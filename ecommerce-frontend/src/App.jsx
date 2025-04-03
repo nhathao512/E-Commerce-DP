@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Thay Switch bằng Routes
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
@@ -15,23 +15,32 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div>
-          <Navbar />
-          <div style={{ padding: "20px" }}>
-            <Routes>
-              <Route path="/register" element={<Register />} />{" "}
-              {/* Thay component bằng element */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/products" element={<ProductList />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/payment" element={<Payment />} />
-              <Route path="/review" element={<ReviewForm />} />
-              <Route path="/reviews" element={<ReviewList />} />
-              <Route path="/" element={<ProductList />} />
-            </Routes>
-          </div>
-          <Footer />
-        </div>
+        <Routes>
+          {/* Các trang không có Navbar và Footer */}
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+
+          {/* Các trang có Navbar và Footer */}
+          <Route
+            path="*"
+            element={
+              <div>
+                <Navbar />
+                <div style={{ padding: "20px" }}>
+                  <Routes>
+                    <Route path="/products" element={<ProductList />} />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/payment" element={<Payment />} />
+                    <Route path="/review" element={<ReviewForm />} />
+                    <Route path="/reviews" element={<ReviewList />} />
+                    <Route path="/" element={<ProductList />} />
+                  </Routes>
+                </div>
+                <Footer />
+              </div>
+            }
+          />
+        </Routes>
       </Router>
     </AuthProvider>
   );
