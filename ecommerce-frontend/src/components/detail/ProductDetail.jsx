@@ -148,7 +148,12 @@ function ProductDetail() {
   };
 
   if (loading) {
-    return <div>Đang tải...</div>;
+    return (
+      <div className={styles.loadingWrapper}>
+        <div className={styles.spinner}></div>
+        <span className={styles.loadingText}>Đang tải...</span>
+      </div>
+    );
   }
 
   if (!product) {
@@ -198,9 +203,11 @@ function ProductDetail() {
             {product.price.toLocaleString("vi-VN")}đ
           </p>
           <p className={styles.description}>
-            NEEDS OF WISDOM® / Streetwear / Based in Saigon / Made in Vietnam
+            ECOMMERCE / Streetfighter / Based in TDTU / Made in Vietnam
           </p>
 
+
+          {/* Phần có thể thay đổi tùy theo dạng product đang được xét đến nên lưu ý*/}
           <div className={styles.sizeSection}>
             <p>Kích thước</p>
             <div className={styles.sizeOptions}>
@@ -217,6 +224,10 @@ function ProductDetail() {
               ))}
             </div>
           </div>
+          {/* Phần có thể thay đổi tùy theo dạng product đang được xét đến nên lưu ý*/}
+
+
+
 
           <div className={styles.quantitySection}>
             <p>Số lượng:</p>
