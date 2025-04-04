@@ -131,7 +131,29 @@ h3 {
 .togglePassword:hover {
   color: #1e40af;
 }
+/* Thêm vào Login.module.css */
+.backButton {
+  position: absolute;
 
+  top: 3px;
+  left: 15px;
+  display: flex;
+  align-items: center;
+  gap: 200px;
+  padding: 8px 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgb(122, 181, 249);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+
+}
+
+.backButton:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
 .forgotPassword {
   display: block;
   text-align: right;

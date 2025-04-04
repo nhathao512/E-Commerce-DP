@@ -1,8 +1,9 @@
+// Login.jsx
 import React, { useState, useContext } from "react";
 import { loginUser } from "../../services/auth";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import eye icons
+import { FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa"; // Thêm FaArrowLeft
 import styles from "./Login.module.css";
 
 function Login() {
@@ -36,6 +37,15 @@ function Login() {
     <div className={styles.container}>
       <div className={styles.backgroundOverlay}></div>
       <div className={styles.formWrapper}>
+        {/* Nút Back to Home */}
+        <button
+          className={styles.backButton}
+          onClick={() => navigate("/")}
+          title="Back to Home"
+        >
+          <FaArrowLeft />
+        </button>
+        
         <h2 className={styles.title}>Welcome back!</h2>
         <h3>Login to continue</h3>
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -47,6 +57,7 @@ function Login() {
             className={styles.input}
             required
           />
+          
           <div className={styles.passwordContainer}>
             <input
               type={showPassword ? "text" : "password"}
