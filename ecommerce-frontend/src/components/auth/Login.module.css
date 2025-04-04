@@ -107,6 +107,8 @@ h3 {
 .passwordContainer {
   position: relative;
   width: 100%;
+  padding-right: 30px;
+  padding-top: 20px;
 }
 
 .togglePassword {
@@ -133,6 +135,7 @@ h3 {
 .forgotPassword {
   display: block;
   text-align: right;
+ 
   margin-top: -0.3rem;
   margin-bottom: 0.8rem;
   font-size: 0.9rem;
