@@ -18,7 +18,7 @@ function ProductItem({ product }) {
         padding: "10px",
         margin: "10px",
         width: "200px",
-      }}
+      }}  
     >
       <h3>{product.name}</h3>
       <p>Giá: ${product.price}</p>

@@ -17,15 +17,15 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Mật khẩu và xác nhận mật khẩu không khớp!");
+      alert("Password and confirm password do not match!");
       return;
     }
     try {
       await registerUser({ username, password, phone, address });
-      alert("Đăng ký thành công!");
+      alert("Registration successful!");
       navigate("/login");
     } catch {
-      alert("Đăng ký thất bại!");
+      alert("Registration failed!");
     }
   };
 
@@ -33,8 +33,8 @@ function Register() {
     <div className={styles.container}>
       <div className={styles.backgroundOverlay}></div>
       <div className={styles.formWrapper}>
-        <Link to="/" className={styles.backButton}>Quay lại</Link>
-        <h2 className={styles.title}>Đăng ký</h2>
+
+        <h2 className={styles.title}>Register</h2>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputWrapper}>
             <FaUser className={styles.icon} />
@@ -42,7 +42,7 @@ function Register() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Tên người dùng"
+              placeholder="Username"
               required
               className={styles.input}
             />
@@ -54,7 +54,7 @@ function Register() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Mật khẩu"
+              placeholder="Password"
               required
               className={styles.input}
             />
@@ -72,7 +72,7 @@ function Register() {
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Xác nhận mật khẩu"
+              placeholder="Confirm password"
               required
               className={styles.input}
             />
@@ -90,7 +90,7 @@ function Register() {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="Số điện thoại"
+              placeholder="Phone number"
               required
               className={styles.input}
             />
@@ -102,19 +102,19 @@ function Register() {
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="Địa chỉ"
+              placeholder="Address"
               required
               className={styles.input}
             />
           </div>
 
           <button type="submit" className={styles.submitButton}>
-            Đăng ký
+            Register
           </button>
         </form>
         <div className={styles.loginContainer}>
-          <p>Đã có tài khoản?</p>
-          <Link to="/login" className={styles.loginButton}>Đăng nhập</Link>
+          <p>You have an account?</p>
+          <Link to="/login" className={styles.loginButton}>Log in</Link>
         </div>
       </div>
     </div>
