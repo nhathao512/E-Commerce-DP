@@ -1,49 +1,89 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import styles from "./Navbar.module.css";
 
 function Navbar() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [cartCount, setCartCount] = useState(0);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    console.log("Searching for:", searchQuery);
+  };
 
   return (
-    <nav style={{ background: "#333", padding: "10px", color: "white" }}>
-      <Link to="/products" style={{ color: "white", marginRight: "10px" }}>
-        Sản phẩm
-      </Link>
-      <Link to="/cart" style={{ color: "white", marginRight: "10px" }}>
-        Giỏ hàng
-      </Link>
-      <Link to="/payment" style={{ color: "white", marginRight: "10px" }}>
-        Thanh toán
-      </Link>
-      <Link to="/review" style={{ color: "white", marginRight: "10px" }}>
-        Đánh giá
-      </Link>
-      <Link to="/reviews" style={{ color: "white", marginRight: "10px" }}>
-        Xem đánh giá
-      </Link>
-      {isAuthenticated ? (
-        <>
-          <span style={{ color: "white", marginRight: "10px" }}>
-            Xin chào, {user?.username}
-          </span>
-          <button
-            onClick={logout}
-            style={{ color: "white", background: "none", border: "none" }}
-          >
-            Đăng xuất
-          </button>
-        </>
-      ) : (
-        <>
-          <Link to="/register" style={{ color: "white", marginRight: "10px" }}>
-            Đăng ký
-          </Link>
-          <Link to="/login" style={{ color: "white" }}>
-            Đăng nhập
-          </Link>
-        </>
-      )}
+    <nav className={styles.navbar}>
+      <div>
+        <Link to="/" className={styles.navLink}>
+          Trang chủ
+        </Link>
+        <Link to="/products" className={styles.navLink}>
+          Sản phẩm
+        </Link>
+      </div>
+
+      <form onSubmit={handleSearch} className={styles.searchContainer}>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Tìm kiếm sản phẩm..."
+          className={styles.searchInput}
+        />
+        <svg
+          className={styles.searchIcon}
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+      </form>
+
+      <div>
+        <Link to="/cart" className={styles.navLink}>
+          <div className={styles.cartContainer}>
+            <svg
+              className={styles.cartIcon}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-10 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+            </svg>
+            {cartCount > 0 && (
+              <span className={styles.cartCount}>{cartCount}</span>
+            )}
+          </div>
+        </Link>
+
+        {isAuthenticated ? (
+          <>
+            <span style={{ marginRight: "20px" }}>
+              Xin chào, {user?.username}
+            </span>
+            <button onClick={logout} className={styles.logoutBtn}>
+              Đăng xuất
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" className={styles.navLink}>
+              Đăng nhập
+            </Link>
+            <Link to="/register" className={styles.navLink}>
+              Đăng ký
+            </Link>
+          </>
+        )}
+      </div>
     </nav>
   );
 }

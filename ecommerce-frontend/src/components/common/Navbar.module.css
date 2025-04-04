@@ -1,0 +1,143 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 25px;
+    background-color: #6caff1; /* Xám nhạt */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    height: 70px; /* Tăng chiều cao để phù hợp với chữ to hơn */
+    font-family: 'Poppins', sans-serif; /* Font chữ hiện đại */
+    font-weight: bold;
+  }
+  
+  /* Container cho các link bên trái */
+  .navbar > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 30px; /* Tăng khoảng cách giữa các link */
+  }
+  
+  /* Container cho phần bên phải (giỏ hàng, đăng nhập, đăng ký) */
+  .navbar > div:last-child {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Tăng khoảng cách giữa các phần tử */
+  }
+  
+  .navLink {
+    color: #eceef1; /* Xám nhạt */
+    text-decoration: none;
+    font-size: 18px; /* Tăng kích thước chữ */
+    font-weight: 700;
+    font-weight: bold;
+
+    transition: color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .navLink:hover {
+    color: #090909af; /* Xanh đậm */
+    transform: translateY(-2px); /* Hiệu ứng nâng nhẹ khi hover */
+  }
+  
+  .searchContainer {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 300px; /* Tăng chiều rộng thanh tìm kiếm */
+  }
+  
+  .searchInput {
+    width: 100%;
+    padding: 10px 40px 10px 15px; /* Tăng padding để kính lúp nằm gọn */
+    border: 1px solid #d1d5db; /* Xám nhạt */
+    border-radius: 25px; /* Bo tròn hơn */
+    font-size: 16px; /* Tăng kích thước chữ */
+    font-family: 'Poppins', sans-serif; /* Font chữ đẹp */
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .searchInput::placeholder {
+    font-size: 16px; /* Tăng kích thước chữ placeholder */
+    color: #9ca3af; /* Xám nhạt cho placeholder */
+  }
+  
+  .searchInput:focus {
+    border-color: #2563eb; /* Xanh đậm */
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); /* Hiệu ứng bóng khi focus */
+  }
+  
+  .searchIcon {
+    position: absolute;
+    bottom: 19px;
+    right: -5px; /* Đưa kính lúp vào trong ô tìm kiếm */
+    width: 25px; /* Tăng kích thước kính lúp */
+    height: 22px;
+    color: #6b7280; /* Xám nhạt */
+    transition: color 0.3s ease;
+  }
+  
+  .searchInput:focus + .searchIcon {
+    color: #090909af; /* Icon đổi màu khi input focus */
+  }
+  
+  .cartContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .cartIcon {
+    width: 26px; /* Tăng kích thước icon giỏ hàng */
+    height: 26px;
+    color: #ffffffca; /* Xám nhạt */
+    transition: color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .cartContainer:hover .cartIcon {
+    color: #090909af; /* Xanh đậm */
+    transform: scale(1.1); /* Hiệu ứng phóng to nhẹ khi hover */
+  }
+  
+  .cartCount {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #2563eb; /* Xanh đậm */
+    color: white;
+    border-radius: 50%;
+    width: 18px; /* Tăng kích thước số lượng */
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px; /* Tăng kích thước chữ số lượng */
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Bóng nhẹ */
+  }
+  
+  .logoutBtn {
+    background-color: #2563eb; /* Xanh đậm */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Tăng padding cho nút */
+    border-radius: 25px; /* Bo tròn hơn */
+    cursor: pointer;
+    font-size: 16px; /* Tăng kích thước chữ */
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif; /* Font chữ đẹp */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .logoutBtn:hover {
+    background-color: #9c9fa7; /* Xanh đậm hơn khi hover */
+    transform: translateY(-2px); /* Hiệu ứng nâng nhẹ khi hover */
+  }
+  
+  /* Đảm bảo span (Xin chào, username) thẳng hàng */
+  .navbar > div:last-child > span {
+    color: #6b7280;
+    font-size: 16px; /* Tăng kích thước chữ */
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif; /* Font chữ đẹp */
+  }

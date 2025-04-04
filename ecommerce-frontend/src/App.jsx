@@ -26,7 +26,7 @@ function App() {
             element={
               <div>
                 <Navbar />
-                <div style={{ padding: "20px" }}>
+                <div style={{ padding: "20px" , minHeight: "90vh"}}>
                   <Routes>
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/cart" element={<Cart />} />
