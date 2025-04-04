@@ -18,15 +18,15 @@ function Login() {
     try {
       const response = await loginUser({ username, password });
       login(response.data, username);
-      alert("Login successfully!");
+      alert("Đăng nhập thành công!");
       navigate("/products");
     } catch {
-      alert("Login failed!");
+      alert("Đăng nhập không thành công!");
     }
   };
 
   const handleSocialLogin = (platform) => {
-    alert(`Login with ${platform} is under development!`);
+    alert(`Đăng nhập bằng ${platform} đang được phát triển!`);
   };
 
   const togglePasswordVisibility = () => {
@@ -41,7 +41,7 @@ function Login() {
         <button
           className={styles.backButton}
           onClick={() => navigate("/")}
-          title="Back to Home"
+          title="Quay lại trang chủ"
         >
           <FaArrowLeft />
         </button>
@@ -53,7 +53,7 @@ function Login() {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
+            placeholder="Tên đăng nhập"
             className={styles.input}
             required
           />
@@ -63,7 +63,7 @@ function Login() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
+              placeholder="Mật khẩu"
               className={styles.input}
               required
             />
@@ -79,14 +79,14 @@ function Login() {
             className={styles.forgotPassword}
             onClick={() => navigate("/forgot-password")}
           >
-            Forgot your password?
+            Quên mật khẩu?
           </button>
           <button type="submit" className={styles.loginButton}>
-            Log in
+            Đăng nhập
           </button>
         </form>
         <div className={styles.orLogin}>
-          <span>or login</span>
+          <span>Hoặc đăng nhập</span>
         </div>
         <div className={styles.socialLogin}>
           <button
@@ -109,12 +109,12 @@ function Login() {
           </button>
         </div>
         <div className={styles.registerContainer}>
-          <p>Don't have an account?</p>
+          <p>Không có tài khoản?</p>
           <button
             className={styles.registerButton}
             onClick={() => navigate("/register")}
           >
-            Sign up
+            Đăng ký
           </button>
         </div>
       </div>

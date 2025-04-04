@@ -17,15 +17,15 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Password and confirm password do not match!");
+      alert("Mật khẩu và mật khẩu xác nhận không khớp!");
       return;
     }
     try {
       await registerUser({ username, password, phone, address });
-      alert("Registration successful!");
+      alert("Đăng ký thành công!");
       navigate("/login");
     } catch {
-      alert("Registration failed!");
+      alert("Đăng ký không thành công!");
     }
   };
 
@@ -42,7 +42,7 @@ function Register() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
+              placeholder="Tên đăng nhập"
               required
               className={styles.input}
             />
@@ -54,7 +54,7 @@ function Register() {
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
+              placeholder="Mật khẩu"
               required
               className={styles.input}
             />
@@ -72,7 +72,7 @@ function Register() {
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm password"
+              placeholder="Xác nhận mật khẩu"
               required
               className={styles.input}
             />
@@ -90,7 +90,7 @@ function Register() {
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              placeholder="Phone number"
+              placeholder="Số điện thoại"
               required
               className={styles.input}
             />
@@ -102,19 +102,19 @@ function Register() {
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              placeholder="Address"
+              placeholder="Địa chỉ"
               required
               className={styles.input}
             />
           </div>
 
           <button type="submit" className={styles.submitButton}>
-            Register
+            Đăng ký
           </button>
         </form>
         <div className={styles.loginContainer}>
-          <p>You have an account?</p>
-          <Link to="/login" className={styles.loginButton}>Log in</Link>
+          <p>Bạn đã có tài khoản?</p>
+          <Link to="/login" className={styles.loginButton}>Đăng nhập</Link>
         </div>
       </div>
     </div>

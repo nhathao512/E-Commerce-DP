@@ -4,7 +4,7 @@
   max-width: 900px; /* Tăng chiều rộng một chút cho thoáng */
   margin: 0 auto;
   padding: 30px; /* Tăng padding cho không gian rộng rãi */
-  background: linear-gradient(135deg, #c3cfe2d8 0%, #c3cfe2 100%); /* Gradient nền nhẹ */
+  background: linear-gradient(135deg, #c3cfe251 0%, #c3cfe2a0 100%); /* Gradient nền nhẹ */
   border-radius: 15px; /* Bo góc mềm mại */
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ nhẹ */
 }

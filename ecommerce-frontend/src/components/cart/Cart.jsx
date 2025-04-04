@@ -13,6 +13,9 @@ function Cart() {
       { id: 1, productName: "Áo thun", quantity: 2, price: 1000 },
       { id: 2, productName: "Quần jeans", quantity: 1, price: 1000 },
       { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
+      { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
+      { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
+      { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
     ];
     setCartItems(fakeData);
   }, []);
