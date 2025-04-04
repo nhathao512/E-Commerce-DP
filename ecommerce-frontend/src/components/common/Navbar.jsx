@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import styles from "./Navbar.module.css";
+import logo from "../../assets/logo.png"; // Nhập logo trực tiếp để đảm bảo hiển thị
 
 function Navbar() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
@@ -16,6 +17,9 @@ function Navbar() {
   return (
     <nav className={styles.navbar}>
       <div>
+        <Link to="/">
+          <img src={logo} alt="Logo" className={styles.logo} /> {/* Sử dụng logo đã nhập */}
+        </Link>
         <Link to="/" className={styles.navLink}>
           Trang chủ
         </Link>

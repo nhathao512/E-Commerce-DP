@@ -10,6 +10,7 @@ import Cart from "./components/cart/Cart";
 import Payment from "./components/payment/Payment";
 import ReviewForm from "./components/review/ReviewForm";
 import ReviewList from "./components/review/ReviewList";
+import HomePage from "./components/home/HomePage";
 
 function App() {
   return (
@@ -33,7 +34,7 @@ function App() {
                     <Route path="/payment" element={<Payment />} />
                     <Route path="/review" element={<ReviewForm />} />
                     <Route path="/reviews" element={<ReviewList />} />
-                    <Route path="/" element={<ProductList />} />
+                    <Route path="/" element={<HomePage />} />
                   </Routes>
                 </div>
                 <Footer />
