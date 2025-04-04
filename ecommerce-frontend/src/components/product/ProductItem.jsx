@@ -1,5 +1,6 @@
 import React from "react";
 import { addToCart } from "../../services/api";
+import styles from "./ProductItem.module.css";
 
 function ProductItem({ product }) {
   const handleAddToCart = async () => {
@@ -12,17 +13,20 @@ function ProductItem({ product }) {
   };
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        padding: "10px",
-        margin: "10px",
-        width: "200px",
-      }}  
-    >
-      <h3>{product.name}</h3>
-      <p>Giá: ${product.price}</p>
-      <button onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
+    <div className={styles.card}>
+      <div className={styles.imageWrapper}>
+        <img src={product.image} alt={product.name} className={styles.image} />
+      </div>
+      <div className={styles.content}>
+        <h3 className={styles.name}>{product.name}</h3>
+        <p className={styles.description}>{product.description}</p>
+        <div className={styles.priceWrapper}>
+          <span className={styles.price}>${product.price.toFixed(2)}</span>
+        </div>
+        <button className={styles.addButton} onClick={handleAddToCart}>
+          Thêm vào giỏ
+        </button>
+      </div>
     </div>
   );
 }
