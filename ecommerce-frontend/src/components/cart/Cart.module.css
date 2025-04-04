@@ -35,6 +35,21 @@
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ */
 }
 
+.selectAll {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  padding-left: 22px;
+}
+
+.selectAll label {
+  margin-left: 10px;
+  font-size: 16px;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
 .emptyCart {
   font-size: 18px;
   color: #7f8c8d;
@@ -182,10 +197,6 @@
   transform: scale(1.1);
 }
 
-/* Thay thế hoặc cập nhật các phần liên quan trong Cart.module.css */
-
-/* Thay thế hoặc cập nhật các phần liên quan trong Cart.module.css */
-
 .summary {
   margin-top: 25px;
   padding: 20px;
@@ -214,6 +225,10 @@
   text-align: left;
 }
 
+.summaryHeader span:nth-child(2) {
+  text-align: center; /* Căn giữa chữ "Số lượng" */
+}
+
 .summaryHeader span:nth-child(3) {
   text-align: right;
 }
@@ -228,6 +243,10 @@
 
 .summaryItem span {
   text-align: left;
+}
+
+.summaryItem span:nth-child(2) {
+  text-align: center; /* Căn giữa số lượng */
 }
 
 .summaryItem span:nth-child(3) {
@@ -246,7 +265,6 @@
   align-items: center; /* Căn giữa theo chiều dọc */
   gap: 20px; /* Khoảng cách giữa "Tổng tiền" và nút "Thanh toán" */
 }
-
 
 .summaryTotal span {
   font-size: 20px;
@@ -289,8 +307,6 @@
   transform: none;
   box-shadow: none;
 }
-
-/* Giữ nguyên các phần khác của CSS */
 
 /* Định nghĩa keyframes cho hiệu ứng slide-up */
 @keyframes slideUp {

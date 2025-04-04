@@ -13,9 +13,9 @@ function Cart() {
       { id: 1, productName: "Áo thun", quantity: 2, price: 1000 },
       { id: 2, productName: "Quần jeans", quantity: 1, price: 1000 },
       { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
-      { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
-      { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
-      { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
+      { id: 4, productName: "Giày thể thao", quantity: 1, price: 1000 },
+      { id: 5, productName: "Giày thể thao", quantity: 1, price: 1000 },
+      { id: 6, productName: "Giày thể thao", quantity: 1, price: 1000 },
     ];
     setCartItems(fakeData);
   }, []);
@@ -31,6 +31,15 @@ function Cart() {
     );
   };
 
+  // Handle Select All checkbox
+  const handleSelectAll = () => {
+    if (selectedItems.length === cartItems.length) {
+      setSelectedItems([]); // Deselect all if all are selected
+    } else {
+      setSelectedItems(cartItems.map(item => item.id)); // Select all
+    }
+  };
+
   const handleProcessToPayment = () => {
     if (selectedItems.length === 0) {
       alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
@@ -43,6 +52,20 @@ function Cart() {
     <div className={styles.container}>
       <h2 className={styles.title}>GIỎ HÀNG</h2>
       <div className={styles.divider}></div>
+      
+      {/* Select All Checkbox */}
+      {cartItems.length > 0 && (
+        <div className={styles.selectAll}>
+          <input
+            type="checkbox"
+            checked={selectedItems.length === cartItems.length && cartItems.length > 0}
+            onChange={handleSelectAll}
+            className={styles.checkbox}
+          />
+          <label>Chọn tất cả ({cartItems.length} sản phẩm)</label>
+        </div>
+      )}
+
       {cartItems.length === 0 ? (
         <p className={styles.emptyCart}>Giỏ hàng trống</p>
       ) : (

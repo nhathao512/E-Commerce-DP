@@ -100,7 +100,7 @@ function HomePage() {
                 <img src={product.image} alt={product.name} className={styles.productImage} />
                 <div className={styles.productInfo}>
                   <span className={styles.productName}>{product.name}</span>
-                  <span className={styles.views}>({product.views} lượt xem)</span>
+                  <span className={styles.views}> ({product.views} lượt xem)</span>
                 </div>
               </div>
             ))}
