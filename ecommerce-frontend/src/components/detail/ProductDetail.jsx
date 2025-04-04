@@ -203,7 +203,7 @@ function ProductDetail() {
             {product.price.toLocaleString("vi-VN")}đ
           </p>
           <p className={styles.description}>
-            ECOMMERCE / Streetfighter / Based in TDTU / Made in Vietnam
+            ECOMMERCE® / Streetfighter / Based in TDTU / Made in Vietnam
           </p>
 
 
