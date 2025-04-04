@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import styles from "./Navbar.module.css";
-import logo from "../../assets/logo.png"; // Nhập logo trực tiếp để đảm bảo hiển thị
+import logo from "../../assets/logo.png";
 
 function Navbar() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
@@ -10,12 +10,36 @@ function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
 
+  // Hàm cập nhật cartCount từ localStorage
+  const updateCartCount = () => {
+    const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+    setCartCount(cartItems.length);
+  };
+
+  useEffect(() => {
+    updateCartCount(); // Cập nhật lần đầu khi mount
+
+    // Lắng nghe sự kiện storage để cập nhật realtime
+    window.addEventListener("storage", updateCartCount);
+    
+    // Cleanup listener khi component unmount
+    return () => {
+      window.removeEventListener("storage", updateCartCount);
+    };
+  }, []);
+
+  // Lắng nghe sự kiện tùy chỉnh từ Cart
+  useEffect(() => {
+    const handleCartUpdate = () => updateCartCount();
+    window.addEventListener("cartUpdated", handleCartUpdate);
+    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
+  }, []);
+
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) { // Kiểm tra query không rỗng
-      // Chuyển hướng đến trang sản phẩm với query tìm kiếm
+    if (searchQuery.trim()) {
       navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
-      setSearchQuery(""); // Xóa query sau khi tìm kiếm (tùy chọn)
+      setSearchQuery("");
     } else {
       navigate(`/products`);
     }
@@ -25,7 +49,7 @@ function Navbar() {
     <nav className={styles.navbar}>
       <div>
         <Link to="/">
-          <img src={logo} alt="Logo" className={styles.logo} /> {/* Sử dụng logo đã nhập */}
+          <img src={logo} alt="Logo" className={styles.logo} />
         </Link>
         <Link to="/" className={styles.navLink}>
           Trang chủ
@@ -34,8 +58,6 @@ function Navbar() {
           Sản phẩm
         </Link>
       </div>
-
-      
 
       <div>
         <form onSubmit={handleSearch} className={styles.searchContainer}>

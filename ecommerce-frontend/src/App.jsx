@@ -35,6 +35,7 @@ function App() {
                     <Route path="/review" element={<ReviewForm />} />
                     <Route path="/reviews" element={<ReviewList />} />
                     <Route path="/" element={<HomePage />} />
+                    
                   </Routes>
                 </div>
                 <Footer />
