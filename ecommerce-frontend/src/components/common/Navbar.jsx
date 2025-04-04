@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import styles from "./Navbar.module.css";
 import logo from "../../assets/logo.png"; // Nhập logo trực tiếp để đảm bảo hiển thị
@@ -8,10 +8,17 @@ function Navbar() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
+  const navigate = useNavigate();
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log("Searching for:", searchQuery);
+    if (searchQuery.trim()) { // Kiểm tra query không rỗng
+      // Chuyển hướng đến trang sản phẩm với query tìm kiếm
+      navigate(`/products?search=${encodeURIComponent(searchQuery)}`);
+      setSearchQuery(""); // Xóa query sau khi tìm kiếm (tùy chọn)
+    } else {
+      navigate(`/products`);
+    }
   };
 
   return (
@@ -28,29 +35,31 @@ function Navbar() {
         </Link>
       </div>
 
-      <form onSubmit={handleSearch} className={styles.searchContainer}>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Tìm kiếm sản phẩm..."
-          className={styles.searchInput}
-        />
-        <svg
-          className={styles.searchIcon}
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-      </form>
+      
 
       <div>
+        <form onSubmit={handleSearch} className={styles.searchContainer}>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Tìm kiếm sản phẩm..."
+            className={styles.searchInput}
+          />
+          <svg
+            className={styles.searchIcon}
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            onClick={handleSearch}
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+        </form>
         <Link to="/cart" className={styles.navLink}>
           <div className={styles.cartContainer}>
             <svg

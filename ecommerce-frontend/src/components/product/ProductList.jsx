@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom"; // Thêm useLocation để đọc query từ URL
 import ProductItem from "./ProductItem";
 import styles from "./ProductList.module.css";
 import { FaFilter, FaAngleLeft, FaAngleRight } from "react-icons/fa";
@@ -19,7 +20,8 @@ function ProductList() {
   const [selectedCategory, setSelectedCategory] = useState("Tất cả");
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 8; 
+  const productsPerPage = 8;
+  const location = useLocation(); // Lấy thông tin URL
 
   const categories = ["Tất cả", ...new Set(fakeProducts.map(p => p.category))];
 
@@ -30,15 +32,30 @@ function ProductList() {
     }, 500);
   }, []);
 
-  // Lọc sản phẩm khi thay đổi danh mục
+  // Lọc sản phẩm dựa trên danh mục và từ khóa tìm kiếm
   useEffect(() => {
-    if (selectedCategory === "Tất cả") {
-      setFilteredProducts(products);
-    } else {
-      setFilteredProducts(products.filter(p => p.category === selectedCategory));
+    const searchParams = new URLSearchParams(location.search);
+    const searchQuery = searchParams.get("search")?.toLowerCase() || "";
+
+    let filtered = products;
+
+    // Lọc theo từ khóa tìm kiếm
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (p) =>
+          p.name.toLowerCase().includes(searchQuery) ||
+          p.description.toLowerCase().includes(searchQuery)
+      );
     }
+
+    // Lọc theo danh mục
+    if (selectedCategory !== "Tất cả") {
+      filtered = filtered.filter((p) => p.category === selectedCategory);
+    }
+
+    setFilteredProducts(filtered);
     setCurrentPage(1); // Reset về trang 1 khi lọc
-  }, [selectedCategory, products]);
+  }, [selectedCategory, products, location.search]); // Thêm location.search vào dependency
 
   // Tính toán sản phẩm hiển thị trên trang hiện tại
   const indexOfLastProduct = currentPage * productsPerPage;
@@ -86,6 +103,8 @@ function ProductList() {
       </div>
       {isLoading ? (
         <div className={styles.loading}>Đang tải sản phẩm...</div>
+      ) : filteredProducts.length === 0 ? (
+        <div className={styles.noResults}>Không tìm thấy sản phẩm nào.</div>
       ) : (
         <>
           <div className={styles.productGrid}>

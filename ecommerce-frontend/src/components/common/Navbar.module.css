@@ -10,6 +10,20 @@
     font-weight: bold;
 }
 
+.searchIcon {
+    width: 20px;
+    height: 20px;
+    color: #6b7280; /* Màu mặc định */
+    transition: all 0.3s ease; /* Hiệu ứng mượt mà cho tất cả thay đổi */
+    cursor: pointer; /* Con trỏ tay khi hover để báo hiệu có thể nhấn */
+  }
+  
+  /* Hiệu ứng hover */
+  .searchIcon:hover {
+    color: #2563eb; /* Đổi màu khi hover (xanh đậm) */
+    transform: scale(1.2); /* Phóng to 20% */
+  }
+
 .navbar > div:first-child {
     display: flex;
     align-items: center;
@@ -19,7 +33,7 @@
 .navbar > div:last-child {
     display: flex;
     align-items: center;
-    gap: 25px;
+    gap: 35px; /* Tăng gap từ 25px lên 35px để các phần tử xa nhau hơn */
 }
 
 .logo {
@@ -51,6 +65,7 @@
     align-items: center;
     position: relative;
     width: 300px;
+    margin-right: 15px; /* Thêm margin-right để tách xa cartContainer */
 }
 
 .searchInput {

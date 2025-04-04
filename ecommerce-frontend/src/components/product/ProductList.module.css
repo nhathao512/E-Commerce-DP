@@ -170,6 +170,14 @@
     font-weight: 700;
   }
   
+  .noResults {
+    text-align: center;
+    font-size: 18px;
+    color: #7f8c8d;
+    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+  }
+
   .pageButton:disabled {
     background: #f5f5f5;
     color: #ccc;
