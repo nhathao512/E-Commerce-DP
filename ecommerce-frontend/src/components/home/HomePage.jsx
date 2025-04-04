@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Thêm import này
 import styles from "./HomePage.module.css";
 
 function HomePage() {
@@ -6,6 +7,7 @@ function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const productsPerPage = 4;
+  const navigate = useNavigate(); // Khai báo useNavigate
 
   const categories = [
     { name: "Điện tử", icon: "📱" },
@@ -46,15 +48,18 @@ function HomePage() {
     setCurrentSlide(prev => (prev === sliderImages.length - 1 ? 0 : prev + 1));
   };
 
-  // Tự động chuyển slide sau 5 giây
+  // Sửa hàm handleProductDetail để nhận product làm tham số
+  const handleProductDetail = (product) => {
+    navigate(`/product/${product.id}`);
+  };
+
   useEffect(() => {
     const autoSlide = setInterval(() => {
       handleNextSlide();
-    }, 5000); // 5000ms = 5 giây
+    }, 5000);
 
-    // Dọn dẹp interval khi component unmount hoặc khi người dùng tương tác
     return () => clearInterval(autoSlide);
-  }, [currentSlide]); // Chạy lại khi currentSlide thay đổi để reset timer
+  }, [currentSlide]);
 
   return (
     <div className={styles.homeContainer}>
@@ -96,7 +101,11 @@ function HomePage() {
         <div className={styles.productsContainer}>
           <div className={styles.productsGrid}>
             {currentProducts.map(product => (
-              <div key={product.id} className={styles.productItem}>
+              <div 
+                key={product.id} 
+                className={styles.productItem} 
+                onClick={() => handleProductDetail(product)} // Truyền product vào hàm
+              >
                 <img src={product.image} alt={product.name} className={styles.productImage} />
                 <div className={styles.productInfo}>
                   <span className={styles.productName}>{product.name}</span>

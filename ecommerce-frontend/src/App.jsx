@@ -11,6 +11,7 @@ import Payment from "./components/payment/Payment";
 import ReviewForm from "./components/review/ReviewForm";
 import ReviewList from "./components/review/ReviewList";
 import HomePage from "./components/home/HomePage";
+import ProductDetail from "./components/detail/ProductDetail";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/payment" element={<Payment />} />
+                    <Route path="/product/:id" element={<ProductDetail />} />
                     <Route path="/review" element={<ReviewForm />} />
                     <Route path="/reviews" element={<ReviewList />} />
                     <Route path="/" element={<HomePage />} />
