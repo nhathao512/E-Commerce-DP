@@ -1,4 +1,3 @@
-// Cart.jsx
 import React, { useState, useEffect } from "react";
 import { getCart } from "../../services/api";
 import CartItem from "./CartItem";
@@ -8,31 +7,6 @@ function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
 
-  // useEffect(() => {
-  //   const fetchCart = async () => {
-  //     try {
-  //       const response = await getCart();
-  //       setCartItems(response.data);
-  //     } catch (error) {
-  //       console.error("Lỗi khi lấy giỏ hàng:", error);
-  //     }
-  //   };
-  //   fetchCart();
-  // }, []);
-
-  // Tính tổng giá tiền của các sản phẩm được chọn
-  const totalPrice = cartItems
-    .filter(item => selectedItems.includes(item.id))
-    .reduce((total, item) => total + (item.price * item.quantity), 0);
-
-  const handleCheckboxChange = (itemId) => {
-    setSelectedItems((prev) =>
-      prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
-        : [...prev, itemId]
-    );
-  };
-  
   useEffect(() => {
     // Fake data để test nếu chưa gọi API thật
     const fakeData = [
@@ -41,28 +15,25 @@ function Cart() {
       { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
     ];
     setCartItems(fakeData);
-
-    // Nếu dùng API thật:
-    // const fetchCart = async () => {
-    //   try {
-    //     const response = await getCart();
-    //     setCartItems(response.data);
-    //   } catch (error) {
-    //     console.error("Lỗi khi lấy giỏ hàng:", error);
-    //   }
-    // };
-    // fetchCart();
   }, []);
+
+  const selectedCartItems = cartItems.filter(item => selectedItems.includes(item.id));
+  const totalPrice = selectedCartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+
+  const handleCheckboxChange = (itemId) => {
+    setSelectedItems((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
 
   const handleProcessToPayment = () => {
     if (selectedItems.length === 0) {
       alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán!");
       return;
     }
-    // Logic xử lý thanh toán ở đây
     console.log("Processing payment for items:", selectedItems);
-    // Ví dụ: chuyển hướng đến trang thanh toán
-    // window.location.href = '/payment';
   };
 
   return (
@@ -85,15 +56,37 @@ function Cart() {
             ))}
           </ul>
           <div className={styles.summary}>
-            <p className={styles.totalPrice}>
-              Tổng tiền ({selectedItems.length} sản phẩm): {totalPrice.toLocaleString()} VNĐ
-            </p>
-            <button 
-              className={styles.paymentButton}
-              onClick={handleProcessToPayment}
-            >
-              Thanh toán
-            </button>
+            <div className={styles.summaryDetails}>
+              <div className={styles.summaryHeader}>
+                <span>Mặt hàng</span>
+                <span>Số lượng</span>
+                <span>Thành tiền</span>
+              </div>
+              {selectedCartItems.length > 0 ? (
+                selectedCartItems.map((item) => (
+                  <div key={item.id} className={styles.summaryItem}>
+                    <span>{item.productName}</span>
+                    <span>{item.quantity}</span>
+                    <span>{(item.price * item.quantity).toLocaleString()} VNĐ</span>
+                  </div>
+                ))
+              ) : (
+                <p className={styles.noItems}>Chưa chọn sản phẩm nào</p>
+              )}
+              <div className={styles.summaryTotal}>
+                <div className={styles.totalWrapper}>
+                  <span>Tổng tiền: {totalPrice.toLocaleString()} VNĐ</span>
+                  <span></span>
+                  <button 
+                    className={styles.paymentButton}
+                    onClick={handleProcessToPayment}
+                    disabled={!selectedItems.length}
+                  >
+                    Thanh toán
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </>
       )}

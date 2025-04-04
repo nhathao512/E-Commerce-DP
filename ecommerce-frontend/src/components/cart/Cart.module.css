@@ -1,37 +1,49 @@
 /* Cart.module.css */
 
 .container {
-  max-width: 800px;
+  max-width: 900px; /* Tăng chiều rộng một chút cho thoáng */
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px; /* Tăng padding cho không gian rộng rãi */
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Gradient nền nhẹ */
+  border-radius: 15px; /* Bo góc mềm mại */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ nhẹ */
 }
 
 .title {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #333;
+  font-size: 40px; /* Tăng kích thước chữ */
+  font-weight: 700; /* Đậm hơn */
+  margin-bottom: 25px;
+  color: #2c3e50; /* Màu xanh đậm sang trọng */
   text-align: center;
-  animation: slideUp 0.5s ease-in-out forwards; /* Thêm hiệu ứng slide-up */
-  opacity: 0; /* Bắt đầu ẩn */
-  animation-delay: 0.1s; /* Độ trễ nhẹ cho title */
+  text-transform: uppercase; /* Chữ in hoa */
+  letter-spacing: 1.5px; /* Giãn chữ nhẹ */
+  animation: slideUp 0.5s ease-in-out forwards;
+  opacity: 0;
+  animation-delay: 0.1s;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* Thêm bóng chữ */
 }
 
 .divider {
-  width: 50%;
-  height: 2px;
+  width: 60%; /* Tăng chiều dài */
+  height: 3px; /* Tăng độ dày */
+  background: linear-gradient(to right, #3498db, #e74c3c); /* Gradient cho divider */
+  margin: 15px auto 25px auto;
+  border-radius: 2px; /* Bo góc nhẹ */
   animation: slideUp 0.5s ease-in-out forwards;
-  background-color: #868585;
-  margin: 10px auto 20px auto;
+  opacity: 0;
+  animation-delay: 0.15s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ */
 }
 
 .emptyCart {
-  font-size: 16px;
-  color: #666;
+  font-size: 18px;
+  color: #7f8c8d;
   text-align: center;
-  padding: 20px;
-  background-color: #f8f8f8;
-  border-radius: 5px;
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  font-style: italic;
 }
 
 .cartList {
@@ -43,27 +55,26 @@
 .cartItem {
   display: flex;
   align-items: center;
-  padding: 15px;
-  margin-bottom: 10px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  transition: box-shadow 0.2s ease-in-out;
-  animation: slideUp 0.5s ease-in-out forwards; /* Hiệu ứng slide-up */
-  opacity: 0; /* Bắt đầu ẩn */
+  padding: 20px;
+  margin-bottom: 15px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out; /* Mượt mà hơn */
+  animation: slideUp 0.5s ease-in-out forwards;
+  opacity: 0;
 }
 
-
 .cartItem:nth-child(1) {
-  animation-delay: 0.2s; /* Độ trễ cho mục đầu tiên */
+  animation-delay: 0.2s;
 }
 
 .cartItem:nth-child(2) {
-  animation-delay: 0.3s; /* Độ trễ cho mục thứ hai */
+  animation-delay: 0.3s;
 }
 
 .cartItem:nth-child(3) {
-  animation-delay: 0.4s; /* Độ trễ cho mục thứ ba */
+  animation-delay: 0.4s;
 }
 
 .cartItem:nth-child(n+4) {
@@ -71,19 +82,28 @@
 }
 
 .cartItem:hover {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Bóng đổ lớn hơn khi hover */
+  transform: translateY(-2px); /* Nhấc lên nhẹ khi hover */
 }
 
 .checkbox {
-  margin-right: 10px;
+  margin-right: 15px;
+  transform: scale(1.2); /* Tăng kích thước checkbox */
+  accent-color: #3498db; /* Màu xanh cho checkbox */
 }
 
 .productImage {
-  width: 50px;
-  height: 50px;
+  width: 60px; /* Tăng kích thước ảnh */
+  height: 60px;
   object-fit: cover;
-  margin-right: 15px;
-  border-radius: 5px;
+  margin-right: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd; /* Viền nhẹ cho ảnh */
+  transition: transform 0.3s ease; /* Hiệu ứng khi hover */
+}
+
+.productImage:hover {
+  transform: scale(1.1); /* Phóng to ảnh khi hover */
 }
 
 .productInfo {
@@ -91,119 +111,195 @@
 }
 
 .productName {
-  font-size: 16px;
-  color: #333;
+  font-size: 18px; /* Tăng kích thước chữ */
+  color: #2c3e50;
   margin: 0;
+  font-weight: 500;
 }
 
 .quantity {
   font-size: 14px;
-  color: #777;
+  color: #7f8c8d;
   margin: 5px 0 0 0;
 }
 
 .price {
-  font-size: 14px;
-  color: #28a745;
+  font-size: 16px; /* Tăng kích thước */
+  color: #27ae60; /* Màu xanh lá đậm hơn */
   margin: 5px 0 0 0;
+  font-weight: 600;
 }
 
 .actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .button {
-  padding: 5px 10px;
+  padding: 6px 12px;
   font-size: 14px;
   border: none;
-  border-radius: 3px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
 }
 
 .buttonAdd {
-  background-color: #28a745;
+  background-color: #2ecc71; /* Màu xanh lá tươi */
   color: white;
 }
 
 .buttonAdd:hover {
-  background-color: #218838;
+  background-color: #27ae60;
+  transform: scale(1.05); /* Phóng to nhẹ khi hover */
 }
 
 .buttonRemove {
-  background-color: #dc3545;
+  background-color: #e74c3c; /* Màu đỏ tươi */
   color: white;
 }
 
 .buttonRemove:hover {
-  background-color: #c82333;
+  background-color: #c0392b;
+  transform: scale(1.05);
 }
 
 .buttonAdjust {
-  background-color: #007bff;
+  background-color: #3498db; /* Màu xanh dương */
   color: white;
-  width: 25px;
-  height: 25px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%; /* Nút tròn */
 }
 
 .buttonAdjust:hover {
-  background-color: #0056b3;
+  background-color: #2980b9;
+  transform: scale(1.1);
 }
+
+/* Thay thế hoặc cập nhật các phần liên quan trong Cart.module.css */
+
+/* Thay thế hoặc cập nhật các phần liên quan trong Cart.module.css */
 
 .summary {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f8f8f8;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  animation: slideUp 0.5s ease-in-out forwards; /* Thêm hiệu ứng slide-up */
-  opacity: 0; /* Bắt đầu ẩn */
-  animation-delay: 0.6s; /* Độ trễ lớn hơn các item để xuất hiện sau */
+  margin-top: 25px;
+  padding: 20px;
+  background: linear-gradient(to right, #ffffff, #ecf0f1);
+  border-radius: 10px;
+  animation: slideUp 0.5s ease-in-out forwards;
+  opacity: 0;
+  animation-delay: 0.6s;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
 }
 
-.totalPrice {
-  font-size: 18px;
-  font-weight: bold;
-  color: #333;
-  margin: 0;
+.summaryDetails {
+  width: 100%;
+}
+
+.summaryHeader {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  font-weight: 600;
+  color: #2c3e50;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+}
+
+.summaryHeader span {
+  text-align: left;
+}
+
+.summaryHeader span:nth-child(3) {
+  text-align: right;
+}
+
+.summaryItem {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  padding: 10px 0;
+  border-bottom: 1px dashed #ddd;
+  color: #34495e;
+}
+
+.summaryItem span {
+  text-align: left;
+}
+
+.summaryItem span:nth-child(3) {
+  text-align: right;
+}
+
+.summaryTotal {
+  display: flex;
+  justify-content: flex-end; /* Căn phải toàn bộ nội dung */
+  align-items: center;
+  padding: 15px 0 0;
+}
+
+.totalWrapper {
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 20px; /* Khoảng cách giữa "Tổng tiền" và nút "Thanh toán" */
+}
+
+
+.summaryTotal span {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ff0000;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.noItems {
+  font-size: 16px;
+  color: #7f8c8d;
+  text-align: center;
+  padding: 10px 0;
+  font-style: italic;
 }
 
 .paymentButton {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #28a745;
+  background: linear-gradient(45deg, #2ecc71, #27ae60);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .paymentButton:hover {
-  background-color: #218838;
+  background: linear-gradient(45deg, #27ae60, #219653);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .paymentButton:disabled {
-  background-color: #cccccc;
+  background: #bdc3c7;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
+
+/* Giữ nguyên các phần khác của CSS */
 
 /* Định nghĩa keyframes cho hiệu ứng slide-up */
 @keyframes slideUp {
   0% {
-      transform: translateY(50px); /* Bắt đầu từ dưới lên 50px */
-      opacity: 0; /* Ẩn hoàn toàn */
+    transform: translateY(50px);
+    opacity: 0;
   }
   100% {
-      transform: translateY(0); /* Vị trí cuối cùng */
-      opacity: 1; /* Hiện hoàn toàn */
+    transform: translateY(0);
+    opacity: 1;
   }
 }
