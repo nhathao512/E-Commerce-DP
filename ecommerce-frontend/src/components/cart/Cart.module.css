@@ -1,0 +1,209 @@
+/* Cart.module.css */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+  animation: slideUp 0.5s ease-in-out forwards; /* Thêm hiệu ứng slide-up */
+  opacity: 0; /* Bắt đầu ẩn */
+  animation-delay: 0.1s; /* Độ trễ nhẹ cho title */
+}
+
+.divider {
+  width: 50%;
+  height: 2px;
+  animation: slideUp 0.5s ease-in-out forwards;
+  background-color: #868585;
+  margin: 10px auto 20px auto;
+}
+
+.emptyCart {
+  font-size: 16px;
+  color: #666;
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+
+.cartList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cartItem {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  transition: box-shadow 0.2s ease-in-out;
+  animation: slideUp 0.5s ease-in-out forwards; /* Hiệu ứng slide-up */
+  opacity: 0; /* Bắt đầu ẩn */
+}
+
+
+.cartItem:nth-child(1) {
+  animation-delay: 0.2s; /* Độ trễ cho mục đầu tiên */
+}
+
+.cartItem:nth-child(2) {
+  animation-delay: 0.3s; /* Độ trễ cho mục thứ hai */
+}
+
+.cartItem:nth-child(3) {
+  animation-delay: 0.4s; /* Độ trễ cho mục thứ ba */
+}
+
+.cartItem:nth-child(n+4) {
+  animation-delay: 0.5s;
+}
+
+.cartItem:hover {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox {
+  margin-right: 10px;
+}
+
+.productImage {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 15px;
+  border-radius: 5px;
+}
+
+.productInfo {
+  flex-grow: 1;
+}
+
+.productName {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+}
+
+.quantity {
+  font-size: 14px;
+  color: #777;
+  margin: 5px 0 0 0;
+}
+
+.price {
+  font-size: 14px;
+  color: #28a745;
+  margin: 5px 0 0 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.button {
+  padding: 5px 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.buttonAdd {
+  background-color: #28a745;
+  color: white;
+}
+
+.buttonAdd:hover {
+  background-color: #218838;
+}
+
+.buttonRemove {
+  background-color: #dc3545;
+  color: white;
+}
+
+.buttonRemove:hover {
+  background-color: #c82333;
+}
+
+.buttonAdjust {
+  background-color: #007bff;
+  color: white;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonAdjust:hover {
+  background-color: #0056b3;
+}
+
+.summary {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideUp 0.5s ease-in-out forwards; /* Thêm hiệu ứng slide-up */
+  opacity: 0; /* Bắt đầu ẩn */
+  animation-delay: 0.6s; /* Độ trễ lớn hơn các item để xuất hiện sau */
+}
+
+.totalPrice {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.paymentButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.paymentButton:hover {
+  background-color: #218838;
+}
+
+.paymentButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Định nghĩa keyframes cho hiệu ứng slide-up */
+@keyframes slideUp {
+  0% {
+      transform: translateY(50px); /* Bắt đầu từ dưới lên 50px */
+      opacity: 0; /* Ẩn hoàn toàn */
+  }
+  100% {
+      transform: translateY(0); /* Vị trí cuối cùng */
+      opacity: 1; /* Hiện hoàn toàn */
+  }
+}
