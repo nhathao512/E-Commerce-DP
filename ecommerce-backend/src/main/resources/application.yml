@@ -5,10 +5,10 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/ecommerce
       database: ecommerce
-  security:
-    user:
-      name: admin
-      password: admin123
+  # security:
+  #   user:
+  #     name: admin
+  #     password: admin123
 
 server:
   port: 8080
@@ -17,4 +17,8 @@ server:
 
 jwt:
   secret: yourVeryLongSecretKeyWithAtLeast32Characters
-  expiration: 86400000  # 24 gi? (tính b?ng mili giây)
+  expiration: 86400000
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.springframework.web: DEBUG
