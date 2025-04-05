@@ -18,6 +18,7 @@ server:
 jwt:
   secret: yourVeryLongSecretKeyWithAtLeast32Characters
   expiration: 86400000
+
 logging:
   level:
     org.springframework.security: TRACE
