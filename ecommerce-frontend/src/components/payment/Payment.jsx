@@ -1,26 +1,184 @@
 import React, { useState } from "react";
 import { processPayment } from "../../services/api";
-
+import styles from "./Payment.module.css";
+import logo from "../../assets/banking.png";
 function Payment() {
-  const [method, setMethod] = useState("bank");
+  const [method, setMethod] = useState("cod");
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    address: "",
+    voucher: "",
+    cardNumber: "",
+    cardExpiry: "",
+    cardCVC: ""
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handlePayment = async () => {
     try {
-      await processPayment(method);
+      await processPayment({
+        method,
+        ...formData
+      });
       alert("Thanh toán thành công!");
-    } catch  {
+    } catch {
       alert("Thanh toán thất bại!");
     }
   };
 
+  const handleVoucherAccept = () => {
+    if (formData.voucher) {
+      alert(`Đã áp dụng voucher: ${formData.voucher}`);
+    }
+  };
+
+  const paymentDetails = {
+    subtotal: 500000,
+    shipping: 30000,
+    total: 530000
+  };
+
   return (
-    <div>
-      <h2>Thanh toán</h2>
-      <select value={method} onChange={(e) => setMethod(e.target.value)}>
-        <option value="bank">Chuyển khoản</option>
-        <option value="credit">Thẻ tín dụng</option>
-      </select>
-      <button onClick={handlePayment}>Thanh toán</button>
+    <div className={styles.paymentContainer}>
+      <h2 className={styles.title}>Thanh Toán</h2>
+      <div className={styles.contentWrapper}>
+        <div className={styles.paymentForm}>
+          <div className={styles.formSection}>
+            <h3>Thông tin khách hàng</h3>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder="Họ và tên"
+              className={styles.input}
+              required
+            />
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              placeholder="Số điện thoại"
+              className={styles.input}
+              required
+            />
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+              placeholder="Địa chỉ giao hàng"
+              className={styles.input}
+              required
+            />
+          </div>
+
+          <div className={styles.formSection}>
+            <h3>Phương thức thanh toán</h3>
+            <select
+              value={method}
+              onChange={(e) => setMethod(e.target.value)}
+              className={styles.select}
+            >
+              <option value="cod">Thanh toán khi nhận hàng</option>
+              <option value="bank">Chuyển khoản</option>
+              <option value="credit">Thẻ tín dụng</option>
+            </select>
+
+            {method === "bank" && (
+              <div className={styles.bankInfo}>
+                <img src={logo}
+                  alt="Banking Info"
+                  className={styles.bankImage}
+                />
+              </div>
+            )}
+
+            {method === "credit" && (
+              <div className={styles.creditForm}>
+                <h4 className={styles.creditTitle}>Thẻ Tín Dụng</h4>
+                <input
+                  type="text"
+                  name="cardNumber"
+                  value={formData.cardNumber}
+                  onChange={handleInputChange}
+                  placeholder="Số thẻ"
+                  className={styles.input}
+                  required
+                />
+                <div className={styles.creditDetails}>
+                  <input
+                    type="text"
+                    name="cardExpiry"
+                    value={formData.cardExpiry}
+                    onChange={handleInputChange}
+                    placeholder="MM/YY"
+                    className={styles.input}
+                    required
+                  />
+                  <input
+                    type="text"
+                    name="cardCVC"
+                    value={formData.cardCVC}
+                    onChange={handleInputChange}
+                    placeholder="CVC"
+                    className={styles.input}
+                    required
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className={styles.formSection}>
+            <h3>Mã giảm giá</h3>
+            <div className={styles.voucherContainer}>
+              <input
+                type="text"
+                name="voucher"
+                value={formData.voucher}
+                onChange={handleInputChange}
+                placeholder="Nhập mã voucher"
+                className={styles.input}
+              />
+              <button
+                onClick={handleVoucherAccept}
+                className={styles.voucherButton}
+              >
+                Áp dụng
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.paymentSummary}>
+          <h3>Tóm tắt thanh toán</h3>
+          <div className={styles.summaryItem}>
+            <span>Tổng tiền hàng:</span>
+            <span>{paymentDetails.subtotal.toLocaleString()} VNĐ</span>
+          </div>
+          <div className={styles.summaryItem}>
+            <span>Phí vận chuyển:</span>
+            <span>{paymentDetails.shipping.toLocaleString()} VNĐ</span>
+          </div>
+          <div className={styles.summaryTotal}>
+            <span>Tổng thanh toán:</span>
+            <span>{paymentDetails.total.toLocaleString()} VNĐ</span>
+          </div>
+          <button
+            onClick={handlePayment}
+            className={styles.paymentButton}
+          >
+            Hoàn tất thanh toán
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
