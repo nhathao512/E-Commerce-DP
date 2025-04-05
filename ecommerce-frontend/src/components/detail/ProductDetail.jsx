@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { getProductById, addToCart } from "../../services/api"; // Thêm addToCart
 import styles from "./ProductDetail.module.css";
 
 function ProductDetail() {
@@ -9,51 +10,24 @@ function ProductDetail() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [comments, setComments] = useState([]); // State cho danh sách bình luận
-  const [newComment, setNewComment] = useState(""); // State cho bình luận mới
-  const [rating, setRating] = useState(0); // State cho đánh giá sao
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [rating, setRating] = useState(0);
+  const API_URL = "http://localhost:8080/api"; // URL backend
 
   useEffect(() => {
     const fetchProduct = async () => {
-        try {
-          const response = await new Promise((resolve) =>
-            setTimeout(() => {
-              resolve({
-                id,
-                name: `NABNAG TEE - YELLOW`,
-                price: 395000,
-                categoryId: "C001",
-                imageUrl: "https://placehold.co/600x400/FF6B6B/FFFFFF?text=Main+Image",
-                additionalImages: [
-                  "https://placehold.co/600x400/4ECDC4/FFFFFF?text=Image+1",
-                  "https://placehold.co/600x400/45B7D1/FFFFFF?text=Image+2",
-                  "https://placehold.co/600x400/FF9F1C/FFFFFF?text=Image+3",
-                  "https://placehold.co/600x400/2AB7CA/FFFFFF?text=Image+4",
-                ],
-                brand: "NEEDS OF WISDOM®",
-                status: "Còn hàng",
-                sizes: ["S", "M", "L", "XL"],
-                description: `
-                  Áo thun NABNAG TEE - YELLOW từ NEEDS OF WISDOM® là một sản phẩm streetwear cao cấp, được thiết kế và sản xuất tại Việt Nam. Với chất liệu cotton 100% cao cấp, áo mang lại cảm giác thoải mái, thoáng mát và bền bỉ. Màu vàng nổi bật cùng thiết kế tối giản nhưng hiện đại, sản phẩm này phù hợp cho cả nam và nữ, dễ dàng phối đồ trong nhiều phong cách khác nhau. Sản phẩm được sản xuất tại Sài Gòn, đảm bảo chất lượng và sự tỉ mỉ trong từng đường kim mũi chỉ.
-                  
-                  - Chất liệu: 100% cotton  
-                  - Form dáng: Regular fit  
-                  - Phù hợp: Mặc hàng ngày, dạo phố, hoặc các hoạt động ngoài trời  
-                  - Hướng dẫn bảo quản: Giặt máy ở nhiệt độ dưới 30°C, không sử dụng chất tẩy mạnh, phơi khô tự nhiên.
-                `,
-              });
-            }, 500)
-          );
-      
-          setProduct(response);
-          setLoading(false);
-        } catch (error) {
-          console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
-          setLoading(false);
-        }
-      };
+      try {
+        const response = await getProductById(id);
+        setProduct(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu sản phẩm:", error);
+        setLoading(false);
+      }
+    };
 
-    // Giả lập fetch danh sách bình luận
+    // Giả lập fetch danh sách bình luận (sẽ thay bằng API thực tế sau)
     const fetchComments = async () => {
       try {
         const response = await new Promise((resolve) =>
@@ -64,19 +38,18 @@ function ProductDetail() {
                 user: "Nguyễn Văn A",
                 content: "Áo rất đẹp, chất lượng tốt!",
                 date: "2025-04-01",
-                rating: 5, // Thêm rating
+                rating: 5,
               },
               {
                 id: "2",
                 user: "Trần Thị B",
                 content: "Màu sắc rất nổi bật, mình rất thích!",
                 date: "2025-04-02",
-                rating: 4, // Thêm rating
+                rating: 4,
               },
             ]);
           }, 500)
         );
-
         setComments(response);
       } catch (error) {
         console.error("Lỗi khi lấy bình luận:", error);
@@ -88,19 +61,22 @@ function ProductDetail() {
   }, [id]);
 
   const getSliderImages = () => {
-    if (!product) return [];
-    const images = [product.imageUrl, ...(product.additionalImages || [])];
-    return images.slice(0, 5);
+    if (!product || !product.images) return [];
+    return product.images.map((image) => `${API_URL}/images/${image}`); // Dùng images từ backend
   };
 
   const sliderImages = getSliderImages();
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? sliderImages.length - 1 : prev - 1));
+    setCurrentSlide((prev) =>
+      prev === 0 ? sliderImages.length - 1 : prev - 1
+    );
   };
 
   const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev === sliderImages.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) =>
+      prev === sliderImages.length - 1 ? 0 : prev + 1
+    );
   };
 
   const handleSizeSelect = (size) => {
@@ -111,12 +87,20 @@ function ProductDetail() {
     setQuantity((prev) => Math.max(1, prev + delta));
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!selectedSize) {
       alert("Vui lòng chọn kích thước!");
       return;
     }
-    alert(`Đã thêm ${quantity} sản phẩm ${product.name} (kích thước: ${selectedSize}) vào giỏ hàng!`);
+    try {
+      await addToCart(product.id, quantity);
+      alert(
+        `Đã thêm ${quantity} sản phẩm ${product.name} (kích thước: ${selectedSize}) vào giỏ hàng!`
+      );
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Thêm vào giỏ hàng thất bại!");
+    }
   };
 
   const handleRating = (star) => {
@@ -136,15 +120,15 @@ function ProductDetail() {
 
     const newCommentObj = {
       id: String(comments.length + 1),
-      user: "Người dùng", // Trong thực tế, lấy từ thông tin người dùng đăng nhập
+      user: "Người dùng",
       content: newComment,
       date: new Date().toISOString().split("T")[0],
-      rating, // Thêm rating vào bình luận
+      rating,
     };
 
     setComments([...comments, newCommentObj]);
-    setNewComment(""); // Reset form
-    setRating(0); // Reset rating
+    setNewComment("");
+    setRating(0);
   };
 
   if (loading) {
@@ -160,44 +144,48 @@ function ProductDetail() {
     return <div>Không tìm thấy sản phẩm!</div>;
   }
 
+  // Giả lập sizes từ extraAttribute (nếu là ClothingProduct)
+  const sizes = product.extraAttribute
+    ? product.extraAttribute.split(",").map((s) => s.trim())
+    : ["S", "M", "L", "XL"];
+
   return (
     <div className={styles.container}>
       <div className={styles.productWrapper}>
         {/* Phần ảnh sản phẩm */}
         <div className={styles.imageSection}>
-            <div className={styles.mainImage}>
-                <img src={sliderImages[currentSlide]} alt={product.name} />
-                {/* Thêm các nút sliderArrow vào đây */}
-                <button className={styles.sliderArrow} onClick={handlePrevSlide}>
-                ❮
-                </button>
-                <button className={styles.sliderArrow} onClick={handleNextSlide}>
-                ❯
-                </button>
+          <div className={styles.mainImage}>
+            <img src={sliderImages[currentSlide]} alt={product.name} />
+            <button className={styles.sliderArrow} onClick={handlePrevSlide}>
+              ❮
+            </button>
+            <button className={styles.sliderArrow} onClick={handleNextSlide}>
+              ❯
+            </button>
+          </div>
+          <div className={styles.thumbnailSlider}>
+            <div className={styles.thumbnailWrapper}>
+              {sliderImages.map((img, index) => (
+                <img
+                  key={index}
+                  src={img}
+                  alt={`${product.name} - Image ${index + 1}`}
+                  className={`${styles.thumbnail} ${
+                    currentSlide === index ? styles.activeThumbnail : ""
+                  }`}
+                  onClick={() => setCurrentSlide(index)}
+                />
+              ))}
             </div>
-            <div className={styles.thumbnailSlider}>
-                <div className={styles.thumbnailWrapper}>
-                {sliderImages.map((img, index) => (
-                    <img
-                    key={index}
-                    src={img}
-                    alt={`${product.name} - Image ${index + 1}`}
-                    className={`${styles.thumbnail} ${
-                        currentSlide === index ? styles.activeThumbnail : ""
-                    }`}
-                    onClick={() => setCurrentSlide(index)}
-                    />
-                ))}
-                </div>
-            </div>
-            </div>
+          </div>
+        </div>
 
         {/* Phần thông tin sản phẩm */}
         <div className={styles.infoSection}>
           <h1 className={styles.productName}>{product.name}</h1>
           <p className={styles.brand}>
-            Thương hiệu: <span>{product.brand}</span> | Tình trạng:{" "}
-            <span>{product.status}</span>
+            Thương hiệu: <span>ECOMMERCE®</span> | Tình trạng:{" "}
+            <span>{product.quantity > 0 ? "Còn hàng" : "Hết hàng"}</span>
           </p>
           <p className={styles.price}>
             {product.price.toLocaleString("vi-VN")}đ
@@ -206,12 +194,10 @@ function ProductDetail() {
             ECOMMERCE® / Streetfighter / Based in TDTU / Made in Vietnam
           </p>
 
-
-          {/* Phần có thể thay đổi tùy theo dạng product đang được xét đến nên lưu ý*/}
           <div className={styles.sizeSection}>
             <p>Kích thước</p>
             <div className={styles.sizeOptions}>
-              {product.sizes.map((size) => (
+              {sizes.map((size) => (
                 <button
                   key={size}
                   className={`${styles.sizeButton} ${
@@ -224,10 +210,6 @@ function ProductDetail() {
               ))}
             </div>
           </div>
-          {/* Phần có thể thay đổi tùy theo dạng product đang được xét đến nên lưu ý*/}
-
-
-
 
           <div className={styles.quantitySection}>
             <p>Số lượng:</p>
@@ -243,21 +225,21 @@ function ProductDetail() {
           </button>
         </div>
       </div>
-    
-        {/* Phần mô tả sản phẩm */}
-        <div className={styles.descriptionSection}>
-            <h2 className={styles.descriptionTitle}>Mô tả sản phẩm</h2>
-            <div className={styles.descriptionContent}>
-            {product.description.split("\n").map((line, index) => (
-                <p key={index}>{line.trim()}</p>
-            ))}
-            </div>
+
+      {/* Phần mô tả sản phẩm */}
+      <div className={styles.descriptionSection}>
+        <h2 className={styles.descriptionTitle}>Mô tả sản phẩm</h2>
+        <div className={styles.descriptionContent}>
+          {product.description.split("\n").map((line, index) => (
+            <p key={index}>{line.trim()}</p>
+          ))}
         </div>
+      </div>
+
       {/* Phần bình luận */}
       <div className={styles.commentSection}>
         <h2 className={styles.commentTitle}>Bình luận</h2>
 
-        {/* Form nhập bình luận */}
         <form className={styles.commentForm} onSubmit={handleCommentSubmit}>
           <div className={styles.ratingSection}>
             <p>Đánh giá:</p>
@@ -286,7 +268,6 @@ function ProductDetail() {
           </button>
         </form>
 
-        {/* Danh sách bình luận */}
         <div className={styles.commentList}>
           {comments.length === 0 ? (
             <p>Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>

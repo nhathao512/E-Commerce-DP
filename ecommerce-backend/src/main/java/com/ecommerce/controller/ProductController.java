@@ -150,4 +150,10 @@ public class ProductController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(responses);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable String id) {
+        Product product = productService.getProductById(id);
+        return ResponseEntity.ok(new ProductResponse(product));
+    }
 }
