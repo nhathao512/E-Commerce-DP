@@ -4,17 +4,25 @@ import com.ecommerce.model.ClothingProduct;
 import com.ecommerce.model.ElectronicsProduct;
 import com.ecommerce.model.Product;
 
+import java.util.Random;
+
 public class ProductFactory {
-    public static Product createProduct(String type, String name, double price, String categoryId, String imageUrl, String description, int quantity) {
+    private static final Random random = new Random();
+
+    public static Product createProduct(String type, String name, double price,
+                                        String categoryId, String imageUrl, String description, int quantity) {
         Product product;
+        String productCodePrefix;
         switch (type.toLowerCase()) {
             case "electronics":
                 product = new ElectronicsProduct();
-                ((ElectronicsProduct) product).setWarranty(description); // Giả sử description là warranty
+                ((ElectronicsProduct) product).setWarranty(description);
+                productCodePrefix = "ELE";
                 break;
             case "clothing":
                 product = new ClothingProduct();
-                ((ClothingProduct) product).setSize(description); // Giả sử description là size
+                ((ClothingProduct) product).setSize(description);
+                productCodePrefix = "CLO";
                 break;
             default:
                 throw new IllegalArgumentException("Invalid product type: " + type);
@@ -22,9 +30,16 @@ public class ProductFactory {
         product.setName(name);
         product.setPrice(price);
         product.setCategoryId(categoryId);
-        product.setImage(imageUrl);
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            product.addImage(imageUrl);
+        }
         product.setDescription(description);
         product.setQuantity(quantity);
+
+        // Sinh productCode: ví dụ ELE001, CLO002
+        String productCode = productCodePrefix + String.format("%03d", random.nextInt(1000));
+        product.setProductCode(productCode);
+
         return product;
     }
 }

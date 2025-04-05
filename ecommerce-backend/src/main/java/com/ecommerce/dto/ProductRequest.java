@@ -7,7 +7,7 @@ public class ProductRequest {
     private double price;
     private String categoryId;
     private int quantity;
-    private String imageUrl;
+    private String imageUrl; // Giữ nguyên để tạo sản phẩm với một ảnh ban đầu
 
     // Getters và Setters
     public String getType() { return type; }

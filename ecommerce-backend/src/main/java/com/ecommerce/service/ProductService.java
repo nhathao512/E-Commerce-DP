@@ -21,8 +21,8 @@ public class ProductService {
                 request.getPrice(),
                 request.getCategoryId(),
                 request.getImageUrl(),
-                request.getDescription(), // Thêm description
-                request.getQuantity()     // Thêm quantity
+                request.getDescription(),
+                request.getQuantity()
         );
         return productRepository.save(product);
     }
@@ -30,6 +30,11 @@ public class ProductService {
     public Product getProductById(String id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+    }
+
+    public Product getProductByProductCode(String productCode) {
+        return productRepository.findByProductCode(productCode)
+                .orElseThrow(() -> new RuntimeException("Product not found with productCode: " + productCode));
     }
 
     public Product updateProduct(Product product) {

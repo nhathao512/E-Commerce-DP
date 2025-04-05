@@ -5,6 +5,7 @@ import com.ecommerce.dto.ProductResponse;
 import com.ecommerce.model.Product;
 import com.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-
 
 @RestController
 @RequestMapping("/products")
@@ -24,51 +25,57 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    // Endpoint thêm sản phẩm (chỉ nhận JSON)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseObject> addProduct(@RequestBody ProductRequest request) {
-        Product product = productService.addProduct(request);
-        return ResponseEntity.ok(ResponseObject.builder()
-                .message("Create new product successfully")
-                .status(HttpStatus.CREATED)
-                .data(new ProductResponse(product))
-                .build());
+        try {
+            Product product = productService.addProduct(request);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .message("Create new product successfully")
+                    .status(HttpStatus.CREATED)
+                    .data(new ProductResponse(product))
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message("Error creating product: " + e.getMessage())
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build());
+        }
     }
 
-    // Endpoint upload hình ảnh cho sản phẩm đã tạo
-    @PostMapping(value = "/uploads/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/uploads", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseObject> uploadImages(
-            @PathVariable("id") String productId,
+            @RequestParam("productCode") String productCode,
             @RequestParam("image") List<MultipartFile> files) {
         try {
-            Product existingProduct = productService.getProductById(productId);
-            if (files == null || files.isEmpty()) {
-                return ResponseEntity.badRequest().body(ResponseObject.builder()
-                        .message("No images uploaded")
-                        .status(HttpStatus.BAD_REQUEST)
-                        .build());
-            }
+            Product existingProduct = productService.getProductByProductCode(productCode);
+            files = files == null ? new ArrayList<>() : files;
 
             final int MAXIMUM_IMAGES_PER_PRODUCT = 5;
             if (files.size() > MAXIMUM_IMAGES_PER_PRODUCT) {
                 return ResponseEntity.badRequest().body(ResponseObject.builder()
-                        .message("Maximum " + MAXIMUM_IMAGES_PER_PRODUCT + " images allowed")
+                        .message("Maximum " + MAXIMUM_IMAGES_PER_PRODUCT + " images allowed per product")
                         .status(HttpStatus.BAD_REQUEST)
                         .build());
             }
 
+            if (existingProduct.getImages().size() + files.size() > MAXIMUM_IMAGES_PER_PRODUCT) {
+                return ResponseEntity.badRequest().body(ResponseObject.builder()
+                        .message("Total images exceed maximum of " + MAXIMUM_IMAGES_PER_PRODUCT)
+                        .status(HttpStatus.BAD_REQUEST)
+                        .build());
+            }
+
+            List<String> imageUrls = new ArrayList<>();
             for (MultipartFile file : files) {
                 if (file.getSize() == 0) {
                     continue;
                 }
-
-                if (file.getSize() > 10 * 1024 * 1024) {
+                if (file.getSize() > 10 * 1024 * 1024) { // > 10MB
                     return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(ResponseObject.builder()
                             .message("File size exceeds 10MB")
                             .status(HttpStatus.PAYLOAD_TOO_LARGE)
                             .build());
                 }
-
                 String contentType = file.getContentType();
                 if (contentType == null || !contentType.startsWith("image/")) {
                     return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(ResponseObject.builder()
@@ -77,17 +84,18 @@ public class ProductController {
                             .build());
                 }
 
-                String imageUrl = saveImage(file);
-                existingProduct.setImage(imageUrl); // Sử dụng setImage thay vì setImageUrl
-                productService.updateProduct(existingProduct);
+                String imageUrl = storeFile(file);
+                imageUrls.add(imageUrl);
+                existingProduct.addImage(imageUrl);
             }
+
+            productService.updateProduct(existingProduct);
 
             return ResponseEntity.ok(ResponseObject.builder()
                     .message("Upload images successfully")
                     .status(HttpStatus.OK)
                     .data(new ProductResponse(existingProduct))
                     .build());
-
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
@@ -97,14 +105,32 @@ public class ProductController {
         }
     }
 
-    private String saveImage(MultipartFile image) throws IOException {
-        String fileName = System.currentTimeMillis() + "_" + image.getOriginalFilename();
-        String uploadDir = "src/main/resources/static/images/";
+    private String storeFile(MultipartFile file) throws IOException {
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        String uploadDir = System.getProperty("user.dir") + "/uploads/"; // Đường dẫn tuyệt đối tới thư mục gốc dự án
         File dir = new File(uploadDir);
         if (!dir.exists()) dir.mkdirs();
         File destination = new File(uploadDir + fileName);
-        image.transferTo(destination);
-        return "/images/" + fileName;
+        file.transferTo(destination);
+        return fileName; // Trả về tên file để lưu vào DB
+    }
+
+    @GetMapping("/images/{imageName}")
+    public ResponseEntity<?> viewImage(@PathVariable String imageName) {
+        try {
+            java.nio.file.Path imagePath = Paths.get(System.getProperty("user.dir") + "/uploads/" + imageName);
+            UrlResource resource = new UrlResource(imagePath.toUri());
+
+            if (resource.exists()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(resource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
