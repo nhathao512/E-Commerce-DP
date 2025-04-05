@@ -5,6 +5,11 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/ecommerce
       database: ecommerce
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
   # security:
   #   user:
   #     name: admin
@@ -16,7 +21,7 @@ server:
     context-path: /api
 
 jwt:
-  secret: yourVeryLongSecretKeyWithAtLeast32Characters
+  secret: abc12345678910@
   expiration: 86400000
 
 logging:

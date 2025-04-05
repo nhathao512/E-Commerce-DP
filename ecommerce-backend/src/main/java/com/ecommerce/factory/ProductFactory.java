@@ -5,24 +5,26 @@ import com.ecommerce.model.ElectronicsProduct;
 import com.ecommerce.model.Product;
 
 public class ProductFactory {
-    public static Product createProduct(String type, String name, double price, String categoryId, String extraAttribute, String imageUrl) {
-        if ("electronics".equalsIgnoreCase(type)) {
-            ElectronicsProduct product = new ElectronicsProduct();
-            product.setName(name);
-            product.setPrice(price);
-            product.setCategoryId(categoryId);
-            product.setWarranty(extraAttribute);
-            product.setImageUrl(imageUrl);  // Thiết lập imageUrl
-            return product;
-        } else if ("clothing".equalsIgnoreCase(type)) {
-            ClothingProduct product = new ClothingProduct();
-            product.setName(name);
-            product.setPrice(price);
-            product.setCategoryId(categoryId);
-            product.setSize(extraAttribute);
-            product.setImageUrl(imageUrl);  // Thiết lập imageUrl
-            return product;
+    public static Product createProduct(String type, String name, double price, String categoryId, String imageUrl, String description, int quantity) {
+        Product product;
+        switch (type.toLowerCase()) {
+            case "electronics":
+                product = new ElectronicsProduct();
+                ((ElectronicsProduct) product).setWarranty(description); // Giả sử description là warranty
+                break;
+            case "clothing":
+                product = new ClothingProduct();
+                ((ClothingProduct) product).setSize(description); // Giả sử description là size
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid product type: " + type);
         }
-        throw new IllegalArgumentException("Loại sản phẩm không hợp lệ");
+        product.setName(name);
+        product.setPrice(price);
+        product.setCategoryId(categoryId);
+        product.setImage(imageUrl);
+        product.setDescription(description);
+        product.setQuantity(quantity);
+        return product;
     }
 }

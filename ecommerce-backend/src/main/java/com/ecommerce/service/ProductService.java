@@ -20,13 +20,27 @@ public class ProductService {
                 request.getName(),
                 request.getPrice(),
                 request.getCategoryId(),
-                request.getExtraAttribute(),
-                request.getImageUrl()  // Truyền imageUrl vào factory
+                request.getImageUrl(),
+                request.getDescription(), // Thêm description
+                request.getQuantity()     // Thêm quantity
         );
+        return productRepository.save(product);
+    }
+
+    public Product getProductById(String id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+    }
+
+    public Product updateProduct(Product product) {
         return productRepository.save(product);
     }
 
     public List<Product> getProductsByCategory(String categoryId) {
         return productRepository.findByCategoryId(categoryId);
+    }
+
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
 }

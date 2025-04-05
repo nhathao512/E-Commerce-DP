@@ -22,16 +22,20 @@ public class OrderService {
 
     public Order createOrder(String userId, String paymentMethod) {
         List<Product> items = cartService.getCartItems();
+        if (items.isEmpty()) {
+            throw new IllegalStateException("Cart is empty");
+        }
+
         double total = cartService.getTotal();
         Order order = new Order();
-        order.setUserId(userId);  // Dòng gây lỗi
+        order.setUserId(userId);
         order.setItems(items);
         order.setTotal(total);
         order.setPaymentMethod(paymentMethod);
 
         // Xử lý thanh toán với Strategy Pattern
         PaymentContext paymentContext = new PaymentContext();
-        switch (paymentMethod) {
+        switch (paymentMethod.toLowerCase()) {
             case "bank_transfer":
                 paymentContext.setPaymentStrategy(new BankTransferPayment());
                 break;

@@ -1,36 +1,36 @@
 package com.ecommerce.service;
 
+import com.ecommerce.model.Cart;
+import com.ecommerce.model.CartItem;
 import com.ecommerce.model.Product;
-import com.ecommerce.observer.CartObserver;
-import com.ecommerce.observer.CartSubject;
-import com.ecommerce.singleton.ShoppingCart;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CartService {
-    private ShoppingCart cart = ShoppingCart.getInstance();
-    private CartSubject cartSubject = new CartSubject();
+    private final Cart cart = Cart.getInstance();
 
     public void addToCart(Product product) {
-        cart.addItem(product);
-        cartSubject.addProduct(product); // Thông báo cập nhật
+        cart.addItem(product, 1);
     }
 
     public List<Product> getCartItems() {
-        return cart.getItems();
+        return cart.getItems().stream()
+                .map(CartItem::getProduct)
+                .collect(Collectors.toList());
     }
 
-    public double getTotal() {
-        return cart.getTotal();
+    public Cart getCart() {
+        return cart;
     }
 
     public void clearCart() {
         cart.clear();
     }
 
-    public void registerObserver(CartObserver observer) {
-        cartSubject.addObserver(observer);
+    public double getTotal() {
+        return cart.getTotal(); // Gọi phương thức getTotal từ Cart
     }
 }

@@ -14,14 +14,11 @@ public class Order {
     private double total;
     private String paymentMethod;
 
-    // Constructors
-    public Order() {}
-
     // Getters và Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }  // Thêm setter này
+    public void setUserId(String userId) { this.userId = userId; }
     public List<Product> getItems() { return items; }
     public void setItems(List<Product> items) { this.items = items; }
     public double getTotal() { return total; }

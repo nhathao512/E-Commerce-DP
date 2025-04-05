@@ -9,25 +9,29 @@ import lombok.Setter;
 @Setter
 @Getter
 public class ProductResponse {
-    // Getters và Setters
     private String id;
     private String name;
+    private String description;
     private double price;
+    private String imageUrl; // Đổi tên thành imageUrl để thống nhất
     private String categoryId;
-    private String extraAttribute;
-    private String imageUrl;  // Thêm imageUrl
+    private int quantity;
+    private String extraAttribute; // Tùy thuộc vào loại sản phẩm
 
     public ProductResponse(Product product) {
         this.id = product.getId();
         this.name = product.getName();
+        this.description = product.getDescription();
         this.price = product.getPrice();
+        this.imageUrl = product.getImage(); // getImage() trả về String, khớp với imageUrl
         this.categoryId = product.getCategoryId();
-        this.imageUrl = product.getImageUrl();
+        this.quantity = product.getQuantity();
+
+        // Xử lý extraAttribute dựa trên loại sản phẩm
         if (product instanceof ElectronicsProduct) {
             this.extraAttribute = ((ElectronicsProduct) product).getWarranty();
         } else if (product instanceof ClothingProduct) {
             this.extraAttribute = ((ClothingProduct) product).getSize();
         }
     }
-
 }
