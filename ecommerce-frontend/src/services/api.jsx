@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8080/api", // Thêm /api vào baseURL để khớp với backend
+  baseURL: "http://localhost:8080/api",
 });
 
 API.interceptors.request.use((config) => {
@@ -18,6 +18,6 @@ export const getCart = () => API.get("/cart");
 export const addToCart = (productId, quantity) =>
   API.post("/cart", { productId, quantity });
 export const processPayment = (method) => API.post("/payment", { method });
-export const addReview = (data) => API.post("/reviews", data);
-export const getReviews = (productId) =>
-  API.get(`/reviews?productId=${productId}`);
+export const addReview = (data) => API.post("/reviews", data); // Không cần token vì permitAll
+export const getReviews = (productCode) =>
+  API.get(`/reviews/product/${productCode}`); // Dùng productCode thay vì productId

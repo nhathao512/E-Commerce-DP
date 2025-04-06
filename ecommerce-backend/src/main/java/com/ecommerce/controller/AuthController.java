@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth") // /auth thay vì /api/auth
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
@@ -15,11 +15,25 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.status(201).body(authService.register(loginRequest.getUsername(), loginRequest.getPassword()));
+        try {
+            return ResponseEntity.status(201).body(authService.register(
+                    loginRequest.getUsername(),
+                    loginRequest.getPassword(),
+                    loginRequest.getPhone(),
+                    loginRequest.getAddress()
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.login(loginRequest.getUsername(), loginRequest.getPassword()));
+        try {
+            String token = authService.login(loginRequest.getUsername(), loginRequest.getPassword());
+            return ResponseEntity.ok(token);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(401).body(e.getMessage());
+        }
     }
 }

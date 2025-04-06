@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getReviews } from "../../services/api";
-import { useSearchParams } from "react-router-dom"; // Thay useLocation bằng useSearchParams
 
-function ReviewList() {
+function ReviewList({ productId }) {
   const [reviews, setReviews] = useState([]);
-  const [searchParams] = useSearchParams(); // Thay useLocation bằng useSearchParams
-  const productId = searchParams.get("productId") || "1"; // Lấy productId từ query params
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -28,7 +25,7 @@ function ReviewList() {
         <ul>
           {reviews.map((review) => (
             <li key={review.id}>
-              {review.content} - {review.rating} sao
+              {review.comment} - {review.rating} sao - {new Date(review.date).toLocaleDateString('vi-VN')}
             </li>
           ))}
         </ul>

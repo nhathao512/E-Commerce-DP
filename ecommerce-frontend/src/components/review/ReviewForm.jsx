@@ -1,47 +1,120 @@
-import React, { useState } from "react";
-import { addReview } from "../../services/api";
+import React, { useState, useEffect } from "react";
+import { addReview, getReviews } from "../../services/api";
+import styles from "./ReviewForm.module.css";
 
-function ReviewForm() {
-  const [productId, setProductId] = useState("");
-  const [content, setContent] = useState("");
-  const [rating, setRating] = useState(5);
+function ReviewForm({ productCode }) {
+  const [reviews, setReviews] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [rating, setRating] = useState(0);
+  const shortUserId = localStorage.getItem("shortUserId") || "anonymous"; // Lấy shortUserId từ localStorage
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await getReviews(productCode);
+        setReviews(response.data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh sách đánh giá:", error);
+      }
+    };
+    fetchReviews();
+  }, [productCode]);
+
+  const handleRating = (star) => {
+    setRating(star);
+  };
+
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
+    if (!newComment.trim()) {
+      alert("Vui lòng nhập nội dung bình luận!");
+      return;
+    }
+    if (rating === 0) {
+      alert("Vui lòng chọn số sao đánh giá!");
+      return;
+    }
+
     try {
-      await addReview({ productId, content, rating });
+      const reviewData = {
+        productCode,
+        shortUserId, // Lấy từ localStorage
+        rating,
+        comment: newComment,
+      };
+      await addReview(reviewData);
+      const response = await getReviews(productCode);
+      setReviews(response.data);
+      setNewComment("");
+      setRating(0);
       alert("Đánh giá thành công!");
-    } catch {
+    } catch (error) {
+      console.error("Lỗi khi gửi đánh giá:", error);
       alert("Đánh giá thất bại!");
     }
   };
 
   return (
-    <div>
-      <h2>Gửi đánh giá</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={productId}
-          onChange={(e) => setProductId(e.target.value)}
-          placeholder="ID sản phẩm"
-          required
-        />
+    <div className={styles.commentSection}>
+      <h2 className={styles.commentTitle}>Bình luận & Đánh giá</h2>
+
+      {/* Form đánh giá */}
+      <form className={styles.commentForm} onSubmit={handleCommentSubmit}>
+        <div className={styles.ratingSection}>
+          <p>Đánh giá:</p>
+          <div className={styles.stars}>
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className={`${styles.star} ${
+                  star <= rating ? styles.starFilled : ""
+                }`}
+                onClick={() => handleRating(star)}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+        </div>
         <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Nội dung đánh giá"
-          required
+          className={styles.commentInput}
+          placeholder="Viết bình luận của bạn..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
         />
-        <select value={rating} onChange={(e) => setRating(e.target.value)}>
-          <option value="5">5 sao</option>
-          <option value="4">4 sao</option>
-          <option value="3">3 sao</option>
-          <option value="2">2 sao</option>
-          <option value="1">1 sao</option>
-        </select>
-        <button type="submit">Gửi đánh giá</button>
+        <button type="submit" className={styles.submitButton}>
+          Gửi bình luận
+        </button>
       </form>
+
+      {/* Danh sách đánh giá */}
+      <div className={styles.commentList}>
+        {reviews.length === 0 ? (
+          <p>Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá!</p>
+        ) : (
+          reviews.map((review) => (
+            <div key={review.id} className={styles.commentItem}>
+              <p className={styles.commentUser}>{review.shortUserId}</p>
+              <div className={styles.commentRating}>
+                {[...Array(5)].map((_, index) => (
+                  <span
+                    key={index}
+                    className={`${styles.star} ${
+                      index < review.rating ? styles.starFilled : ""
+                    }`}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+              <p className={styles.commentContent}>{review.comment}</p>
+              <p className={styles.commentDate}>
+                {new Date(review.date).toLocaleDateString("vi-VN")}
+              </p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }

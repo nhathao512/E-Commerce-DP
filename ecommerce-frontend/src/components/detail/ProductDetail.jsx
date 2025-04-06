@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { getProductById, addToCart } from "../../services/api"; // Thêm addToCart
+import { getProductById, addToCart } from "../../services/api";
+import ReviewForm from "../review/ReviewForm";
 import styles from "./ProductDetail.module.css";
 
 function ProductDetail() {
@@ -10,10 +11,7 @@ function ProductDetail() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState("");
-  const [rating, setRating] = useState(0);
-  const API_URL = "http://localhost:8080/api"; // URL backend
+  const API_URL = "http://localhost:8080/api";
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -26,43 +24,12 @@ function ProductDetail() {
         setLoading(false);
       }
     };
-
-    // Giả lập fetch danh sách bình luận (sẽ thay bằng API thực tế sau)
-    const fetchComments = async () => {
-      try {
-        const response = await new Promise((resolve) =>
-          setTimeout(() => {
-            resolve([
-              {
-                id: "1",
-                user: "Nguyễn Văn A",
-                content: "Áo rất đẹp, chất lượng tốt!",
-                date: "2025-04-01",
-                rating: 5,
-              },
-              {
-                id: "2",
-                user: "Trần Thị B",
-                content: "Màu sắc rất nổi bật, mình rất thích!",
-                date: "2025-04-02",
-                rating: 4,
-              },
-            ]);
-          }, 500)
-        );
-        setComments(response);
-      } catch (error) {
-        console.error("Lỗi khi lấy bình luận:", error);
-      }
-    };
-
     fetchProduct();
-    fetchComments();
   }, [id]);
 
   const getSliderImages = () => {
     if (!product || !product.images) return [];
-    return product.images.map((image) => `${API_URL}/images/${image}`); // Dùng images từ backend
+    return product.images.map((image) => `${API_URL}/images/${image}`);
   };
 
   const sliderImages = getSliderImages();
@@ -79,9 +46,7 @@ function ProductDetail() {
     );
   };
 
-  const handleSizeSelect = (size) => {
-    setSelectedSize(size);
-  };
+  const handleSizeSelect = (size) => setSelectedSize(size);
 
   const handleQuantityChange = (delta) => {
     setQuantity((prev) => Math.max(1, prev + delta));
@@ -103,48 +68,9 @@ function ProductDetail() {
     }
   };
 
-  const handleRating = (star) => {
-    setRating(star);
-  };
+  if (loading) return <div className={styles.loadingWrapper}>Đang tải...</div>;
+  if (!product) return <div>Không tìm thấy sản phẩm!</div>;
 
-  const handleCommentSubmit = (e) => {
-    e.preventDefault();
-    if (!newComment.trim()) {
-      alert("Vui lòng nhập nội dung bình luận!");
-      return;
-    }
-    if (rating === 0) {
-      alert("Vui lòng chọn số sao đánh giá!");
-      return;
-    }
-
-    const newCommentObj = {
-      id: String(comments.length + 1),
-      user: "Người dùng",
-      content: newComment,
-      date: new Date().toISOString().split("T")[0],
-      rating,
-    };
-
-    setComments([...comments, newCommentObj]);
-    setNewComment("");
-    setRating(0);
-  };
-
-  if (loading) {
-    return (
-      <div className={styles.loadingWrapper}>
-        <div className={styles.spinner}></div>
-        <span className={styles.loadingText}>Đang tải...</span>
-      </div>
-    );
-  }
-
-  if (!product) {
-    return <div>Không tìm thấy sản phẩm!</div>;
-  }
-
-  // Giả lập sizes từ extraAttribute (nếu là ClothingProduct)
   const sizes = product.extraAttribute
     ? product.extraAttribute.split(",").map((s) => s.trim())
     : ["S", "M", "L", "XL"];
@@ -152,7 +78,6 @@ function ProductDetail() {
   return (
     <div className={styles.container}>
       <div className={styles.productWrapper}>
-        {/* Phần ảnh sản phẩm */}
         <div className={styles.imageSection}>
           <div className={styles.mainImage}>
             <img src={sliderImages[currentSlide]} alt={product.name} />
@@ -180,7 +105,6 @@ function ProductDetail() {
           </div>
         </div>
 
-        {/* Phần thông tin sản phẩm */}
         <div className={styles.infoSection}>
           <h1 className={styles.productName}>{product.name}</h1>
           <p className={styles.brand}>
@@ -188,12 +112,8 @@ function ProductDetail() {
             <span>{product.quantity > 0 ? "Còn hàng" : "Hết hàng"}</span>
           </p>
           <p className={styles.price}>
-            {product.price.toLocaleString("vi-VN")}đ
+            {product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ
           </p>
-          <p className={styles.description}>
-            ECOMMERCE® / Streetfighter / Based in TDTU / Made in Vietnam
-          </p>
-
           <div className={styles.sizeSection}>
             <p>Kích thước</p>
             <div className={styles.sizeOptions}>
@@ -210,7 +130,6 @@ function ProductDetail() {
               ))}
             </div>
           </div>
-
           <div className={styles.quantitySection}>
             <p>Số lượng:</p>
             <div className={styles.quantityControl}>
@@ -219,14 +138,12 @@ function ProductDetail() {
               <button onClick={() => handleQuantityChange(1)}>+</button>
             </div>
           </div>
-
           <button className={styles.addToCartButton} onClick={handleAddToCart}>
             THÊM VÀO GIỎ HÀNG
           </button>
         </div>
       </div>
 
-      {/* Phần mô tả sản phẩm */}
       <div className={styles.descriptionSection}>
         <h2 className={styles.descriptionTitle}>Mô tả sản phẩm</h2>
         <div className={styles.descriptionContent}>
@@ -236,64 +153,8 @@ function ProductDetail() {
         </div>
       </div>
 
-      {/* Phần bình luận */}
-      <div className={styles.commentSection}>
-        <h2 className={styles.commentTitle}>Bình luận</h2>
-
-        <form className={styles.commentForm} onSubmit={handleCommentSubmit}>
-          <div className={styles.ratingSection}>
-            <p>Đánh giá:</p>
-            <div className={styles.stars}>
-              {[1, 2, 3, 4, 5].map((star) => (
-                <span
-                  key={star}
-                  className={`${styles.star} ${
-                    star <= rating ? styles.starFilled : ""
-                  }`}
-                  onClick={() => handleRating(star)}
-                >
-                  ★
-                </span>
-              ))}
-            </div>
-          </div>
-          <textarea
-            className={styles.commentInput}
-            placeholder="Viết bình luận của bạn..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-          />
-          <button type="submit" className={styles.submitButton}>
-            Gửi bình luận
-          </button>
-        </form>
-
-        <div className={styles.commentList}>
-          {comments.length === 0 ? (
-            <p>Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>
-          ) : (
-            comments.map((comment) => (
-              <div key={comment.id} className={styles.commentItem}>
-                <p className={styles.commentUser}>{comment.user}</p>
-                <div className={styles.commentRating}>
-                  {[...Array(5)].map((_, index) => (
-                    <span
-                      key={index}
-                      className={`${styles.star} ${
-                        index < comment.rating ? styles.starFilled : ""
-                      }`}
-                    >
-                      ★
-                    </span>
-                  ))}
-                </div>
-                <p className={styles.commentContent}>{comment.content}</p>
-                <p className={styles.commentDate}>{comment.date}</p>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
+      {/* Đánh giá */}
+      <ReviewForm productCode={product.productCode} />
     </div>
   );
 }
