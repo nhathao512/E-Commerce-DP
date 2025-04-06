@@ -1,31 +1,49 @@
 import React, { useState, useEffect } from "react";
 import { getReviews } from "../../services/api";
+import styles from "./ReviewList.module.css"; // Thêm file CSS mới
 
-function ReviewList({ productId }) {
+function ReviewList({ productCode }) {
+  // Đổi productId thành productCode
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const response = await getReviews(productId);
+        const response = await getReviews(productCode);
         setReviews(response.data);
       } catch (error) {
         console.error("Lỗi khi lấy danh sách đánh giá:", error);
       }
     };
     fetchReviews();
-  }, [productId]);
+  }, [productCode]);
 
   return (
-    <div>
-      <h2>Danh sách đánh giá</h2>
+    <div className={styles.reviewList}>
+      <h2 className={styles.reviewTitle}>Danh sách đánh giá</h2>
       {reviews.length === 0 ? (
-        <p>Chưa có đánh giá nào</p>
+        <p className={styles.noReviews}>Chưa có đánh giá nào</p>
       ) : (
-        <ul>
+        <ul className={styles.reviewItems}>
           {reviews.map((review) => (
-            <li key={review.id}>
-              {review.comment} - {review.rating} sao - {new Date(review.date).toLocaleDateString('vi-VN')}
+            <li key={review.id} className={styles.reviewItem}>
+              <span className={styles.reviewUser}>{review.shortUserId}</span>
+              <div className={styles.reviewRating}>
+                {[...Array(5)].map((_, index) => (
+                  <span
+                    key={index}
+                    className={`${styles.star} ${
+                      index < review.rating ? styles.starFilled : ""
+                    }`}
+                  >
+                    ★
+                  </span>
+                ))}
+              </div>
+              <p className={styles.reviewComment}>{review.comment}</p>
+              <span className={styles.reviewDate}>
+                {new Date(review.date).toLocaleDateString("vi-VN")}
+              </span>
             </li>
           ))}
         </ul>

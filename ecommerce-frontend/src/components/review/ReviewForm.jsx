@@ -6,7 +6,7 @@ function ReviewForm({ productCode }) {
   const [reviews, setReviews] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [rating, setRating] = useState(0);
-  const shortUserId = localStorage.getItem("shortUserId") || "anonymous"; // Lấy shortUserId từ localStorage
+  const shortUserId = localStorage.getItem("shortUserId") || "anonymous"; // Vẫn dùng shortUserId để gửi
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -38,7 +38,7 @@ function ReviewForm({ productCode }) {
     try {
       const reviewData = {
         productCode,
-        shortUserId, // Lấy từ localStorage
+        shortUserId, // Gửi shortUserId
         rating,
         comment: newComment,
       };
@@ -94,7 +94,10 @@ function ReviewForm({ productCode }) {
         ) : (
           reviews.map((review) => (
             <div key={review.id} className={styles.commentItem}>
-              <p className={styles.commentUser}>{review.shortUserId}</p>
+              <p className={styles.commentUser}>
+                {review.username || review.shortUserId}
+              </p>{" "}
+              {/* Hiển thị username */}
               <div className={styles.commentRating}>
                 {[...Array(5)].map((_, index) => (
                   <span
