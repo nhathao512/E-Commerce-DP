@@ -2,6 +2,8 @@ package com.ecommerce.factory;
 
 import com.ecommerce.model.ClothingProduct;
 import com.ecommerce.model.ElectronicsProduct;
+import com.ecommerce.model.BookProduct;
+import com.ecommerce.model.HouseholdProduct;
 import com.ecommerce.model.Product;
 
 import java.util.Random;
@@ -23,6 +25,16 @@ public class ProductFactory {
                 product = new ClothingProduct();
                 ((ClothingProduct) product).setSize(description);
                 productCodePrefix = "CLO";
+                break;
+            case "household":
+                product = new HouseholdProduct();
+                ((HouseholdProduct) product).setBrand(description);
+                productCodePrefix = "HO";
+                break;
+            case "book":
+                product = new BookProduct();
+                ((BookProduct) product).setAuthor(description);
+                productCodePrefix = "BO";
                 break;
             default:
                 throw new IllegalArgumentException("Invalid product type: " + type);
