@@ -6,7 +6,7 @@ function ReviewForm({ productCode }) {
   const [reviews, setReviews] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [rating, setRating] = useState(0);
-  const shortUserId = localStorage.getItem("shortUserId") || "anonymous"; // Vẫn dùng shortUserId để gửi
+  const shortUserId = localStorage.getItem("shortUserId") || "anonymous"; 
 
   useEffect(() => {
     const fetchReviews = async () => {

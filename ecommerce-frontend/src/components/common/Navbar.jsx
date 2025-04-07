@@ -10,16 +10,14 @@ function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
 
-  // Hàm cập nhật cartCount từ localStorage
   const updateCartCount = () => {
     const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     setCartCount(cartItems.length);
   };
 
   useEffect(() => {
-    updateCartCount(); // Cập nhật lần đầu khi mount
+    updateCartCount(); 
 
-    // Lắng nghe sự kiện storage để cập nhật realtime
     window.addEventListener("storage", updateCartCount);
     
     // Cleanup listener khi component unmount
