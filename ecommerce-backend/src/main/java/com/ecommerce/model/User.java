@@ -6,12 +6,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "users")
 public class User {
     @Id
-    private String id; // Giữ lại ID gốc của MongoDB
-    private String shortUserId; // Thêm trường shortUserId
+    private String id; // ID gốc của MongoDB
+    private String shortUserId; // shortUserId
     private String username;
     private String password;
     private String phone;
     private String address;
+    private String fullName; // Thêm trường Họ và tên
+    private String avatar; // Thêm trường Ảnh đại diện (URL hoặc đường dẫn)
+
+    // Constructors
+    public User() {}
+
     // Getters và Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -25,4 +31,8 @@ public class User {
     public void setPhone(String phone) { this.phone = phone; }
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
 }

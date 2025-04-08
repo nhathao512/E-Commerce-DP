@@ -106,19 +106,19 @@ public class ProductController {
     }
 
     private String storeFile(MultipartFile file) throws IOException {
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        String uploadDir = System.getProperty("user.dir") + "/uploads/";
+        String uploadDir = System.getProperty("user.dir") + "/uploads/products/";
         File dir = new File(uploadDir);
         if (!dir.exists()) dir.mkdirs();
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         File destination = new File(uploadDir + fileName);
         file.transferTo(destination);
-        return fileName; 
+        return "/uploads/products/" + fileName; // Trả về URL đầy đủ
     }
 
     @GetMapping("/images/{imageName}")
     public ResponseEntity<?> viewImage(@PathVariable String imageName) {
         try {
-            java.nio.file.Path imagePath = Paths.get(System.getProperty("user.dir") + "/uploads/" + imageName);
+            java.nio.file.Path imagePath = Paths.get(System.getProperty("user.dir") + "/uploads/products/" + imageName);
             UrlResource resource = new UrlResource(imagePath.toUri());
 
             if (resource.exists()) {

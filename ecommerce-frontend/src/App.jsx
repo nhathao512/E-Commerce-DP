@@ -12,7 +12,6 @@ import ReviewForm from "./components/review/ReviewForm";
 import ReviewList from "./components/review/ReviewList";
 import HomePage from "./components/home/HomePage";
 import ProductDetail from "./components/detail/ProductDetail";
-import Profile from "./components/profile/Profile";
 
 function App() {
   return (
@@ -29,7 +28,7 @@ function App() {
             element={
               <div>
                 <Navbar />
-                <div style={{ padding: "20px" , minHeight: "90vh"}}>
+                <div style={{ padding: "20px", minHeight: "90vh" }}>
                   <Routes>
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/cart" element={<Cart />} />
@@ -38,8 +37,6 @@ function App() {
                     <Route path="/review" element={<ReviewForm />} />
                     <Route path="/reviews" element={<ReviewList />} />
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/profile" element={<Profile />} />
-                    
                   </Routes>
                 </div>
                 <Footer />

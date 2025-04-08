@@ -1,5 +1,6 @@
 package com.ecommerce.service;
 
+import com.ecommerce.dto.UserResponse;
 import com.ecommerce.model.User;
 import com.ecommerce.repository.UserRepository;
 import com.ecommerce.security.JwtTokenProvider;
@@ -34,7 +35,6 @@ public class AuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    // Sinh shortUserId ngẫu nhiên (6 ký tự)
     private String generateShortUserId() {
         String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
@@ -44,12 +44,12 @@ public class AuthService {
         }
         String shortId = sb.toString();
         if (userRepository.findByShortUserId(shortId) != null) {
-            return generateShortUserId(); // Sinh lại nếu trùng
+            return generateShortUserId();
         }
         return shortId;
     }
 
-    public String register(String username, String password, String phone, String address) {
+    public String register(String username, String password, String phone, String address, String fullName, String avatar) {
         if (userRepository.findByUsername(username) != null) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -59,13 +59,15 @@ public class AuthService {
         user.setPassword(encodedPassword);
         user.setPhone(phone);
         user.setAddress(address);
-        user.setShortUserId(generateShortUserId()); // Gán shortUserId
+        user.setFullName(fullName);
+        user.setAvatar(avatar != null && !avatar.isEmpty() ? avatar : "/uploads/avatars/default-avatar.png"); // Avatar mặc định
+        user.setShortUserId(generateShortUserId());
         User savedUser = userRepository.save(user);
         logger.info("User registered with ID: {}, shortUserId: {}", savedUser.getId(), savedUser.getShortUserId());
         return "User registered successfully with username: " + username + " and shortUserId: " + savedUser.getShortUserId();
     }
 
-    public String login(String username, String password) {
+    public UserResponse login(String username, String password) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, password)
@@ -76,7 +78,9 @@ public class AuthService {
             }
             String token = jwtTokenProvider.generateToken(user.getUsername());
             logger.info("Generated token for username {}: {}", user.getUsername(), token);
-            return token;
+            UserResponse userResponse = new UserResponse(user);
+            userResponse.setId(token); // Gán token vào id
+            return userResponse;
         } catch (AuthenticationException e) {
             logger.warn("Login failed for username {}: {}", username, e.getMessage());
             throw new IllegalArgumentException("Invalid username or password");

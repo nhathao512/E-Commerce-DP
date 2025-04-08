@@ -5,10 +5,10 @@ import logo from "../../assets/logo.png";
 import { AuthContext } from "../../context/AuthContext";
 
 function Navbar() {
-  // const { isAuthenticated, user, logout } = useContext(AuthContext);
-  const isAuthenticated = true;
-  const user = { username: "Hồ Việt" };
-  const logout = () => console.log("Đăng xuất");
+  const { isAuthenticated, user, logout } = useContext(AuthContext);
+  // const isAuthenticated = true;
+  // const user = { username: "Hồ Việt" };
+  // const logout = () => console.log("Đăng xuất");
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
@@ -169,9 +169,6 @@ function Navbar() {
           <>
             <Link to="/login" className={styles.navLink}>
               Đăng nhập
-            </Link>
-            <Link to="/register" className={styles.navLink}>
-              Đăng ký
             </Link>
           </>
         )}
