@@ -12,7 +12,6 @@ public class User {
     private String password;
     private String phone;
     private String address;
-
     // Getters và Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
