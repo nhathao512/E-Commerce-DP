@@ -6,6 +6,7 @@ import com.ecommerce.dto.UserResponse;
 import com.ecommerce.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -37,14 +38,38 @@ public class AuthController {
             UserResponse userResponse = authService.login(loginRequest.getUsername(), loginRequest.getPassword());
             return ResponseEntity.ok(userResponse);
         } catch (IllegalArgumentException e) {
-            // Trả về UserResponse với thông tin lỗi thay vì String
-            UserResponse errorResponse = new UserResponse(null); // null để biểu thị không có user
-            errorResponse.setId(null); // Không có token
+            UserResponse errorResponse = new UserResponse(null);
+            errorResponse.setId(null);
             errorResponse.setUsername(loginRequest.getUsername());
             errorResponse.setFullName(null);
             errorResponse.setAvatar(null);
             errorResponse.setShortUserId(null);
             return ResponseEntity.status(401).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getCurrentUser(@RequestParam("username") String username) {
+        try {
+            UserResponse userResponse = authService.getCurrentUser(username);
+            return ResponseEntity.ok(userResponse);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserResponse> updateCurrentUser(
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "avatar", required = false) String avatar,
+            @RequestParam("username") String username) { // Thêm username từ request
+        try {
+            UserResponse userResponse = authService.updateUser(username, phone, address, fullName, avatar);
+            return ResponseEntity.ok(userResponse);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(null);
         }
     }
 }

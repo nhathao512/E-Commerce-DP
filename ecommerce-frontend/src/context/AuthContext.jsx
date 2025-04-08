@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
-import API from "../services/api"; // Sửa thành import default
+import API from "../services/api";
 
 export const AuthContext = createContext();
 
@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await API.post("/auth/login", { username, password });
-      const { id: token, ...userData } = response.data;
+      const { id: token, ...userData } = response.data; // Lấy toàn bộ thông tin từ UserResponse
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
@@ -40,7 +40,8 @@ export const AuthProvider = ({ children }) => {
         address,
         fullName,
       });
-      const userData = { username, fullName };
+      // Sau khi đăng ký thành công, lưu thông tin cơ bản vào localStorage
+      const userData = { username, fullName, phone, address };
       localStorage.setItem("user", JSON.stringify(userData));
       return response.data;
     } catch (error) {
@@ -65,4 +66,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export default AuthProvider; // Export AuthProvider nếu chưa có
+export default AuthProvider;

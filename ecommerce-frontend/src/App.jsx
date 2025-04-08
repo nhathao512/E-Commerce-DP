@@ -13,6 +13,8 @@ import ReviewForm from "./components/review/ReviewForm";
 import ReviewList from "./components/review/ReviewList";
 import HomePage from "./components/home/HomePage";
 import ProductDetail from "./components/detail/ProductDetail";
+import Profile from "./components/profile/Profile"; // Thêm Profile
+
 import Dashboard from "./components/admin/Dashboard/Dashboard";
 import Products from "./components/admin/Products/Products";
 import Categories from "./components/admin/Categories/Categories";
@@ -20,60 +22,60 @@ import Orders from "./components/admin/Orders/Orders";
 import Users from "./components/admin/Users/Users";
 import NavbarAdmin from "./components/admin/NavbarAdmin/Navbar";
 function App() {
-    return (
-        <AuthProvider>
-            <Router>
-                <Routes>
-                    {/* Các trang không có Navbar và Footer */}
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/login" element={<Login />} />
+  return (
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Các trang không có Navbar và Footer */}
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
 
-                    {/* Các trang người dùng thông thường với Navbar và Footer */}
-                    <Route
-                        path="*"
-                        element={
-                            <div>
-                                <Navbar />
-                                <div style={{ padding: "20px", minHeight: "90vh" }}>
-                                    <Routes>
-                                        <Route path="/products" element={<ProductList />} />
-                                        <Route path="/cart" element={<Cart />} />
-                                        <Route path="/payment" element={<Payment />} />
-                                        <Route path="/product/:id" element={<ProductDetail />} />
-                                        <Route path="/review" element={<ReviewForm />} />
-                                        <Route path="/reviews" element={<ReviewList />} />
-                                        <Route path="/" element={<HomePage />} />
-                                    </Routes>
-                                </div>
-                                <Footer />
-                            </div>
-                        }
-                    />
+          {/* Các trang người dùng thông thường với Navbar và Footer */}
+          <Route
+            path="*"
+            element={
+              <div>
+                <Navbar />
+                <div style={{ padding: "20px", minHeight: "90vh" }}>
+                  <Routes>
+                    <Route path="/products" element={<ProductList />} />
+                    <Route path="/cart" element={<Cart />} />
+                    <Route path="/payment" element={<Payment />} />
+                    <Route path="/product/:id" element={<ProductDetail />} />
+                    <Route path="/review" element={<ReviewForm />} />
+                    <Route path="/reviews" element={<ReviewList />} />
+                    <Route path="/profile" element={<Profile />} />{" "}
+                    {/* Thêm route Profile */}
+                    <Route path="/" element={<HomePage />} />
+                  </Routes>
+                </div>
+                <Footer />
+              </div>
+            }
+          />
 
-                    {/* Các trang Admin không có Navbar và Footer */}
-                    <Route
-                        path="/admin/*"
-                        element={
-                          <div>
-                            <NavbarAdmin />
-                         
-                            <div style={{ padding: "20px", minHeight: "100vh" }}>
-                                <Routes>
-                                    <Route path="/" element={<Dashboard />} />
-                                    <Route path="/products" element={<Products />} />
-                                    <Route path="/categories" element={<Categories />} />
-                                    <Route path="/orders" element={<Orders />} />
-                                    <Route path="/users" element={<Users />} />
-                                </Routes>
-                            </div>
-                            </div>
-                        }
-                        
-                    />
-                </Routes>
-            </Router>
-        </AuthProvider>
-    );
+          {/* Các trang Admin không có Navbar và Footer */}
+          <Route
+            path="/admin/*"
+            element={
+              <div>
+                <NavbarAdmin />
+                <div style={{ padding: "20px", minHeight: "100vh" }}>
+                  <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/products" element={<Products />} />
+                    <Route path="/categories" element={<Categories />} />
+                    <Route path="/orders" element={<Orders />} />
+                    <Route path="/users" element={<Users />} />
+                  </Routes>
+                </div>
+              </div>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
+  );
 }
 
 export default App;

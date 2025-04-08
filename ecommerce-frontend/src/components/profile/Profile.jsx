@@ -1,48 +1,89 @@
-// Profile.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import API from "../../services/api";
+import { useNavigate } from "react-router-dom";
 import styles from "./Profile.module.css";
 
 const Profile = () => {
+  const { user, isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState({
     username: "",
     phone: "",
     address: "",
-    fullname: "",
-    image: "",
+    fullName: "",
+    avatar: "",
   });
   const [previewImage, setPreviewImage] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editProfile, setEditProfile] = useState({});
+  const [message, setMessage] = useState(null);
 
   const defaultImage =
     "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png";
 
   useEffect(() => {
-    const mockData = {
-      username: "john_doe",
-      phone: "0123-456-789",
-      address: "123 Main Street, City",
-      fullname: "John Doe",
-      image: null,
-    };
-    setUserProfile(mockData);
-    setPreviewImage(mockData.image);
-  }, []);
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
 
-  const handleImageChange = (e) => {
+    if (user) {
+      setUserProfile({
+        username: user.username || "",
+        fullName: user.fullName || "",
+        avatar: user.avatar || "",
+        phone: user.phone || "",
+        address: user.address || "",
+      });
+      setPreviewImage(user.avatar || defaultImage);
+    }
+
+    const fetchUserProfile = async () => {
+      try {
+        const response = await API.get("/auth/me"); // Đổi thành /api/auth/me
+        setUserProfile(response.data);
+        setPreviewImage(response.data.avatar || defaultImage);
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+        setPreviewImage(defaultImage);
+      }
+    };
+    fetchUserProfile();
+  }, [isAuthenticated, navigate, user]);
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
       setIsLoading(true);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-        setTimeout(() => {
-          setUserProfile({ ...userProfile, image: reader.result });
-          setIsLoading(false);
-        }, 1000);
-      };
-      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const uploadResponse = await API.post("/upload/avatar", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        const avatarUrl = uploadResponse.data;
+
+        const updateResponse = await API.put("/auth/me", {
+          // Đổi thành /api/auth/me
+          phone: userProfile.phone,
+          address: userProfile.address,
+          fullName: userProfile.fullName,
+          avatar: avatarUrl,
+        });
+
+        setUserProfile(updateResponse.data);
+        setPreviewImage(updateResponse.data.avatar || defaultImage);
+        setMessage({ text: "Avatar updated successfully!", type: "success" });
+      } catch (error) {
+        console.error("Failed to upload avatar:", error);
+        setMessage({ text: "Failed to update avatar.", type: "error" });
+      } finally {
+        setIsLoading(false);
+        setTimeout(() => setMessage(null), 3000);
+      }
     }
   };
 
@@ -60,24 +101,41 @@ const Profile = () => {
     setEditProfile({ ...editProfile, [name]: value });
   };
 
-  const handleUpdate = () => {
-    setUserProfile({
-      ...userProfile,
-      phone: editProfile.phone,
-      address: editProfile.address,
-      fullname: editProfile.fullname,
-    });
-    setIsModalOpen(false);
+  const handleUpdate = async () => {
+    try {
+      const response = await API.put("/auth/me", {
+        // Đổi thành /api/auth/me
+        phone: editProfile.phone,
+        address: editProfile.address,
+        fullName: editProfile.fullName,
+        avatar: userProfile.avatar,
+      });
+      setUserProfile(response.data);
+      setIsModalOpen(false);
+      setMessage({ text: "Profile updated successfully!", type: "success" });
+    } catch (error) {
+      console.error("Failed to update profile:", error);
+      setMessage({ text: "Failed to update profile.", type: "error" });
+    } finally {
+      setTimeout(() => setMessage(null), 3000);
+    }
   };
 
   return (
     <div className={styles.profileContainer}>
       <h2 className={styles.title}>User Profile</h2>
+      {message && (
+        <div
+          className={message.type === "success" ? styles.success : styles.error}
+        >
+          {message.text}
+        </div>
+      )}
       <div className={styles.profileCard}>
         <div className={styles.formSection}>
           <div className={styles.profileField}>
             <label className={styles.label}>Full Name</label>
-            <div className={styles.value}>{userProfile.fullname}</div>
+            <div className={styles.value}>{userProfile.fullName}</div>
           </div>
           <div className={styles.profileField}>
             <label className={styles.label}>Username</label>
@@ -132,8 +190,8 @@ const Profile = () => {
                 <label className={styles.label}>Full Name</label>
                 <input
                   type="text"
-                  name="fullname"
-                  value={editProfile.fullname}
+                  name="fullName"
+                  value={editProfile.fullName}
                   onChange={handleEditChange}
                   className={styles.input}
                 />

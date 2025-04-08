@@ -60,7 +60,7 @@ public class AuthService {
         user.setPhone(phone);
         user.setAddress(address);
         user.setFullName(fullName);
-        user.setAvatar(avatar != null && !avatar.isEmpty() ? avatar : "/uploads/avatars/default-avatar.png"); // Avatar mặc định
+        user.setAvatar(avatar != null && !avatar.isEmpty() ? avatar : "/uploads/avatars/default-avatar.png");
         user.setShortUserId(generateShortUserId());
         User savedUser = userRepository.save(user);
         logger.info("User registered with ID: {}, shortUserId: {}", savedUser.getId(), savedUser.getShortUserId());
@@ -79,11 +79,34 @@ public class AuthService {
             String token = jwtTokenProvider.generateToken(user.getUsername());
             logger.info("Generated token for username {}: {}", user.getUsername(), token);
             UserResponse userResponse = new UserResponse(user);
-            userResponse.setId(token); // Gán token vào id
+            userResponse.setId(token);
             return userResponse;
         } catch (AuthenticationException e) {
             logger.warn("Login failed for username {}: {}", username, e.getMessage());
             throw new IllegalArgumentException("Invalid username or password");
         }
+    }
+
+    // Thêm phương thức lấy thông tin người dùng hiện tại
+    public UserResponse getCurrentUser(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        return new UserResponse(user);
+    }
+
+    // Thêm phương thức cập nhật thông tin người dùng
+    public UserResponse updateUser(String username, String phone, String address, String fullName, String avatar) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+        if (phone != null && !phone.isEmpty()) user.setPhone(phone);
+        if (address != null && !address.isEmpty()) user.setAddress(address);
+        if (fullName != null && !fullName.isEmpty()) user.setFullName(fullName);
+        if (avatar != null && !avatar.isEmpty()) user.setAvatar(avatar);
+        User updatedUser = userRepository.save(user);
+        return new UserResponse(updatedUser);
     }
 }

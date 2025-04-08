@@ -12,9 +12,8 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-export default API; // Export API như export default
+export default API;
 
-// Export các hàm riêng lẻ nếu cần
 export const getProducts = () => API.get("/products");
 export const getProductById = (id) => API.get(`/products/${id}`);
 export const getCart = () => API.get("/cart");
