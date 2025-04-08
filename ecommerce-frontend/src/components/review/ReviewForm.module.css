@@ -1,18 +1,37 @@
 .commentSection {
   margin-top: 40px;
-}
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  }
 
 .commentTitle {
   font-size: 24px;
-  margin-bottom: 20px;
   font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Bố cục hai cột */
+.commentLayout {
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap; /* Cho phép wrap trên mobile */
+}
+
+.commentFormWrapper {
+  flex: 1;
+  min-width: 300px; /* Đảm bảo form không bị quá nhỏ */
 }
 
 .commentForm {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: 3px;
+  margin-left: 0;
+  margin-right: auto;
 }
 
 .ratingSection {
@@ -22,8 +41,9 @@
 }
 
 .ratingSection p {
-  margin: 0;
   font-size: 16px;
+  margin: 0;
+  color: #333;
 }
 
 .stars {
@@ -32,54 +52,77 @@
 }
 
 .star {
-  font-size: 24px;
-  color: #ccc;
+  font-size: 20px;
+  color: #ddd;
   cursor: pointer;
+  transition: color 0.3s ease;
 }
 
+.star:hover,
 .starFilled {
-  color: #f5c518; /* Màu vàng cho sao đã chọn */
+  color: #ffcc00;
 }
 
 .commentInput {
   width: 100%;
-  min-height: 100px;
+  height: 100px;
   padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 5px;
-  resize: vertical;
+  border-radius: 4px;
   font-size: 14px;
+  resize: vertical;
+  transition: border-color 0.3s ease;
+}
+
+.commentInput:focus {
+  border-color: #ff0000;
+  outline: none;
 }
 
 .submitButton {
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
+  background: #016fec;
+  color: #fff;
   border: none;
-  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
-  font-size: 16px;
+  text-transform: uppercase;
+  transition: background 0.3s ease;
 }
 
 .submitButton:hover {
-  background-color: #0056b3;
+  background: #1500ff;
+}
+
+.commentListWrapper {
+  flex: 1;
+  min-width: 300px; /* Đảm bảo danh sách không bị quá nhỏ */
 }
 
 .commentList {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
 
 .commentItem {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+  transition: box-shadow 0.3s ease;
+}
+
+.commentItem:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .commentUser {
   font-weight: bold;
+  font-size: 14px;
   margin-bottom: 5px;
-  font-size: 16px;
+  color: #333;
 }
 
 .commentRating {
@@ -89,11 +132,12 @@
 }
 
 .commentContent {
-  margin-bottom: 5px;
   font-size: 14px;
+  margin-bottom: 5px;
+  color: #555;
 }
 
 .commentDate {
   font-size: 12px;
-  color: #666;
+  color: #999;
 }

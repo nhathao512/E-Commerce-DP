@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getProductById, addToCart } from "../../services/api";
 import ReviewForm from "../review/ReviewForm";
 import styles from "./ProductDetail.module.css";
+import notFound from "../../assets/productnotfound.png";
 
 function ProductDetail() {
   const { id } = useParams();
@@ -69,7 +70,7 @@ function ProductDetail() {
   };
 
   if (loading) return <div className={styles.loadingWrapper}>Đang tải...</div>;
-  if (!product) return <div>Không tìm thấy sản phẩm!</div>;
+  if (!product) return <img className={styles.notFound} src={notFound}></img>;
 
   const sizes = product.extraAttribute
     ? product.extraAttribute.split(",").map((s) => s.trim())

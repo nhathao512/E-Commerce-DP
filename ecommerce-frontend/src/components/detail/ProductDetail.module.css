@@ -18,6 +18,15 @@
   .imageSection {
     flex: 1;
   }
+
+  .notFound {
+    display: block;
+    max-width: 100%;              /* Ensures the image scales down if the container is smaller */
+    height: auto;                 /* Maintains aspect ratio */
+    max-height: 80vh;             /* Limits height to 80% of viewport height */
+    margin: 20px auto;            /* Centers the image horizontally with some spacing */
+    object-fit: contain;          /* Ensures the image fits within its container without distortion */
+  }
   
   .mainImage {
     position: relative; /* Để các nút sliderArrow có thể định vị tuyệt đối bên trong */
@@ -185,10 +194,10 @@
 }
 
 .selectedSize {
-    background: #ff3333; /* Màu đỏ nhạt hơn một chút so với #ff0000 để dịu mắt */
+    background: #007bff; /* Màu đỏ nhạt hơn một chút so với #ff0000 để dịu mắt */
     color: #fff;
-    border: 1px solid #ff3333; /* Viền cùng màu với nền */
-    box-shadow: 0 0 5px rgba(255, 51, 51, 0.5); /* Thêm bóng nhẹ để nổi bật */
+    border: 1px solid #007bff; /* Viền cùng màu với nền */
+    box-shadow: 0 0 5px rgba(82, 51, 255, 0.5); /* Thêm bóng nhẹ để nổi bật */
 }
   
   .quantitySection {
@@ -206,29 +215,30 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    border: 1px solid #020000;
+    border: 1px solid #999;; /* Giữ viền ngoài */
   }
   
   .quantityControl button {
-    background: none;
-    border-color: none;
-    padding: 5px 10px;
+    background: white; /* Thêm nền xám nhạt để nút nổi bật hơn */
+    padding: 0px 10px 0px;
     cursor: pointer;
     font-size: 16px;
-    transition: color 0.3s ease;
+    color: #333; /* Màu chữ đậm để luôn sáng, đồng bộ với giao diện */
+    transition: background 0.3s ease, color 0.3s ease; /* Hiệu ứng mượt mà */
   }
   
   .quantityControl button:hover {
-    color: #ff0000;
+    background: #e0e0e0; /* Nền đậm hơn khi hover */
+    color: #007bff; /* Đổi sang xanh dương khi hover, đồng bộ với nút khác */
   }
   
   .quantityControl span {
-    padding: 0 10px;
     font-size: 16px;
+    color: #333; /* Đảm bảo số lượng cũng sáng */
   }
   
   .addToCartButton {
-    background: #ff0000;
+    background: #007bff;
     color: #fff;
     border: none;
     padding: 15px;
@@ -240,7 +250,7 @@
   }
   
   .addToCartButton:hover {
-    background: #e60000;
+    background: #0056b3;
   }
   
   /* Phần bình luận */
@@ -326,7 +336,7 @@
   }
   
   .submitButton {
-    background: #ff0000;
+    background: #007bff;
     color: #fff;
     border: none;
     padding: 10px 20px;
@@ -338,7 +348,7 @@
   }
   
   .submitButton:hover {
-    background: #e60000;
+    background: #0056b3;
   }
   
   .commentListWrapper {
@@ -406,6 +416,8 @@
   border-radius: 50%; /* Làm tròn để tạo hình vòng quay */
   animation: spin 1s linear infinite; /* Hiệu ứng quay */
 }
+
+
 
 @keyframes spin {
   0% {
