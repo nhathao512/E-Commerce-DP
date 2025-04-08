@@ -21,6 +21,7 @@ import Categories from "./components/admin/Categories/Categories";
 import Orders from "./components/admin/Orders/Orders";
 import Users from "./components/admin/Users/Users";
 import NavbarAdmin from "./components/admin/NavbarAdmin/Navbar";
+import OrdersDetail from "./components/ordersDetail/OrdersDetail";
 function App() {
   return (
     <AuthProvider>
@@ -41,6 +42,7 @@ function App() {
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/payment" element={<Payment />} />
+                    <Route path="/orders" element={<OrdersDetail />} />
                     <Route path="/product/:id" element={<ProductDetail />} />
                     <Route path="/review" element={<ReviewForm />} />
                     <Route path="/reviews" element={<ReviewList />} />

@@ -117,7 +117,7 @@ function Navbar() {
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
-              <span>Xin chào, {getLastName(user?.fullName)}</span>
+              <span>{user.fullName}</span>
             </div>
             <ul className={styles.navProfileDropdown}>
               <li onClick={() => navigate("/profile")}>
