@@ -1,21 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
 import { addReview, getReviews } from "../../services/api";
 import styles from "./ReviewForm.module.css";
-import { FaExclamationTriangle } from "react-icons/fa"; // Import icon alert
+import { FaExclamationTriangle } from "react-icons/fa";
 import { AuthContext } from "../../context/AuthContext";
 
 function ReviewForm({ productCode }) {
   const [reviews, setReviews] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [rating, setRating] = useState(0);
-  const [showLoginPopup, setShowLoginPopup] = useState(false); // State cho popup
-  const shortUserId = localStorage.getItem("shortUserId") || "anonymous";
-  const { isAuthenticated } = useContext(AuthContext);
-
-  // Giả lập hàm kiểm tra trạng thái đăng nhập
-  const isLoggedIn = () => {
-    return isAuthenticated; // True nếu đã đăng nhập
-  };
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(null);
+  const { isAuthenticated, user } = useContext(AuthContext);
+  const shortUserId = user?.shortUserId || "anonymous";
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -29,15 +25,23 @@ function ReviewForm({ productCode }) {
     fetchReviews();
   }, [productCode]);
 
-  // Tự động tắt popup sau 5 giây
   useEffect(() => {
     if (showLoginPopup) {
       const timer = setTimeout(() => {
         setShowLoginPopup(false);
-      }, 5000); // 5000ms = 5 giây
-      return () => clearTimeout(timer); // Dọn dẹp timer
+      }, 1000);
+      return () => clearTimeout(timer);
     }
   }, [showLoginPopup]);
+
+  useEffect(() => {
+    if (alertMessage) {
+      const timer = setTimeout(() => {
+        setAlertMessage(null);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [alertMessage]);
 
   const handleRating = (star) => {
     setRating(star);
@@ -46,18 +50,23 @@ function ReviewForm({ productCode }) {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
 
-    // Kiểm tra trạng thái đăng nhập
-    if (!isLoggedIn()) {
-      setShowLoginPopup(true); // Hiển thị popup nếu chưa đăng nhập
+    if (!isAuthenticated) {
+      setShowLoginPopup(true);
       return;
     }
 
     if (!newComment.trim()) {
-      alert("Vui lòng nhập nội dung bình luận!");
+      setAlertMessage({
+        text: "Vui lòng nhập nội dung bình luận!",
+        type: "error",
+      });
       return;
     }
     if (rating === 0) {
-      alert("Vui lòng chọn số sao đánh giá!");
+      setAlertMessage({
+        text: "Vui lòng chọn số sao đánh giá!",
+        type: "error",
+      });
       return;
     }
 
@@ -73,10 +82,10 @@ function ReviewForm({ productCode }) {
       setReviews(response.data);
       setNewComment("");
       setRating(0);
-      alert("Đánh giá thành công!");
+      setAlertMessage({ text: "Đánh giá thành công!", type: "success" });
     } catch (error) {
       console.error("Lỗi khi gửi đánh giá:", error);
-      alert("Đánh giá thất bại!");
+      setAlertMessage({ text: "Đánh giá thất bại!", type: "error" });
     }
   };
 
@@ -84,7 +93,6 @@ function ReviewForm({ productCode }) {
     <div className={styles.commentSection}>
       <h2 className={styles.commentTitle}>Bình luận & Đánh giá</h2>
 
-      {/* Form đánh giá */}
       <form className={styles.commentForm} onSubmit={handleCommentSubmit}>
         <div className={styles.ratingSection}>
           <p>Đánh giá:</p>
@@ -113,7 +121,6 @@ function ReviewForm({ productCode }) {
         </button>
       </form>
 
-      {/* Danh sách đánh giá */}
       <div className={styles.commentList}>
         {reviews.length === 0 ? (
           <p>Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá!</p>
@@ -121,7 +128,7 @@ function ReviewForm({ productCode }) {
           reviews.map((review) => (
             <div key={review.id} className={styles.commentItem}>
               <p className={styles.commentUser}>
-                {review.username || review.shortUserId}
+                {review.fullName || "Anonymous"}
               </p>
               <div className={styles.commentRating}>
                 {[...Array(5)].map((_, index) => (
@@ -144,13 +151,29 @@ function ReviewForm({ productCode }) {
         )}
       </div>
 
-      {/* Popup yêu cầu đăng nhập với icon alert */}
       {showLoginPopup && (
         <div className={styles.loginPopup}>
+          <FaExclamationTriangle className={styles.alertIcon} />
           <p>Vui lòng đăng nhập để gửi đánh giá!</p>
           <button
             className={styles.closeButton}
             onClick={() => setShowLoginPopup(false)}
+          >
+            Đóng
+          </button>
+        </div>
+      )}
+
+      {alertMessage && (
+        <div
+          className={`${styles.alertPopup} ${
+            alertMessage.type === "success" ? styles.success : styles.error
+          }`}
+        >
+          <p>{alertMessage.text}</p>
+          <button
+            className={styles.closeButton}
+            onClick={() => setAlertMessage(null)}
           >
             Đóng
           </button>

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { getReviews } from "../../services/api";
-import styles from "./ReviewList.module.css"; // Thêm file CSS mới
+import styles from "./ReviewList.module.css";
 
 function ReviewList({ productCode }) {
-  // Đổi productId thành productCode
   const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
@@ -27,7 +26,9 @@ function ReviewList({ productCode }) {
         <ul className={styles.reviewItems}>
           {reviews.map((review) => (
             <li key={review.id} className={styles.reviewItem}>
-              <span className={styles.reviewUser}>{review.shortUserId}</span>
+              <span className={styles.reviewUser}>
+                {review.fullName || "Anonymous"} {/* Hiển thị fullName */}
+              </span>
               <div className={styles.reviewRating}>
                 {[...Array(5)].map((_, index) => (
                   <span

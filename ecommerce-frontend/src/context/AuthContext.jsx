@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Thêm trạng thái loading
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -16,11 +16,10 @@ export const AuthProvider = ({ children }) => {
       if (token && storedUser) {
         try {
           const parsedUser = JSON.parse(storedUser);
-          // Kiểm tra token với server (tùy chọn)
           const response = await API.get(
             `/auth/me?username=${parsedUser.username}`
           );
-          setUser(response.data);
+          setUser(response.data); // Lưu toàn bộ dữ liệu user từ server, bao gồm shortUserId
           setIsAuthenticated(true);
         } catch (error) {
           console.error("Failed to verify auth:", error);
@@ -33,7 +32,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(false);
         setUser(null);
       }
-      setIsLoading(false); // Đánh dấu đã hoàn tất kiểm tra
+      setIsLoading(false);
     };
 
     initializeAuth();
@@ -42,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await API.post("/auth/login", { username, password });
-      const { id: token, ...userData } = response.data;
+      const { id: token, ...userData } = response.data; // userData phải chứa shortUserId từ backend
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
@@ -63,9 +62,9 @@ export const AuthProvider = ({ children }) => {
         address,
         fullName,
       });
-      const userData = { username, fullName, phone, address };
+      const userData = response.data; // Giả sử backend trả về user với shortUserId
       localStorage.setItem("user", JSON.stringify(userData));
-      return response.data;
+      return userData;
     } catch (error) {
       console.error("Register failed:", error);
       throw error;

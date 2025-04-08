@@ -6,6 +6,8 @@ import com.ecommerce.model.User;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.repository.ReviewRepository;
 import com.ecommerce.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.Optional;
 
 @Service
 public class ReviewService {
+    private static final Logger logger = LoggerFactory.getLogger(ReviewService.class);
+
     @Autowired
     private ReviewRepository reviewRepository;
 
@@ -47,6 +51,17 @@ public class ReviewService {
         review.setShortUserId(shortUserId);
         review.setRating(rating);
         review.setComment(comment);
+
+        // Lấy fullName từ User
+        User user = userRepository.findByShortUserId(shortUserId);
+        if (user != null) {
+            logger.info("Found user for shortUserId {}: fullName = {}", shortUserId, user.getFullName());
+            review.setFullName(user.getFullName() != null ? user.getFullName() : "Anonymous");
+        } else {
+            logger.warn("User not found for shortUserId: {}", shortUserId);
+            review.setFullName("Anonymous");
+        }
+
         return reviewRepository.save(review);
     }
 
@@ -55,13 +70,16 @@ public class ReviewService {
             throw new IllegalArgumentException("Product code cannot be empty");
         }
         List<Review> reviews = reviewRepository.findByProductCode(productCode);
-        // Thêm username vào mỗi review
         for (Review review : reviews) {
-            User user = userRepository.findByShortUserId(review.getShortUserId());
-            if (user != null) {
-                review.setUsername(user.getUsername()); // Giả sử bạn thêm setter này trong Review
-            } else {
-                review.setUsername("Anonymous"); // Trường hợp không tìm thấy user
+            if (review.getFullName() == null) {
+                User user = userRepository.findByShortUserId(review.getShortUserId());
+                if (user != null) {
+                    logger.info("Found user for shortUserId {}: fullName = {}", review.getShortUserId(), user.getFullName());
+                    review.setFullName(user.getFullName() != null ? user.getFullName() : "Anonymous");
+                } else {
+                    logger.warn("User not found for shortUserId: {}", review.getShortUserId());
+                    review.setFullName("Anonymous");
+                }
             }
         }
         return reviews;

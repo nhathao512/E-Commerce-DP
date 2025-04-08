@@ -5,7 +5,7 @@
   background-color: #f9f9f9;
   padding: 20px;
   border-radius: 8px;
-  }
+}
 
 .commentTitle {
   font-size: 24px;
@@ -155,24 +155,69 @@
   text-align: center;
   font-size: 16px;
   color: #333;
-  border: 1px solid #e2e8f0;
+  border: 2px solid #4c4b4b;
   animation: fadeIn 0.3s ease-in-out;
   min-width: 300px;
 }
 
-/* Nút Đóng */
-.closeButton {
+.alertPopup {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  text-align: center;
+  font-size: 16px;
+  color: #333;
+  border: 2px solid #4c4b4b;
+  animation: fadeIn 0.3s ease-in-out;
+  min-width: 300px;
+}
+
+.success {
+  background-color: #d4edda; /* Màu xanh nhạt cho thành công */
+  border-color: #c3e6cb;
+  color: #155724;
+}
+
+.error {
+  background-color: #f8d7da; /* Màu đỏ nhạt cho lỗi */
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+.alertPopup p {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.alertPopup button {
+  padding: 10px 20px;
+  margin: 10px 5px 0;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.alertPopup .closeButton {
   background-color: #e63946; /* Màu đỏ */
   color: white;
 }
 
-.closeButton:hover {
+.alertPopup .closeButton:hover {
   background-color: #d00000;
-  transform: translateY(-2px); /* Nâng nhẹ khi hover */
+  transform: translateY(-2px);
 }
 
-.closeButton:active {
-  transform: scale(0.98); /* Hiệu ứng nhấn */
+.alertPopup .closeButton:active {
+  transform: scale(0.98);
 }
 
 @keyframes fadeIn {
@@ -186,47 +231,32 @@
   }
 }
 
-.loginPopup {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #fff;
-  padding: 25px; /* Tăng padding cho rộng rãi hơn */
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  text-align: center;
-  font-size: 16px;
-  color: #333;
-  border: 2px solid #4c4b4b;
-  animation: fadeIn 0.3s ease-in-out;
-  min-width: 300px; /* Đặt chiều rộng tối thiểu cho popup */
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px); /* Thêm hiệu ứng trượt nhẹ */
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
 /* Style chung cho các nút trong popup */
 .loginPopup button {
-  padding: 10px 20px; /* Kích thước đồng đều */
-  margin: 10px 5px 0; /* Khoảng cách đều giữa các nút */
+  padding: 10px 20px;
+  margin: 10px 5px 0;
   font-size: 14px;
   font-weight: 500;
   border: none;
-  border-radius: 6px; /* Bo góc nhẹ hơn */
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng mượt */
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .loginPopup p {
   font-weight: bold;
+}
+
+.closeButton {
+  background-color: #e63946; /* Màu đỏ */
+  color: white;
+}
+
+.closeButton:hover {
+  background-color: #d00000;
+  transform: translateY(-2px);
+}
+
+.closeButton:active {
+  transform: scale(0.98);
 }
