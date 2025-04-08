@@ -6,9 +6,6 @@ import { AuthContext } from "../../context/AuthContext";
 
 function Navbar() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
-  // const isAuthenticated = true;
-  // const user = { username: "Hồ Việt" };
-  // const logout = () => console.log("Đăng xuất");
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
@@ -42,7 +39,13 @@ function Navbar() {
 
   const handleLogoutWithReload = () => {
     logout();
-    window.location.reload(); // Tương tự code mẫu
+    window.location.reload();
+  };
+
+  const getLastName = (fullName) => {
+    if (!fullName) return "";
+    const nameParts = fullName.trim().split(" ");
+    return nameParts[nameParts.length - 1];
   };
 
   return (
@@ -114,7 +117,7 @@ function Navbar() {
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
-              <span>Xin chào, {user?.username}</span>
+              <span>Xin chào, {getLastName(user?.fullName)}</span>
             </div>
             <ul className={styles.navProfileDropdown}>
               <li onClick={() => navigate("/profile")}>
@@ -166,11 +169,9 @@ function Navbar() {
             </ul>
           </div>
         ) : (
-          <>
-            <Link to="/login" className={styles.navLink}>
-              Đăng nhập
-            </Link>
-          </>
+          <Link to="/login" className={styles.navLink}>
+            Đăng nhập
+          </Link>
         )}
       </div>
     </nav>
