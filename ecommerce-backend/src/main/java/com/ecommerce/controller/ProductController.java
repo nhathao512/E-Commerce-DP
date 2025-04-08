@@ -112,13 +112,13 @@ public class ProductController {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         File destination = new File(uploadDir + fileName);
         file.transferTo(destination);
-        return "/uploads/products/" + fileName; // Trả về URL đầy đủ
+        return "products/" + fileName; // Trả về URL đầy đủ
     }
 
     @GetMapping("/images/{imageName}")
     public ResponseEntity<?> viewImage(@PathVariable String imageName) {
         try {
-            java.nio.file.Path imagePath = Paths.get(System.getProperty("user.dir") + "/uploads/products/" + imageName);
+            java.nio.file.Path imagePath = Paths.get(System.getProperty("user.dir") + "products/" + imageName);
             UrlResource resource = new UrlResource(imagePath.toUri());
 
             if (resource.exists()) {
