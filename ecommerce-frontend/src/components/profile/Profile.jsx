@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Profile.module.css";
 
 const Profile = () => {
-  const { user, isAuthenticated } = useContext(AuthContext);
+  const { user, isAuthenticated, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState({
     username: "",
@@ -15,7 +15,7 @@ const Profile = () => {
     avatar: "",
   });
   const [previewImage, setPreviewImage] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editProfile, setEditProfile] = useState({});
   const [message, setMessage] = useState(null);
@@ -24,6 +24,8 @@ const Profile = () => {
     "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png";
 
   useEffect(() => {
+    if (isLoading) return;
+
     if (!isAuthenticated) {
       navigate("/login");
       return;
@@ -42,46 +44,44 @@ const Profile = () => {
 
     const fetchUserProfile = async () => {
       try {
-        const response = await API.get("/auth/me"); // Đổi thành /api/auth/me
+        setIsLoadingProfile(true);
+        const response = await API.get(`/auth/me?username=${user.username}`);
         setUserProfile(response.data);
         setPreviewImage(response.data.avatar || defaultImage);
       } catch (error) {
         console.error("Failed to fetch user profile:", error);
         setPreviewImage(defaultImage);
+      } finally {
+        setIsLoadingProfile(false);
       }
     };
     fetchUserProfile();
-  }, [isAuthenticated, navigate, user]);
+  }, [isAuthenticated, navigate, user, isLoading]);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      setIsLoading(true);
+      setIsLoadingProfile(true);
       const formData = new FormData();
       formData.append("file", file);
+      formData.append("username", user.username);
 
       try {
         const uploadResponse = await API.post("/upload/avatar", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        const avatarUrl = uploadResponse.data;
+        const updatedUser = uploadResponse.data;
 
-        const updateResponse = await API.put("/auth/me", {
-          // Đổi thành /api/auth/me
-          phone: userProfile.phone,
-          address: userProfile.address,
-          fullName: userProfile.fullName,
-          avatar: avatarUrl,
-        });
-
-        setUserProfile(updateResponse.data);
-        setPreviewImage(updateResponse.data.avatar || defaultImage);
+        setUserProfile(updatedUser);
+        setPreviewImage(updatedUser.avatar || defaultImage);
         setMessage({ text: "Avatar updated successfully!", type: "success" });
+
+        localStorage.setItem("user", JSON.stringify(updatedUser));
       } catch (error) {
         console.error("Failed to upload avatar:", error);
         setMessage({ text: "Failed to update avatar.", type: "error" });
       } finally {
-        setIsLoading(false);
+        setIsLoadingProfile(false);
         setTimeout(() => setMessage(null), 3000);
       }
     }
@@ -103,16 +103,22 @@ const Profile = () => {
 
   const handleUpdate = async () => {
     try {
-      const response = await API.put("/auth/me", {
-        // Đổi thành /api/auth/me
-        phone: editProfile.phone,
-        address: editProfile.address,
-        fullName: editProfile.fullName,
-        avatar: userProfile.avatar,
+      const formData = new FormData();
+      formData.append("username", user.username);
+      formData.append("phone", editProfile.phone || "");
+      formData.append("address", editProfile.address || "");
+      formData.append("fullName", editProfile.fullName || "");
+      formData.append("avatar", userProfile.avatar || "");
+
+      const response = await API.put("/auth/me", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
+
       setUserProfile(response.data);
       setIsModalOpen(false);
       setMessage({ text: "Profile updated successfully!", type: "success" });
+
+      localStorage.setItem("user", JSON.stringify(response.data));
     } catch (error) {
       console.error("Failed to update profile:", error);
       setMessage({ text: "Failed to update profile.", type: "error" });
@@ -121,14 +127,20 @@ const Profile = () => {
     }
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className={styles.profileContainer}>
       <h2 className={styles.title}>User Profile</h2>
       {message && (
         <div
-          className={message.type === "success" ? styles.success : styles.error}
+          className={`${styles.message} ${
+            message.type === "success" ? styles.success : styles.error
+          }`}
         >
-          {message.text}
+          <span className={styles.messageText}>{message.text}</span>
         </div>
       )}
       <div className={styles.profileCard}>
@@ -155,7 +167,7 @@ const Profile = () => {
         </div>
         <div className={styles.imageSection}>
           <div className={styles.avatarWrapper}>
-            {isLoading ? (
+            {isLoadingProfile ? (
               <div className={styles.loader}>Uploading...</div>
             ) : (
               <img
@@ -168,9 +180,6 @@ const Profile = () => {
               />
             )}
           </div>
-          <label htmlFor="imageUpload" className={styles.uploadButton}>
-            Upload New Image
-          </label>
           <input
             id="imageUpload"
             type="file"

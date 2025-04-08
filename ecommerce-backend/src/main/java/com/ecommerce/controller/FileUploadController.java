@@ -1,5 +1,8 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.dto.UserResponse;
+import com.ecommerce.service.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,8 +16,13 @@ public class FileUploadController {
 
     private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 
+    @Autowired
+    private AuthService authService; // Tiêm AuthService
+
     @PostMapping("/avatar")
-    public ResponseEntity<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadAvatar(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("username") String username) {
         try {
             // Kiểm tra file
             if (file.isEmpty()) {
@@ -40,11 +48,17 @@ public class FileUploadController {
             File destinationFile = new File(avatarDir + fileName);
             file.transferTo(destinationFile);
 
-            // Trả về URL với prefix /images/ để đồng bộ với WebConfig
+            // Tạo URL ảnh mới
             String fileUrl = "/images/avatars/" + fileName;
+
+            // Cập nhật avatar trong MongoDB qua AuthService
+            authService.updateUser(username, null, null, null, fileUrl);
+
             return ResponseEntity.ok(fileUrl);
         } catch (IOException e) {
             return ResponseEntity.status(500).body("Failed to upload avatar: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("User not found: " + e.getMessage());
         }
     }
 
@@ -70,12 +84,12 @@ public class FileUploadController {
                 directory.mkdirs();
             }
 
-            // Lưu file với timestamp (đồng bộ với ProductController)
+            // Lưu file với timestamp
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             File destinationFile = new File(productDir + fileName);
             file.transferTo(destinationFile);
 
-            // Trả về URL (giữ nguyên như bạn yêu cầu)
+            // Trả về URL
             String fileUrl = "/uploads/products/" + fileName;
             return ResponseEntity.ok(fileUrl);
         } catch (IOException e) {
