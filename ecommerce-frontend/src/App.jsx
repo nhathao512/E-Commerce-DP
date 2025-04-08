@@ -12,7 +12,8 @@ import ReviewForm from "./components/review/ReviewForm";
 import ReviewList from "./components/review/ReviewList";
 import HomePage from "./components/home/HomePage";
 import ProductDetail from "./components/detail/ProductDetail";
-
+import AdminPage from "./components/admin/AdminPage";
+  
 function App() {
   return (
     <AuthProvider>
@@ -21,6 +22,7 @@ function App() {
           {/* Các trang không có Navbar và Footer */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin/*" element={<AdminPage />} />
 
           {/* Các trang có Navbar và Footer */}
           <Route
