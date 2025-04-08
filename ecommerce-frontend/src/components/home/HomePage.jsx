@@ -127,7 +127,7 @@ function HomePage() {
             <img className={styles.notFound} src={notFound}></img>
           ) : (
             <>
-              <h2 className={styles.sectionTitle}>Sản phẩm nổi bật</h2>
+              <h2 className={styles.sectionTitle}>SẢN PHẨM NỔI BẬT</h2>
               <div className={styles.productsGrid}>
                 {currentProducts.map((product) => (
                   <div

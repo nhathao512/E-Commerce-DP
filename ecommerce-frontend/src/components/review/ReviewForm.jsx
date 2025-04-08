@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { addReview, getReviews } from "../../services/api";
 import styles from "./ReviewForm.module.css";
+import { FaExclamationTriangle } from "react-icons/fa"; // Import icon alert
 
 function ReviewForm({ productCode }) {
   const [reviews, setReviews] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [rating, setRating] = useState(0);
-  const shortUserId = localStorage.getItem("shortUserId") || "anonymous"; 
+  const [showLoginPopup, setShowLoginPopup] = useState(false); // State cho popup
+  const shortUserId = localStorage.getItem("shortUserId") || "anonymous";
+
+  // Giả lập hàm kiểm tra trạng thái đăng nhập
+  const isLoggedIn = () => {
+    return !!localStorage.getItem("authToken"); // True nếu đã đăng nhập
+  };
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -20,12 +27,29 @@ function ReviewForm({ productCode }) {
     fetchReviews();
   }, [productCode]);
 
+  // Tự động tắt popup sau 5 giây
+  useEffect(() => {
+    if (showLoginPopup) {
+      const timer = setTimeout(() => {
+        setShowLoginPopup(false);
+      }, 5000); // 5000ms = 5 giây
+      return () => clearTimeout(timer); // Dọn dẹp timer
+    }
+  }, [showLoginPopup]);
+
   const handleRating = (star) => {
     setRating(star);
   };
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
+
+    // Kiểm tra trạng thái đăng nhập
+    if (!isLoggedIn()) {
+      setShowLoginPopup(true); // Hiển thị popup nếu chưa đăng nhập
+      return;
+    }
+
     if (!newComment.trim()) {
       alert("Vui lòng nhập nội dung bình luận!");
       return;
@@ -38,7 +62,7 @@ function ReviewForm({ productCode }) {
     try {
       const reviewData = {
         productCode,
-        shortUserId, // Gửi shortUserId
+        shortUserId,
         rating,
         comment: newComment,
       };
@@ -96,8 +120,7 @@ function ReviewForm({ productCode }) {
             <div key={review.id} className={styles.commentItem}>
               <p className={styles.commentUser}>
                 {review.username || review.shortUserId}
-              </p>{" "}
-              {/* Hiển thị username */}
+              </p>
               <div className={styles.commentRating}>
                 {[...Array(5)].map((_, index) => (
                   <span
@@ -118,6 +141,19 @@ function ReviewForm({ productCode }) {
           ))
         )}
       </div>
+
+      {/* Popup yêu cầu đăng nhập với icon alert */}
+      {showLoginPopup && (
+        <div className={styles.loginPopup}>
+          <p>Vui lòng đăng nhập để gửi đánh giá!</p>
+          <button
+            className={styles.closeButton}
+            onClick={() => setShowLoginPopup(false)}
+          >
+            Đóng
+          </button>
+        </div>
+      )}
     </div>
   );
 }

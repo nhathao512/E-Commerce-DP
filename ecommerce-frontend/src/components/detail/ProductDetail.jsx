@@ -12,7 +12,14 @@ function ProductDetail() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [showLoginPopup, setShowLoginPopup] = useState(false); // State cho popup
   const API_URL = "http://localhost:8080/api";
+
+  // Giả lập hàm kiểm tra trạng thái đăng nhập (thay bằng logic thực tế của bạn)
+  const isLoggedIn = () => {
+    // Ví dụ: Kiểm tra token trong localStorage
+    return !!localStorage.getItem("authToken"); // Trả về true nếu có token, false nếu không
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -27,6 +34,16 @@ function ProductDetail() {
     };
     fetchProduct();
   }, [id]);
+
+  // Tự động tắt popup sau 5 giây
+  useEffect(() => {
+    if (showLoginPopup) {
+      const timer = setTimeout(() => {
+        setShowLoginPopup(false);
+      }, 3000); // 3000ms = 5 giây
+      return () => clearTimeout(timer); // Dọn dẹp timer khi component unmount hoặc popup tắt
+    }
+  }, [showLoginPopup]);
 
   const getSliderImages = () => {
     if (!product || !product.images) return [];
@@ -54,6 +71,12 @@ function ProductDetail() {
   };
 
   const handleAddToCart = async () => {
+    // Kiểm tra trạng thái đăng nhập
+    if (!isLoggedIn()) {
+      setShowLoginPopup(true); // Hiển thị popup nếu chưa đăng nhập
+      return;
+    }
+
     if (!selectedSize) {
       alert("Vui lòng chọn kích thước!");
       return;
@@ -153,6 +176,18 @@ function ProductDetail() {
           ))}
         </div>
       </div>
+
+      {showLoginPopup && (
+        <div className={styles.loginPopup}>
+          <p>Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!</p>
+          <button
+            className={styles.closeButton}
+            onClick={() => setShowLoginPopup(false)}
+          >
+            Đóng
+          </button>
+        </div>
+      )}
 
       {/* Đánh giá */}
       <ReviewForm productCode={product.productCode} />
