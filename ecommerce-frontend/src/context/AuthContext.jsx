@@ -19,7 +19,14 @@ export const AuthProvider = ({ children }) => {
           const response = await API.get(
             `/auth/me?username=${parsedUser.username}`
           );
-          setUser(response.data); // Lưu toàn bộ dữ liệu user từ server, bao gồm shortUserId
+          const fetchedUser = response.data;
+
+          // Kiểm tra nếu có lỗi từ API
+          if (fetchedUser.error) {
+            throw new Error(fetchedUser.error);
+          }
+
+          setUser(fetchedUser); // Lưu toàn bộ dữ liệu user từ server
           setIsAuthenticated(true);
         } catch (error) {
           console.error("Failed to verify auth:", error);
@@ -41,7 +48,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await API.post("/auth/login", { username, password });
-      const { id: token, ...userData } = response.data; // userData phải chứa shortUserId từ backend
+      const { id: token, ...userData } = response.data; // userData chứa thông tin người dùng
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
@@ -62,7 +69,8 @@ export const AuthProvider = ({ children }) => {
         address,
         fullName,
       });
-      const userData = response.data; // Giả sử backend trả về user với shortUserId
+      // Giả sử backend trả về thông tin người dùng sau khi đăng ký
+      const userData = response.data;
       localStorage.setItem("user", JSON.stringify(userData));
       return userData;
     } catch (error) {
@@ -80,7 +88,16 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, login, register, logout, isLoading }}
+      value={{
+        isAuthenticated,
+        setIsAuthenticated, // Thêm để các component khác có thể cập nhật trạng thái đăng nhập
+        user,
+        setUser, // Thêm setUser để Profile.js có thể sử dụng
+        login,
+        register,
+        logout,
+        isLoading,
+      }}
     >
       {children}
     </AuthContext.Provider>

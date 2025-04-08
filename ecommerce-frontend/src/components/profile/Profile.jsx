@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import styles from "./Profile.module.css";
 
 const Profile = () => {
-  const { user, isAuthenticated, isLoading } = useContext(AuthContext);
+  const { user, setUser, isAuthenticated, isLoading, logout } =
+    useContext(AuthContext);
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState({
     username: "",
@@ -20,9 +21,6 @@ const Profile = () => {
   const [editProfile, setEditProfile] = useState({});
   const [message, setMessage] = useState(null);
 
-  const defaultImage =
-    "https://icons.veryicon.com/png/o/miscellaneous/rookie-official-icon-gallery/225-default-avatar.png";
-
   useEffect(() => {
     if (isLoading) return;
 
@@ -31,36 +29,50 @@ const Profile = () => {
       return;
     }
 
-    if (user) {
-      setUserProfile({
-        username: user.username || "",
-        fullName: user.fullName || "",
-        avatar: user.avatar || "",
-        phone: user.phone || "",
-        address: user.address || "",
-      });
-      setPreviewImage(user.avatar || defaultImage);
-    }
-
     const fetchUserProfile = async () => {
       try {
         setIsLoadingProfile(true);
         const response = await API.get(`/auth/me?username=${user.username}`);
-        setUserProfile(response.data);
-        setPreviewImage(response.data.avatar || defaultImage);
+        const fetchedUser = response.data;
+
+        if (fetchedUser.error) {
+          throw new Error(fetchedUser.error);
+        }
+
+        setUserProfile({
+          username: fetchedUser.username || "",
+          fullName: fetchedUser.fullName || "",
+          avatar: fetchedUser.avatar || "",
+          phone: fetchedUser.phone || "",
+          address: fetchedUser.address || "",
+        });
+
+        const backendBaseUrl = "http://localhost:8080";
+        const imageUrl = fetchedUser.avatar
+          ? `${backendBaseUrl}${fetchedUser.avatar}?t=${Date.now()}`
+          : null;
+        console.log("Initial Image URL:", imageUrl); // Debug URL ban đầu
+        setPreviewImage(imageUrl);
       } catch (error) {
-        console.error("Failed to fetch user profile:", error);
-        setPreviewImage(defaultImage);
+        console.error("Không thể tải thông tin hồ sơ:", error);
+        setMessage({
+          text: error.message || "Không thể tải thông tin hồ sơ.",
+          type: "error",
+        });
+        setPreviewImage(null);
       } finally {
         setIsLoadingProfile(false);
       }
     };
+
     fetchUserProfile();
   }, [isAuthenticated, navigate, user, isLoading]);
 
   const handleImageChange = async (e) => {
+    console.log("handleImageChange called");
     const file = e.target.files[0];
     if (file) {
+      console.log("File selected:", file.name);
       setIsLoadingProfile(true);
       const formData = new FormData();
       formData.append("file", file);
@@ -72,18 +84,38 @@ const Profile = () => {
         });
         const updatedUser = uploadResponse.data;
 
-        setUserProfile(updatedUser);
-        setPreviewImage(updatedUser.avatar || defaultImage);
-        setMessage({ text: "Avatar updated successfully!", type: "success" });
+        if (updatedUser.error) {
+          throw new Error(updatedUser.error);
+        }
 
+        console.log("Avatar URL:", updatedUser.avatar);
+
+        setUserProfile(updatedUser);
+        const backendBaseUrl = "http://localhost:8080";
+        const imageUrl = updatedUser.avatar
+          ? `${backendBaseUrl}${updatedUser.avatar}?t=${Date.now()}`
+          : null;
+        console.log("Full Image URL:", imageUrl);
+        setPreviewImage(imageUrl);
+        setMessage({
+          text: "Cập nhật ảnh đại diện thành công!",
+          type: "success",
+        });
+
+        setUser(updatedUser);
         localStorage.setItem("user", JSON.stringify(updatedUser));
       } catch (error) {
-        console.error("Failed to upload avatar:", error);
-        setMessage({ text: "Failed to update avatar.", type: "error" });
+        console.error("Không thể tải ảnh đại diện:", error);
+        setMessage({
+          text: error.message || "Cập nhật ảnh đại diện thất bại.",
+          type: "error",
+        });
       } finally {
         setIsLoadingProfile(false);
         setTimeout(() => setMessage(null), 3000);
       }
+    } else {
+      console.log("No file selected");
     }
   };
 
@@ -113,27 +145,41 @@ const Profile = () => {
       const response = await API.put("/auth/me", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      const updatedUser = response.data;
 
-      setUserProfile(response.data);
+      if (updatedUser.error) {
+        throw new Error(updatedUser.error);
+      }
+
+      setUserProfile(updatedUser);
       setIsModalOpen(false);
-      setMessage({ text: "Profile updated successfully!", type: "success" });
+      setMessage({ text: "Cập nhật hồ sơ thành công!", type: "success" });
 
-      localStorage.setItem("user", JSON.stringify(response.data));
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
     } catch (error) {
-      console.error("Failed to update profile:", error);
-      setMessage({ text: "Failed to update profile.", type: "error" });
+      console.error("Không thể cập nhật hồ sơ:", error);
+      setMessage({
+        text: error.message || "Cập nhật hồ sơ thất bại.",
+        type: "error",
+      });
     } finally {
       setTimeout(() => setMessage(null), 3000);
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Đang tải...</div>;
   }
 
   return (
     <div className={styles.profileContainer}>
-      <h2 className={styles.title}>User Profile</h2>
+      <h2 className={styles.title}>Hồ Sơ Người Dùng</h2>
       {message && (
         <div
           className={`${styles.message} ${
@@ -146,40 +192,45 @@ const Profile = () => {
       <div className={styles.profileCard}>
         <div className={styles.formSection}>
           <div className={styles.profileField}>
-            <label className={styles.label}>Full Name</label>
+            <label className={styles.label}>Họ và Tên</label>
             <div className={styles.value}>{userProfile.fullName}</div>
           </div>
           <div className={styles.profileField}>
-            <label className={styles.label}>Username</label>
+            <label className={styles.label}>Tên Đăng Nhập</label>
             <div className={styles.value}>{userProfile.username}</div>
           </div>
           <div className={styles.profileField}>
-            <label className={styles.label}>Phone</label>
+            <label className={styles.label}>Số Điện Thoại</label>
             <div className={styles.value}>{userProfile.phone}</div>
           </div>
           <div className={styles.profileField}>
-            <label className={styles.label}>Address</label>
+            <label className={styles.label}>Địa Chỉ</label>
             <div className={styles.value}>{userProfile.address}</div>
           </div>
           <button className={styles.editButton} onClick={openModal}>
-            Edit Profile
+            Chỉnh Sửa Hồ Sơ
           </button>
         </div>
         <div className={styles.imageSection}>
           <div className={styles.avatarWrapper}>
             {isLoadingProfile ? (
-              <div className={styles.loader}>Uploading...</div>
+              <div className={styles.loader}>Đang tải ảnh...</div>
             ) : (
-              <img
-                src={previewImage || defaultImage}
-                alt="Profile"
-                className={styles.avatar}
-                onError={(e) => {
-                  e.target.src = defaultImage;
-                }}
-              />
+              previewImage && (
+                <img
+                  src={previewImage}
+                  alt="Ảnh đại diện"
+                  className={styles.avatar}
+                  onError={(e) => {
+                    console.log("Image load error:", e); // Debug lỗi tải ảnh
+                  }}
+                />
+              )
             )}
           </div>
+          <label htmlFor="imageUpload" className={styles.uploadButton}>
+            Tải Ảnh Lên
+          </label>
           <input
             id="imageUpload"
             type="file"
@@ -193,44 +244,44 @@ const Profile = () => {
       {isModalOpen && (
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
-            <h3 className={styles.modalTitle}>Edit Profile</h3>
+            <h3 className={styles.modalTitle}>Chỉnh Sửa Hồ Sơ</h3>
             <div className={styles.modalContent}>
               <div className={styles.modalField}>
-                <label className={styles.label}>Full Name</label>
+                <label className={styles.label}>Họ và Tên</label>
                 <input
                   type="text"
                   name="fullName"
-                  value={editProfile.fullName}
+                  value={editProfile.fullName || ""}
                   onChange={handleEditChange}
                   className={styles.input}
                 />
               </div>
               <div className={styles.modalField}>
-                <label className={styles.label}>Username</label>
+                <label className={styles.label}>Tên Đăng Nhập</label>
                 <input
                   type="text"
                   name="username"
-                  value={editProfile.username}
+                  value={editProfile.username || ""}
                   disabled
                   className={styles.inputDisabled}
                 />
               </div>
               <div className={styles.modalField}>
-                <label className={styles.label}>Phone</label>
+                <label className={styles.label}>Số Điện Thoại</label>
                 <input
                   type="text"
                   name="phone"
-                  value={editProfile.phone}
+                  value={editProfile.phone || ""}
                   onChange={handleEditChange}
                   className={styles.input}
                 />
               </div>
               <div className={styles.modalField}>
-                <label className={styles.label}>Address</label>
+                <label className={styles.label}>Địa Chỉ</label>
                 <input
                   type="text"
                   name="address"
-                  value={editProfile.address}
+                  value={editProfile.address || ""}
                   onChange={handleEditChange}
                   className={styles.input}
                 />
@@ -238,10 +289,10 @@ const Profile = () => {
             </div>
             <div className={styles.modalActions}>
               <button className={styles.updateButton} onClick={handleUpdate}>
-                Update
+                Cập Nhật
               </button>
               <button className={styles.cancelButton} onClick={closeModal}>
-                Cancel
+                Hủy
               </button>
             </div>
           </div>

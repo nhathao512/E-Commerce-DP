@@ -38,12 +38,8 @@ public class AuthController {
             UserResponse userResponse = authService.login(loginRequest.getUsername(), loginRequest.getPassword());
             return ResponseEntity.ok(userResponse);
         } catch (IllegalArgumentException e) {
-            UserResponse errorResponse = new UserResponse(null);
-            errorResponse.setId(null);
+            UserResponse errorResponse = new UserResponse("Tên đăng nhập hoặc mật khẩu không đúng");
             errorResponse.setUsername(loginRequest.getUsername());
-            errorResponse.setFullName(null);
-            errorResponse.setAvatar(null);
-            errorResponse.setShortUserId(null);
             return ResponseEntity.status(401).body(errorResponse);
         }
     }
@@ -54,7 +50,7 @@ public class AuthController {
             UserResponse userResponse = authService.getCurrentUser(username);
             return ResponseEntity.ok(userResponse);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(404).body(new UserResponse("Không tìm thấy người dùng: " + e.getMessage()));
         }
     }
 
@@ -64,12 +60,12 @@ public class AuthController {
             @RequestParam(value = "address", required = false) String address,
             @RequestParam(value = "fullName", required = false) String fullName,
             @RequestParam(value = "avatar", required = false) String avatar,
-            @RequestParam("username") String username) { // Thêm username từ request
+            @RequestParam("username") String username) {
         try {
             UserResponse userResponse = authService.updateUser(username, phone, address, fullName, avatar);
             return ResponseEntity.ok(userResponse);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body(null);
+            return ResponseEntity.status(404).body(new UserResponse("Không tìm thấy người dùng: " + e.getMessage()));
         }
     }
 }

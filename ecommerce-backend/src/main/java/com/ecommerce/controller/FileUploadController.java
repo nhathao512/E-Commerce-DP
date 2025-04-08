@@ -17,23 +17,23 @@ public class FileUploadController {
     private static final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 
     @Autowired
-    private AuthService authService; // Tiêm AuthService
+    private AuthService authService;
 
     @PostMapping("/avatar")
-    public ResponseEntity<String> uploadAvatar(
+    public ResponseEntity<UserResponse> uploadAvatar(
             @RequestParam("file") MultipartFile file,
             @RequestParam("username") String username) {
         try {
             // Kiểm tra file
             if (file.isEmpty()) {
-                return ResponseEntity.badRequest().body("File is empty");
+                return ResponseEntity.badRequest().body(new UserResponse("Tệp trống"));
             }
             if (file.getSize() > 10 * 1024 * 1024) { // > 10MB
-                return ResponseEntity.status(413).body("File size exceeds 10MB");
+                return ResponseEntity.status(413).body(new UserResponse("Kích thước tệp vượt quá 10MB"));
             }
             String contentType = file.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
-                return ResponseEntity.status(415).body("File must be an image");
+                return ResponseEntity.status(415).body(new UserResponse("Tệp phải là hình ảnh"));
             }
 
             // Tạo thư mục avatars nếu chưa tồn tại
@@ -43,22 +43,34 @@ public class FileUploadController {
                 directory.mkdirs();
             }
 
+            // Lấy thông tin người dùng hiện tại để kiểm tra avatar cũ
+            UserResponse currentUser = authService.getCurrentUser(username);
+            String oldAvatar = currentUser.getAvatar();
+            if (oldAvatar != null && !oldAvatar.equals("/api/images/avatars/default-avatar.png")) {
+                // Xóa ảnh cũ nếu không phải ảnh mặc định
+                String oldFilePath = UPLOAD_DIR + "avatars/" + oldAvatar.substring(oldAvatar.lastIndexOf("/") + 1);
+                File oldFile = new File(oldFilePath);
+                if (oldFile.exists()) {
+                    oldFile.delete();
+                }
+            }
+
             // Lưu file với timestamp
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             File destinationFile = new File(avatarDir + fileName);
             file.transferTo(destinationFile);
 
-            // Tạo URL ảnh mới
-            String fileUrl = "/images/avatars/" + fileName;
+            // Tạo URL ảnh mới với tiền tố /api/
+            String fileUrl = "/api/images/avatars/" + fileName;
 
-            // Cập nhật avatar trong MongoDB qua AuthService
-            authService.updateUser(username, null, null, null, fileUrl);
+            // Cập nhật avatar trong MongoDB qua AuthService và lấy thông tin người dùng mới nhất
+            UserResponse updatedUser = authService.updateUser(username, null, null, null, fileUrl);
 
-            return ResponseEntity.ok(fileUrl);
+            return ResponseEntity.ok(updatedUser);
         } catch (IOException e) {
-            return ResponseEntity.status(500).body("Failed to upload avatar: " + e.getMessage());
+            return ResponseEntity.status(500).body(new UserResponse("Không thể tải ảnh đại diện: " + e.getMessage()));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body("User not found: " + e.getMessage());
+            return ResponseEntity.status(404).body(new UserResponse("Không tìm thấy người dùng: " + e.getMessage()));
         }
     }
 
@@ -67,14 +79,14 @@ public class FileUploadController {
         try {
             // Kiểm tra file
             if (file.isEmpty()) {
-                return ResponseEntity.badRequest().body("File is empty");
+                return ResponseEntity.badRequest().body("Tệp trống");
             }
             if (file.getSize() > 10 * 1024 * 1024) { // > 10MB
-                return ResponseEntity.status(413).body("File size exceeds 10MB");
+                return ResponseEntity.status(413).body("Kích thước tệp vượt quá 10MB");
             }
             String contentType = file.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
-                return ResponseEntity.status(415).body("File must be an image");
+                return ResponseEntity.status(415).body("Tệp phải là hình ảnh");
             }
 
             // Tạo thư mục products nếu chưa tồn tại
@@ -89,11 +101,11 @@ public class FileUploadController {
             File destinationFile = new File(productDir + fileName);
             file.transferTo(destinationFile);
 
-            // Trả về URL
-            String fileUrl = "/uploads/products/" + fileName;
+            // Trả về URL với tiền tố /api/
+            String fileUrl = "/api/images/products/" + fileName;
             return ResponseEntity.ok(fileUrl);
         } catch (IOException e) {
-            return ResponseEntity.status(500).body("Failed to upload product image: " + e.getMessage());
+            return ResponseEntity.status(500).body("Không thể tải ảnh sản phẩm: " + e.getMessage());
         }
     }
 }
