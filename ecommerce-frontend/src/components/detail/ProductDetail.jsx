@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { getProductById, addToCart } from "../../services/api";
 import ReviewForm from "../review/ReviewForm";
 import styles from "./ProductDetail.module.css";
 import notFound from "../../assets/productnotfound.png";
+import { AuthContext } from "../../context/AuthContext";
 
 function ProductDetail() {
   const { id } = useParams();
@@ -13,12 +14,13 @@ function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [showLoginPopup, setShowLoginPopup] = useState(false); // State cho popup
+  const { isAuthenticated } = useContext(AuthContext);
   const API_URL = "http://localhost:8080/api";
 
   // Giả lập hàm kiểm tra trạng thái đăng nhập (thay bằng logic thực tế của bạn)
   const isLoggedIn = () => {
     // Ví dụ: Kiểm tra token trong localStorage
-    return !!localStorage.getItem("authToken"); // Trả về true nếu có token, false nếu không
+    return isAuthenticated; // Trả về true nếu có token, false nếu không
   };
 
   useEffect(() => {

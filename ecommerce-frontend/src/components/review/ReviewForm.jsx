@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { addReview, getReviews } from "../../services/api";
 import styles from "./ReviewForm.module.css";
 import { FaExclamationTriangle } from "react-icons/fa"; // Import icon alert
+import { AuthContext } from "../../context/AuthContext";
 
 function ReviewForm({ productCode }) {
   const [reviews, setReviews] = useState([]);
@@ -9,10 +10,11 @@ function ReviewForm({ productCode }) {
   const [rating, setRating] = useState(0);
   const [showLoginPopup, setShowLoginPopup] = useState(false); // State cho popup
   const shortUserId = localStorage.getItem("shortUserId") || "anonymous";
+  const { isAuthenticated } = useContext(AuthContext);
 
   // Giả lập hàm kiểm tra trạng thái đăng nhập
   const isLoggedIn = () => {
-    return !!localStorage.getItem("authToken"); // True nếu đã đăng nhập
+    return isAuthenticated; // True nếu đã đăng nhập
   };
 
   useEffect(() => {

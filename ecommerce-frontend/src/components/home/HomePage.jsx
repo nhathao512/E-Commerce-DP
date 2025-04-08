@@ -29,7 +29,6 @@ function HomePage() {
 
         const categoryResponse = await getAllCategories();
         setCategories(categoryResponse.data);
-        console.log(categoryResponse.data);
         setLoading(false);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);
