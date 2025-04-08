@@ -15,9 +15,13 @@
   
   .image {
     width: 100%;
-    height: 200px; /* Lấy từ file ban đầu */
-    object-fit: cover;
-    transition: transform 0.5s ease;
+    height: 220px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #fff; /* Nền trắng cho khoảng trống nếu dùng contain */
   }
   
   .card:hover .image {

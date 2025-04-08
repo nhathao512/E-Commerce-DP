@@ -24,3 +24,4 @@ export const processPayment = (method) => API.post("/payment", { method });
 export const addReview = (data) => API.post("/reviews", data);
 export const getReviews = (productCode) =>
   API.get(`/reviews/product/${productCode}`);
+export const getAllCategories = () => API.get("/categories");

@@ -3,11 +3,13 @@ import { useLocation } from "react-router-dom";
 import ProductItem from "./ProductItem";
 import styles from "./ProductList.module.css";
 import { FaFilter, FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { getProducts } from "../../services/api";
+import { getProducts, getAllCategories } from "../../services/api"; // Thêm getAllCategories
+import notFound from "../../assets/productnotfound.png";
 
 function ProductList() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [categories, setCategories] = useState([]); // Thêm state cho categories
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Tất cả");
   const [isLoading, setIsLoading] = useState(true);
@@ -15,25 +17,26 @@ function ProductList() {
   const productsPerPage = 8;
   const location = useLocation();
 
-  // Lấy danh sách sản phẩm từ API khi component mount
+  // Fetch danh sách sản phẩm và categories từ API khi component mount
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
         setIsLoading(true);
-        const response = await getProducts();
-        setProducts(response.data);
-        setFilteredProducts(response.data);
+        const productResponse = await getProducts();
+        setProducts(productResponse.data);
+        setFilteredProducts(productResponse.data);
+
+        const categoryResponse = await getAllCategories();
+        // Thêm "Tất cả" vào danh sách categories từ API
+        setCategories([{ id: "Tất cả", name: "Tất cả" }, ...categoryResponse.data]);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchProducts();
+    fetchData();
   }, []);
-
-  // Lấy danh sách danh mục từ sản phẩm
-  const categories = ["Tất cả", ...new Set(products.map((p) => p.categoryId))];
 
   // Lọc sản phẩm dựa trên danh mục và từ khóa tìm kiếm
   useEffect(() => {
@@ -81,8 +84,8 @@ function ProductList() {
     setShowFilter(!showFilter);
   };
 
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategory(categoryId); // Lưu category.id thay vì name
     setShowFilter(false);
   };
 
@@ -101,13 +104,13 @@ function ProductList() {
           >
             {categories.map((category) => (
               <button
-                key={category}
+                key={category.id}
                 className={`${styles.filterItem} ${
-                  selectedCategory === category ? styles.active : ""
+                  selectedCategory === category.id ? styles.active : ""
                 }`}
-                onClick={() => handleCategorySelect(category)}
+                onClick={() => handleCategorySelect(category.id)}
               >
-                {category}
+                {category.name} {/* Hiển thị tên category */}
               </button>
             ))}
           </div>
@@ -116,7 +119,7 @@ function ProductList() {
       {isLoading ? (
         <div className={styles.loading}>Đang tải sản phẩm...</div>
       ) : filteredProducts.length === 0 ? (
-        <div className={styles.noResults}>Không tìm thấy sản phẩm nào.</div>
+        <img className={styles.notFound} src={notFound}></img>
       ) : (
         <>
           <div className={styles.productGrid}>

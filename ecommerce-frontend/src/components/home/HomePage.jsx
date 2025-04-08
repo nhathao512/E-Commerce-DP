@@ -1,54 +1,65 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Thêm import này
+import { useNavigate } from "react-router-dom";
 import styles from "./HomePage.module.css";
+import { getProducts, getAllCategories } from "../../services/api";
+import slider1 from "../../assets/slider1.jpg";
+import slider2 from "../../assets/slider2.jpg";
+import slider3 from "../../assets/slider3.jpg";
+import notFound from "../../assets/productnotfound.png";
 
 function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null); // Lưu category.id
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const productsPerPage = 4;
-  const navigate = useNavigate(); // Khai báo useNavigate
+  const navigate = useNavigate();
+  const API_URL = "http://localhost:8080/api";
 
-  const categories = [
-    { name: "Điện tử", icon: "📱" },
-    { name: "Thời trang", icon: "👕" },
-    { name: "Gia dụng", icon: "🏠" },
-    { name: "Sách", icon: "📚" }
-  ];
+  const sliderImages = [slider1, slider2, slider3];
 
-  const allProducts = [
-    { id: 1, name: "iPhone 14", views: 1200, image: "https://placehold.co/600x400", category: "Điện tử" },
-    { id: 2, name: "Áo thun Unisex", views: 950, image: "https://placehold.co/600x400", category: "Thời trang" },
-    { id: 3, name: "Máy xay sinh tố", views: 870, image: "https://placehold.co/600x400", category: "Gia dụng" },
-    { id: 4, name: "Sách Harry Potter", views: 780, image: "https://placehold.co/600x400", category: "Sách" },
-    { id: 5, name: "Tai nghe Bluetooth", views: 650, image: "https://placehold.co/600x400", category: "Điện tử" },
-    { id: 6, name: "Quần jeans", views: 620, image: "https://placehold.co/600x400", category: "Thời trang" }
-  ];
+  // Fetch danh sách sản phẩm và categories từ API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const productResponse = await getProducts();
+        setProducts(productResponse.data);
 
-  const sliderImages = [
-    "https://placehold.co/600x400/FF6B6B/FFFFFF?text=Slide+1",
-    "https://placehold.co/600x400/4ECDC4/FFFFFF?text=Slide+2",
-    "https://placehold.co/600x400/45B7D1/FFFFFF?text=Slide+3"
-  ];
+        const categoryResponse = await getAllCategories();
+        setCategories(categoryResponse.data);
+        console.log(categoryResponse.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Lỗi khi lấy dữ liệu:", error);
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const filteredProducts = selectedCategory 
-    ? allProducts.filter(product => product.category === selectedCategory)
-    : allProducts;
+  // Lọc sản phẩm dựa trên category.id
+  const filteredProducts = selectedCategory
+    ? products.filter((product) => product.categoryId === selectedCategory)
+    : products;
 
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const handlePrevSlide = () => {
-    setCurrentSlide(prev => (prev === 0 ? sliderImages.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? sliderImages.length - 1 : prev - 1));
   };
 
   const handleNextSlide = () => {
-    setCurrentSlide(prev => (prev === sliderImages.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev === sliderImages.length - 1 ? 0 : prev + 1));
   };
 
-  // Sửa hàm handleProductDetail để nhận product làm tham số
   const handleProductDetail = (product) => {
     navigate(`/product/${product.id}`);
   };
@@ -57,36 +68,50 @@ function HomePage() {
     const autoSlide = setInterval(() => {
       handleNextSlide();
     }, 5000);
-
     return () => clearInterval(autoSlide);
   }, [currentSlide]);
+
+  if (loading) {
+    return <div className={styles.loadingWrapper}>Đang tải...</div>;
+  }
 
   return (
     <div className={styles.homeContainer}>
       <div className={styles.topSpacing}></div>
 
       <div className={styles.imageSlider}>
-        <button className={styles.sliderArrow} onClick={handlePrevSlide}>❮</button>
-        <div className={styles.sliderWrapper} style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+        <button className={styles.sliderArrow} onClick={handlePrevSlide}>
+          ❮
+        </button>
+        <div
+          className={styles.sliderWrapper}
+          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+        >
           {sliderImages.map((img, index) => (
-            <img 
-              key={index} 
-              src={img} 
-              alt={`Slide ${index + 1}`} 
+            <img
+              key={index}
+              src={img}
+              alt={`Slide ${index + 1}`}
               className={styles.sliderImage}
             />
           ))}
         </div>
-        <button className={styles.sliderArrow} onClick={handleNextSlide}>❯</button>
+        <button className={styles.sliderArrow} onClick={handleNextSlide}>
+          ❯
+        </button>
       </div>
 
       <div className={styles.categoriesBar}>
-        {categories.map((category, index) => (
-          <div 
-            key={index} 
-            className={`${styles.categoryItem} ${selectedCategory === category.name ? styles.activeCategory : ''}`}
+        {categories.map((category) => (
+          <div
+            key={category.id}
+            className={`${styles.categoryItem} ${
+              selectedCategory === category.id ? styles.activeCategory : ""
+            }`}
             onClick={() => {
-              setSelectedCategory(category.name === selectedCategory ? null : category.name);
+              setSelectedCategory(
+                category.id === selectedCategory ? null : category.id
+              );
               setCurrentPage(1);
             }}
           >
@@ -97,41 +122,58 @@ function HomePage() {
       </div>
 
       <div className={styles.featuredProducts}>
-        <h2 className={styles.sectionTitle}>Sản phẩm nổi bật</h2>
         <div className={styles.productsContainer}>
-          <div className={styles.productsGrid}>
-            {currentProducts.map(product => (
-              <div 
-                key={product.id} 
-                className={styles.productItem} 
-                onClick={() => handleProductDetail(product)} // Truyền product vào hàm
-              >
-                <img src={product.image} alt={product.name} className={styles.productImage} />
-                <div className={styles.productInfo}>
-                  <span className={styles.productName}>{product.name}</span>
-                  <span className={styles.views}> ({product.views} lượt xem)</span>
-                </div>
+          {filteredProducts.length === 0 ? (
+            <img className={styles.notFound} src={notFound}></img>
+          ) : (
+            <>
+              <h2 className={styles.sectionTitle}>Sản phẩm nổi bật</h2>
+              <div className={styles.productsGrid}>
+                {currentProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className={styles.productItem}
+                    onClick={() => handleProductDetail(product)}
+                  >
+                    <img
+                      src={
+                        product.images && product.images.length > 0
+                          ? `${API_URL}/images/${product.images[0]}`
+                          : "https://placehold.co/600x400"
+                      }
+                      alt={product.name}
+                      className={styles.productImage}
+                    />
+                    <div className={styles.productInfo}>
+                      <span className={styles.productName}>{product.name}</span>
+                      <span className={styles.views}>
+                        {product.price.toLocaleString("vi-VN")} VNĐ
+                      </span>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.pagination}>
-          <button 
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className={styles.paginationButton}
-          >
-            Trước
-          </button>
-          <span>Trang {currentPage} / {totalPages}</span>
-          <button 
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages}
-            className={styles.paginationButton}
-          >
-            Sau
-          </button>
+              <div className={styles.pagination}>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={styles.paginationButton}
+                >
+                  Trước
+                </button>
+                <span>
+                  Trang {currentPage} / {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className={styles.paginationButton}
+                >
+                  Sau
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

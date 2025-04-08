@@ -14,8 +14,8 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping
-    public Category addCategory(@RequestParam String name) {
-        return categoryService.addCategory(name);
+    public Category addCategory(@RequestParam String name, @RequestParam String icon) {
+        return categoryService.addCategory(name, icon);
     }
 
     @GetMapping
