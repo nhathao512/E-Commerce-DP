@@ -13,7 +13,6 @@ import ReviewForm from "./components/review/ReviewForm";
 import ReviewList from "./components/review/ReviewList";
 import HomePage from "./components/home/HomePage";
 import ProductDetail from "./components/detail/ProductDetail";
-<<<<<<< trung
 import AdminPage from "./components/admin/AdminPage";
 function App() {
   return (
