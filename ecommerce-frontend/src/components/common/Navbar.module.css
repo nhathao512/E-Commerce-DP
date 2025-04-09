@@ -162,6 +162,7 @@
   /* Phần trigger (Xin chào + biểu tượng user) */
   .profileTrigger {
     display: flex;
+    gap: 5px;
     align-items: center;
     padding: 8px 12px;
     cursor: pointer;
@@ -184,6 +185,13 @@
   
   .profileTrigger:hover .userIcon {
     color: #090909af;
+  }
+
+  .userAvatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
   }
   
   /* Text "Xin chào, Hồ Việt" */

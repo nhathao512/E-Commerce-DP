@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import logo from "../../assets/logo.png";
+import defaultAvatar from "../../assets/defaultAvatar.jpg";
 import { AuthContext } from "../../context/AuthContext";
 
 function Navbar() {
@@ -9,6 +10,11 @@ function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
+
+  const backendBaseUrl = "http://localhost:8080";
+  const avatarUrl = user?.avatar
+    ? `${backendBaseUrl}${user.avatar}?t=${Date.now()}`
+    : null;
 
   const updateCartCount = () => {
     const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
@@ -105,18 +111,27 @@ function Navbar() {
         {isAuthenticated ? (
           <div className={styles.navBarProfile}>
             <div className={styles.profileTrigger}>
-              <svg
-                className={styles.userIcon}
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Avatar"
+                  className={styles.userAvatar} // Thêm class CSS cho avatar
+                  onError={(e) => {
+                    console.log("Avatar load error:", e);
+                    e.target.style.display = "none"; // Ẩn ảnh nếu lỗi
+                  }}
+                />
+              ) : (
+                <img
+                  src={defaultAvatar}
+                  alt="Avatar"
+                  className={styles.userAvatar} // Thêm class CSS cho avatar
+                  onError={(e) => {
+                    console.log("Avatar load error:", e);
+                    e.target.style.display = "none"; // Ẩn ảnh nếu lỗi
+                  }}
+                />
+              )}
               <span>{user.fullName}</span>
             </div>
             <ul className={styles.navProfileDropdown}>
