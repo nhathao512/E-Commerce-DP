@@ -2,6 +2,7 @@ package com.ecommerce.service;
 
 import com.ecommerce.model.Cart;
 import com.ecommerce.model.CartItem;
+import com.ecommerce.model.ClothingProduct;
 import com.ecommerce.model.Product;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +17,8 @@ public class CartService {
         cart.addItem(product, 1);
     }
 
-    public List<Product> getCartItems() {
-        return cart.getItems().stream()
-                .map(CartItem::getProduct)
-                .collect(Collectors.toList());
+    public List<CartItem> getCartItems() {
+        return cart.getItems();
     }
 
     public Cart getCart() {

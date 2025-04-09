@@ -1,5 +1,6 @@
 package com.ecommerce.service;
 
+import com.ecommerce.model.CartItem;
 import com.ecommerce.model.Order;
 import com.ecommerce.model.Product;
 import com.ecommerce.repository.OrderRepository;
@@ -21,7 +22,7 @@ public class OrderService {
     private CartService cartService;
 
     public Order createOrder(String userId, String paymentMethod) {
-        List<Product> items = cartService.getCartItems();
+        List<CartItem> items = cartService.getCartItems();
         if (items.isEmpty()) {
             throw new IllegalStateException("Cart is empty");
         }

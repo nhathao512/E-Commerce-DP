@@ -1,12 +1,12 @@
 package com.ecommerce.controller;
 
-import com.ecommerce.model.Cart;
-import com.ecommerce.model.Product;
+import com.ecommerce.model.*;
 import com.ecommerce.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Book;
 import java.util.List;
 
 @RestController
@@ -17,13 +17,22 @@ public class CartController {
 
     @PostMapping("/add")
     public ResponseEntity<Void> addToCart(@RequestBody Product product) {
-        cartService.addToCart(product);
+        if(product instanceof ClothingProduct){
+            cartService.addToCart((ClothingProduct) product);
+        } else if(product instanceof ElectronicsProduct){
+            cartService.addToCart((ElectronicsProduct) product);
+        } else if(product instanceof  BookProduct){
+            cartService.addToCart((BookProduct) product);
+        } else if(product instanceof HouseholdProduct){
+            cartService.addToCart((HouseholdProduct) product);
+        }
+
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getCartItems() {
-        List<Product> items = cartService.getCartItems();
+    public ResponseEntity<List<CartItem>> getCartItems() {
+        List<CartItem> items = cartService.getCartItems();
         return ResponseEntity.ok(items);
     }
 
