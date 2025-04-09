@@ -1,33 +1,50 @@
 import React, { useState, useEffect } from "react";
+import { getCart } from "../../services/api";
 import CartItem from "./CartItem";
 import styles from "./Cart.module.css";
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
-
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const API_URL = "http://localhost:8080/api";
   useEffect(() => {
-    const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
-    if (storedCartItems && storedCartItems.length > 0) {
-      setCartItems(storedCartItems);
-    } else {
-      const fakeData = [
-        { id: 1, productName: "Áo thun", quantity: 2, price: 1000 },
-        { id: 2, productName: "Quần jeans", quantity: 1, price: 1000 },
-        { id: 3, productName: "Giày thể thao", quantity: 1, price: 1000 },
-        { id: 4, productName: "Giày thể thao", quantity: 1, price: 1000 },
-        { id: 5, productName: "Giày thể thao", quantity: 1, price: 1000 },
-        { id: 6, productName: "Giày thể thao", quantity: 1, price: 1000 },
-      ];
-      setCartItems(fakeData);
-      localStorage.setItem("cartItems", JSON.stringify(fakeData));
-    }
+    const fetchCartItems = async () => {
+      try {
+        setLoading(true);
+        const response = await getCart();
+        console.log("API response:", response.data);
+        const cartData = response.data;
+   // Thay bằng URL thực tế
+        const mappedCartData = cartData.map((item) => ({
+          id: item.product.id,
+          productName: item.product.name,
+          imageUrl: item.product.images && item.product.images.length > 0 ? `${API_URL}/images/${item.product.images[0]}` : null,
+          price: item.product.price,
+          quantity: item.quantity,
+        }));
+  
+        setCartItems(mappedCartData);
+        localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
+      } catch (err) {
+        setError("Không thể tải dữ liệu giỏ hàng. Vui lòng thử lại sau!");
+        console.error("Error fetching cart:", err);
+        const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
+        if (storedCartItems && storedCartItems.length > 0) {
+          setCartItems(storedCartItems);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchCartItems();
   }, []);
 
-  // Cập nhật localStorage và phát sự kiện khi cartItems thay đổi
   useEffect(() => {
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    window.dispatchEvent(new Event("cartUpdated")); // Phát sự kiện tùy chỉnh
+    window.dispatchEvent(new Event("cartUpdated"));
   }, [cartItems]);
 
   const selectedCartItems = cartItems.filter((item) =>
@@ -61,6 +78,14 @@ function Cart() {
     }
     console.log("Processing payment for items:", selectedItems);
   };
+
+  if (loading) {
+    return <div className={styles.container}>Đang tải giỏ hàng...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.container}>{error}</div>;
+  }
 
   return (
     <div className={styles.container}>

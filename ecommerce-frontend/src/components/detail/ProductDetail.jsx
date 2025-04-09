@@ -99,7 +99,7 @@ function ProductDetail() {
 
   const sizes = product.extraAttribute
     ? product.extraAttribute.split(",").map((s) => s.trim())
-    : ["S", "M", "L", "XL"];
+    : ["Hiện tại chưa update"];
 
   return (
     <div className={styles.container}>

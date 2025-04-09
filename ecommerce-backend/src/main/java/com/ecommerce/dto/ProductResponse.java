@@ -1,10 +1,6 @@
 package com.ecommerce.dto;
 
-import com.ecommerce.model.ClothingProduct;
-import com.ecommerce.model.ElectronicsProduct;
-import com.ecommerce.model.Product;
-import lombok.Getter;
-import lombok.Setter;
+import com.ecommerce.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +15,7 @@ public class ProductResponse {
     private String categoryId;
     private int quantity;
     private String extraAttribute;
+    private String _class;
 
     public ProductResponse(Product product) {
         this.id = product.getId();
@@ -29,11 +26,16 @@ public class ProductResponse {
         this.images = product.getImages();
         this.categoryId = product.getCategoryId();
         this.quantity = product.getQuantity();
+        this._class = product.getClass().getName();
 
         if (product instanceof ElectronicsProduct) {
             this.extraAttribute = ((ElectronicsProduct) product).getWarranty();
         } else if (product instanceof ClothingProduct) {
             this.extraAttribute = ((ClothingProduct) product).getSize();
+        } else if (product instanceof HouseholdProduct) {
+            this.extraAttribute = ((HouseholdProduct) product).getBrand();
+        } else if (product instanceof BookProduct) {
+            this.extraAttribute = ((BookProduct) product).getAuthor();
         }
     }
 
@@ -100,6 +102,10 @@ public class ProductResponse {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
+    public String get_class() { return _class; }
+
+    public void set_class(String _class) { this._class = _class; }
 
     public String getExtraAttribute() {
         return extraAttribute;

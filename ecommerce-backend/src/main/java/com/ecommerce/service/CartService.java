@@ -13,8 +13,17 @@ import java.util.stream.Collectors;
 public class CartService {
     private final Cart cart = Cart.getInstance();
 
-    public void addToCart(Product product) {
-        cart.addItem(product, 1);
+    public void addToCart(Product product, int quantity) {
+        cart.addItem(product, quantity);
+    }
+
+    public boolean isProductInCart(String id){
+        for(CartItem item : cart.getItems()){
+            if(item.getProduct().getId().equals(id)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<CartItem> getCartItems() {

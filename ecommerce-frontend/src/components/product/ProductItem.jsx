@@ -9,10 +9,12 @@ function ProductItem({ product }) {
 
   const handleAddToCart = async () => {
     try {
-      await addToCart(product.id, 1);
+      await addToCart(product, 1);
+      console.log(product);
       alert("Đã thêm vào giỏ hàng!");
     } catch (error) {
       console.error("Error adding to cart:", error.response || error);
+      console.log(product);
       alert("Thêm vào giỏ hàng thất bại!");
     }
   };
