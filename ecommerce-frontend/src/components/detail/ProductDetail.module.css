@@ -42,11 +42,15 @@
 .mainImage {
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .mainImage img {
-  width: 100%;
-  height: auto;
+  width: auto;
+  height: 500px;
+  
   object-fit: cover;
   transition: transform 0.3s ease;
 }
@@ -267,6 +271,10 @@
   font-size: 16px;
   color: #333;
   transition: all 0.3s ease;
+}
+
+.quantityControl button:hover {
+  background: #f9f9f9;
 }
 
 .quantityControl span {
