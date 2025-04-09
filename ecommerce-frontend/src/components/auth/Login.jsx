@@ -1,43 +1,60 @@
-// Login.jsx
 import React, { useState, useContext } from "react";
-import { loginUser } from "../../services/auth";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa"; // Thêm FaArrowLeft
+import { FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa";
+import Popup from "../common/Popup";
 import styles from "./Login.module.css";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [popup, setPopup] = useState(null);
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await loginUser({ username, password });
-      login(response.data, username);
-      alert("Đăng nhập thành công!");
-      navigate("/products");
-    } catch {
-      alert("Đăng nhập không thành công!");
+      await login(username, password);
+      setPopup({ message: "Đăng nhập thành công!", type: "success" });
+      setTimeout(() => {
+        setPopup(null);
+        navigate("/");
+      }, 2000);
+    } catch (error) {
+      // Xử lý lỗi để đảm bảo message là chuỗi
+      let errorMsg = "Đăng nhập không thành công! Vui lòng kiểm tra lại.";
+      if (error.response && error.response.data) {
+        if (typeof error.response.data === "string") {
+          errorMsg = error.response.data;
+        } else if (error.response.data.error) {
+          errorMsg = error.response.data.error; // Lấy trường error nếu có
+        } else {
+          errorMsg = JSON.stringify(error.response.data); // Chuyển object thành chuỗi nếu cần
+        }
+      }
+      setPopup({ message: errorMsg, type: "error" });
     }
   };
 
   const handleSocialLogin = (platform) => {
-    alert(`Đăng nhập bằng ${platform} đang được phát triển!`);
+    setPopup({
+      message: `Đăng nhập bằng ${platform} đang được phát triển!`,
+      type: "error",
+    });
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
+  const closePopup = () => setPopup(null);
+
   return (
     <div className={styles.container}>
       <div className={styles.backgroundOverlay}></div>
       <div className={styles.formWrapper}>
-        {/* Nút Back to Home */}
         <button
           className={styles.backButton}
           onClick={() => navigate("/")}
@@ -45,7 +62,6 @@ function Login() {
         >
           <FaArrowLeft />
         </button>
-        
         <h2 className={styles.title}>Welcome back!</h2>
         <h3>Login to continue</h3>
         <form className={styles.form} onSubmit={handleSubmit}>
@@ -57,7 +73,6 @@ function Login() {
             className={styles.input}
             required
           />
-          
           <div className={styles.passwordContainer}>
             <input
               type={showPassword ? "text" : "password"}
@@ -77,6 +92,7 @@ function Login() {
           </div>
           <button
             className={styles.forgotPassword}
+            type="button"
             onClick={() => navigate("/forgot-password")}
           >
             Quên mật khẩu?
@@ -118,6 +134,9 @@ function Login() {
           </button>
         </div>
       </div>
+      {popup && (
+        <Popup message={popup.message} type={popup.type} onClose={closePopup} />
+      )}
     </div>
   );
 }

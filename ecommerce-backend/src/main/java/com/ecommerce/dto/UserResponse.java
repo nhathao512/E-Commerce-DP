@@ -1,19 +1,142 @@
 package com.ecommerce.dto;
 
 import com.ecommerce.model.User;
-import lombok.Getter;
-import lombok.Setter;
 
-@Setter
-@Getter
 public class UserResponse {
-    // Getters và Setters
     private String id;
+    private String shortUserId;
     private String username;
+    private String fullName;
+    private String avatar;
+    private String phone;
+    private String address;
+    private String error; // Thêm trường error để chứa thông báo lỗi
 
+    // Constructor nhận một User (dùng khi trả về thông tin người dùng)
     public UserResponse(User user) {
         this.id = user.getId();
+        this.shortUserId = user.getShortUserId();
         this.username = user.getUsername();
+        this.fullName = user.getFullName();
+        this.avatar = user.getAvatar();
+        this.phone = user.getPhone();
+        this.address = user.getAddress();
+        this.error = null; // Không có lỗi
     }
 
+    // Constructor rỗng (dùng khi cần tạo đối tượng rỗng)
+    public UserResponse() {
+        this.id = null;
+        this.shortUserId = null;
+        this.username = null;
+        this.fullName = null;
+        this.avatar = null;
+        this.phone = null;
+        this.address = null;
+        this.error = null;
+    }
+
+    // Constructor với thông báo lỗi (dùng khi trả về lỗi)
+    public UserResponse(String error) {
+        this.id = null;
+        this.shortUserId = null;
+        this.username = null;
+        this.fullName = null;
+        this.avatar = null;
+        this.phone = null;
+        this.address = null;
+        this.error = error;
+    }
+
+    // Constructor đầy đủ với tất cả các tham số (dùng khi cần tạo đối tượng thủ công)
+    public UserResponse(String id, String shortUserId, String username, String fullName, String avatar, String phone, String address) {
+        this.id = id;
+        this.shortUserId = shortUserId;
+        this.username = username;
+        this.fullName = fullName;
+        this.avatar = avatar;
+        this.phone = phone;
+        this.address = address;
+        this.error = null;
+    }
+
+    // Getters và Setters
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getShortUserId() {
+        return shortUserId;
+    }
+
+    public void setShortUserId(String shortUserId) {
+        this.shortUserId = shortUserId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    // Phương thức toString để hỗ trợ debug
+    @Override
+    public String toString() {
+        return "UserResponse{" +
+                "id='" + id + '\'' +
+                ", shortUserId='" + shortUserId + '\'' +
+                ", username='" + username + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", error='" + error + '\'' +
+                '}';
+    }
 }

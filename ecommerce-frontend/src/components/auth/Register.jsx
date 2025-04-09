@@ -1,41 +1,73 @@
-import React, { useState } from "react";
-import { registerUser } from "../../services/auth";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
-import { FaEye, FaEyeSlash, FaUser, FaLock, FaPhone, FaMapMarkerAlt } from "react-icons/fa";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaUser,
+  FaLock,
+  FaPhone,
+  FaMapMarkerAlt,
+} from "react-icons/fa";
+import Popup from "../common/Popup";
 import styles from "./Register.module.css";
 
 function Register() {
   const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [popup, setPopup] = useState(null);
+  const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert("Mật khẩu và mật khẩu xác nhận không khớp!");
+      setPopup({
+        message: "Mật khẩu và mật khẩu xác nhận không khớp!",
+        type: "error",
+      });
       return;
     }
     try {
-      await registerUser({ username, password, phone, address });
-      alert("Đăng ký thành công!");
-      navigate("/login");
-    } catch {
-      alert("Đăng ký không thành công!");
+      await register(username, password, phone, address, fullName, ""); // Để avatar rỗng, backend sẽ gán mặc định
+      setPopup({ message: "Đăng ký thành công!", type: "success" });
+      setTimeout(() => {
+        setPopup(null);
+        navigate("/login");
+      }, 2000);
+    } catch (error) {
+      const errorMsg =
+        error.response?.data ||
+        "Đăng ký không thành công! Vui lòng kiểm tra lại.";
+      setPopup({ message: errorMsg, type: "error" });
     }
   };
+
+  const closePopup = () => setPopup(null);
 
   return (
     <div className={styles.container}>
       <div className={styles.backgroundOverlay}></div>
       <div className={styles.formWrapper}>
-
         <h2 className={styles.title}>Register</h2>
         <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputWrapper}>
+            <FaUser className={styles.icon} />
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Họ và tên"
+              required
+              className={styles.input}
+            />
+          </div>
           <div className={styles.inputWrapper}>
             <FaUser className={styles.icon} />
             <input
@@ -65,7 +97,6 @@ function Register() {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
-
           <div className={styles.inputWrapper}>
             <FaLock className={styles.icon} />
             <input
@@ -83,7 +114,6 @@ function Register() {
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </div>
-
           <div className={styles.inputWrapper}>
             <FaPhone className={styles.icon} />
             <input
@@ -95,7 +125,6 @@ function Register() {
               className={styles.input}
             />
           </div>
-
           <div className={styles.inputWrapper}>
             <FaMapMarkerAlt className={styles.icon} />
             <input
@@ -107,16 +136,20 @@ function Register() {
               className={styles.input}
             />
           </div>
-
           <button type="submit" className={styles.submitButton}>
             Đăng ký
           </button>
         </form>
         <div className={styles.loginContainer}>
           <p>Bạn đã có tài khoản?</p>
-          <Link to="/login" className={styles.loginButton}>Đăng nhập</Link>
+          <Link to="/login" className={styles.loginButton}>
+            Đăng nhập
+          </Link>
         </div>
       </div>
+      {popup && (
+        <Popup message={popup.message} type={popup.type} onClose={closePopup} />
+      )}
     </div>
   );
 }

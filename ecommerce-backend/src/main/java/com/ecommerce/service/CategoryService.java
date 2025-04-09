@@ -11,8 +11,8 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public Category addCategory(String name) {
-        return categoryRepository.save(new Category(name));
+    public Category addCategory(String name, String icon) {
+        return categoryRepository.save(new Category(name, icon));
     }
 
     public List<Category> getAllCategories() {

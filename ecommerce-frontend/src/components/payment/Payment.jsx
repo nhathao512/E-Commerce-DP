@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { processPayment } from "../../services/api";
 import styles from "./Payment.module.css";
 import logo from "../../assets/banking.png";
+
 function Payment() {
   const [method, setMethod] = useState("cod");
   const [formData, setFormData] = useState({
@@ -13,6 +14,33 @@ function Payment() {
     cardExpiry: "",
     cardCVC: ""
   });
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+  const [transferCode, setTransferCode] = useState("");
+
+  // Generate random transfer code when bank method is selected
+  useEffect(() => {
+    if (method === "bank") {
+      const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      setTransferCode(randomCode);
+      setTimeLeft(300); // Reset timer to 5 minutes
+    }
+  }, [method]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (method === "bank" && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [method, timeLeft]);
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -23,6 +51,7 @@ function Payment() {
     try {
       await processPayment({
         method,
+        transferCode: method === "bank" ? transferCode : undefined,
         ...formData
       });
       alert("Thanh toán thành công!");
@@ -92,13 +121,33 @@ function Payment() {
             </select>
 
             {method === "bank" && (
-              <div className={styles.bankInfo}>
-                <img src={logo}
-                  alt="Banking Info"
-                  className={styles.bankImage}
-                />
-              </div>
-            )}
+  <div className={styles.bankInfo}>
+    <img 
+      src={logo}
+      alt="Banking Info"
+      className={styles.bankImage}
+    />
+    <div className={styles.timerContainer}>
+      <span className={styles.timerText}>
+        Mã sẽ hết hạn trong vòng: {formatTime(timeLeft)}
+      </span>
+      <div className={styles.codeWrapper}>
+        <span className={styles.transferCode}>
+          Mã chuyển khoản: {transferCode}
+        </span>
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(transferCode);
+            alert("Đã sao chép mã: " + transferCode);
+          }}
+          className={styles.copyButton}
+        >
+          Copy
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
             {method === "credit" && (
               <div className={styles.creditForm}>

@@ -30,7 +30,7 @@ public class ProductController {
         try {
             Product product = productService.addProduct(request);
             return ResponseEntity.ok(ResponseObject.builder()
-                    .message("Create new product successfully")
+                    .message("Tạo sản phẩm mới thành công")
                     .status(HttpStatus.CREATED)
                     .data(new ProductResponse(product))
                     .build());
@@ -53,14 +53,14 @@ public class ProductController {
             final int MAXIMUM_IMAGES_PER_PRODUCT = 5;
             if (files.size() > MAXIMUM_IMAGES_PER_PRODUCT) {
                 return ResponseEntity.badRequest().body(ResponseObject.builder()
-                        .message("Maximum " + MAXIMUM_IMAGES_PER_PRODUCT + " images allowed per product")
+                        .message("Tối đa " + MAXIMUM_IMAGES_PER_PRODUCT + " hình ảnh được phép cho mỗi sản phẩm")
                         .status(HttpStatus.BAD_REQUEST)
                         .build());
             }
 
             if (existingProduct.getImages().size() + files.size() > MAXIMUM_IMAGES_PER_PRODUCT) {
                 return ResponseEntity.badRequest().body(ResponseObject.builder()
-                        .message("Total images exceed maximum of " + MAXIMUM_IMAGES_PER_PRODUCT)
+                        .message("Tổng số hình ảnh vượt quá tối đa " + MAXIMUM_IMAGES_PER_PRODUCT)
                         .status(HttpStatus.BAD_REQUEST)
                         .build());
             }
@@ -72,14 +72,14 @@ public class ProductController {
                 }
                 if (file.getSize() > 10 * 1024 * 1024) { // > 10MB
                     return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(ResponseObject.builder()
-                            .message("File size exceeds 10MB")
+                            .message("Kích thước tập tin vượt quá 10MB")
                             .status(HttpStatus.PAYLOAD_TOO_LARGE)
                             .build());
                 }
                 String contentType = file.getContentType();
                 if (contentType == null || !contentType.startsWith("image/")) {
                     return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(ResponseObject.builder()
-                            .message("File must be an image")
+                            .message("Tệp phải là hình ảnh")
                             .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                             .build());
                 }
@@ -92,33 +92,33 @@ public class ProductController {
             productService.updateProduct(existingProduct);
 
             return ResponseEntity.ok(ResponseObject.builder()
-                    .message("Upload images successfully")
+                    .message("Tải hình ảnh lên thành công")
                     .status(HttpStatus.OK)
                     .data(new ProductResponse(existingProduct))
                     .build());
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
-                    .message("Error uploading images: " + e.getMessage())
+                    .message("Lỗi khi tải hình ảnh lên: " + e.getMessage())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build());
         }
     }
 
     private String storeFile(MultipartFile file) throws IOException {
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        String uploadDir = System.getProperty("user.dir") + "/uploads/"; // Đường dẫn tuyệt đối tới thư mục gốc dự án
+        String uploadDir = System.getProperty("user.dir") + "/uploads/products/";
         File dir = new File(uploadDir);
         if (!dir.exists()) dir.mkdirs();
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         File destination = new File(uploadDir + fileName);
         file.transferTo(destination);
-        return fileName; // Trả về tên file để lưu vào DB
+        return "products/" + fileName; // Trả về URL đầy đủ
     }
 
     @GetMapping("/images/{imageName}")
     public ResponseEntity<?> viewImage(@PathVariable String imageName) {
         try {
-            java.nio.file.Path imagePath = Paths.get(System.getProperty("user.dir") + "/uploads/" + imageName);
+            java.nio.file.Path imagePath = Paths.get(System.getProperty("user.dir") + "/uploads/products/" + imageName);
             UrlResource resource = new UrlResource(imagePath.toUri());
 
             if (resource.exists()) {

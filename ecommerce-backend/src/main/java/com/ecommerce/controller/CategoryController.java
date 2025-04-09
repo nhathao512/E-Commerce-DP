@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping("/categories")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
     @PostMapping
-    public Category addCategory(@RequestParam String name) {
-        return categoryService.addCategory(name);
+    public Category addCategory(@RequestParam String name, @RequestParam String icon) {
+        return categoryService.addCategory(name, icon);
     }
 
     @GetMapping

@@ -21,7 +21,7 @@ server:
     context-path: /api
 
 jwt:
-  secret: abc12345678910@
+  secret: yourVeryLongSecretKeyWithAtLeast32Characters@
   expiration: 86400000
 
 logging:

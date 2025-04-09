@@ -53,8 +53,10 @@ function ProductItem({ product }) {
         </p>
         <div className={styles.priceWrapper}>
           <span className={styles.price}>
-            ${product.price ? (product.price / 1000).toFixed(2) : "0.00"}{" "}
-            {/* Chia 1000 nếu giá là VND */}
+            {product.price
+              ? product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") +
+                " VNĐ"
+              : "0.00 VNĐ"}
           </span>
         </div>
         <button

@@ -13,8 +13,12 @@ public class Category {
     @Id
     private String id;
     private String name;
+    private String icon;
 
     public Category() {}
-    public Category(String name) { this.name = name; }
+    public Category(String name, String icon) { 
+        this.name = name; 
+        this.icon = icon; 
+    }
 
 }

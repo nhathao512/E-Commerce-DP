@@ -151,6 +151,142 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
+/* Các style cũ giữ nguyên, chỉ cập nhật phần profile */
+
+/* Container của profile */
+.navBarProfile {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* Phần trigger (Xin chào + biểu tượng user) */
+  .profileTrigger {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 25px;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .profileTrigger:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+  
+  /* Biểu tượng user */
+  .userIcon {
+    margin-right: 8px;
+    color: #eceef1;
+    transition: color 0.3s ease;
+  }
+  
+  .profileTrigger:hover .userIcon {
+    color: #090909af;
+  }
+
+  .userAvatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  /* Text "Xin chào, Hồ Việt" */
+  .profileTrigger span {
+    color: #eceef1;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    transition: color 0.3s ease;
+  }
+  
+  .profileTrigger:hover span {
+    color: #090909af;
+  }
+  
+  /* Dropdown */
+  .navProfileDropdown {
+    position: absolute;
+    display: none;
+    right: 0;
+    top: 100%; /* Đặt sát ngay dưới trigger, không có khoảng cách */
+    z-index: 1;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 200px;
+    padding: 10px 0;
+    margin-top: 0; /* Loại bỏ margin-top để không có khe hở */
+  }
+  
+  /* Mũi tên giống giao diện Shopee */
+  .navProfileDropdown::before {
+    content: "";
+    position: absolute;
+    top: -8px; /* Điều chỉnh vị trí mũi tên vì không còn khoảng cách */
+    right: 20px;
+    border-left: 8px solid transparent; /* Giảm kích thước mũi tên để phù hợp */
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #fff;
+    z-index: 2;
+  }
+  
+  .navProfileDropdown::after {
+    content: "";
+    position: absolute;
+    top: -9px; /* Điều chỉnh viền mũi tên */
+    right: 20px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #ddd;
+    z-index: 1;
+  }
+  
+  .navBarProfile:hover .navProfileDropdown {
+    display: block;
+  }
+  
+  /* Các mục trong dropdown */
+  .navProfileDropdown li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .navProfileDropdown li:hover {
+    background-color: #f5f5f5;
+    color: #2563eb;
+  }
+  
+  /* Biểu tượng trong dropdown */
+  .navProfileDropdown svg {
+    width: 20px;
+    height: 20px;
+    color: #6b7280;
+    transition: color 0.3s ease;
+  }
+  
+  .navProfileDropdown li:hover svg {
+    color: #2563eb;
+  }
+  
+  /* Đường phân cách */
+  .navProfileDropdown hr {
+    margin: 5px 0;
+    border-color: #e5e7eb;
+  }
+
 .logoutBtn:hover {
     background-color: #9c9fa7;
     transform: translateY(-2px);

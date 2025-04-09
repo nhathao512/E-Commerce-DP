@@ -171,6 +171,7 @@ h3 {
 .forgotPassword:hover {
   color: #1e40af;
   transform: translateX(4px);
+  background-color: white;
 }
 
 .loginButton {
@@ -188,6 +189,7 @@ h3 {
 .loginButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+  
 }
 
 .orLogin {
@@ -282,4 +284,5 @@ h3 {
 .registerButton:hover {
   color: #1e3a8a;
   transform: scale(1.05);
+  background-color: white;
 }
