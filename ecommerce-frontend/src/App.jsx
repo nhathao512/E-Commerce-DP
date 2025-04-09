@@ -13,7 +13,7 @@ import ReviewList from "./components/review/ReviewList";
 import HomePage from "./components/home/HomePage";
 import ProductDetail from "./components/detail/ProductDetail";
 import AdminPage from "./components/admin/AdminPage";
-
+import Profile from "./components/profile/Profile";
 
 function App() {
   return (
@@ -31,7 +31,7 @@ function App() {
             element={
               <div>
                 <Navbar />
-                <div style={{ padding: "20px" , minHeight: "90vh"}}>
+                <div style={{ padding: "20px", minHeight: "90vh" }}>
                   <Routes>
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/cart" element={<Cart />} />
@@ -39,8 +39,8 @@ function App() {
                     <Route path="/product/:id" element={<ProductDetail />} />
                     <Route path="/review" element={<ReviewForm />} />
                     <Route path="/reviews" element={<ReviewList />} />
+                    <Route path="/profile" element={<Profile />} />
                     <Route path="/" element={<HomePage />} />
-                    
                   </Routes>
                 </div>
                 <Footer />
@@ -53,4 +53,4 @@ function App() {
   );
 }
 
-export default App;       
+export default App;

@@ -52,11 +52,15 @@ function HomePage() {
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? sliderImages.length - 1 : prev - 1));
+    setCurrentSlide((prev) =>
+      prev === 0 ? sliderImages.length - 1 : prev - 1
+    );
   };
 
   const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev === sliderImages.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) =>
+      prev === sliderImages.length - 1 ? 0 : prev + 1
+    );
   };
 
   const handleProductDetail = (product) => {
@@ -71,7 +75,12 @@ function HomePage() {
   }, [currentSlide]);
 
   if (loading) {
-    return <div className={styles.loadingWrapper}>Đang tải...</div>;
+    return (
+      <div className={styles.loadingWrapper}>
+        <div className={styles.spinner}></div>
+        <div className={styles.loadingText}>Đang tải trang chủ...</div>
+      </div>
+    );
   }
 
   return (
@@ -154,7 +163,9 @@ function HomePage() {
               </div>
               <div className={styles.pagination}>
                 <button
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                   className={styles.paginationButton}
                 >
@@ -164,7 +175,9 @@ function HomePage() {
                   Trang {currentPage} / {totalPages}
                 </span>
                 <button
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
                   disabled={currentPage === totalPages}
                   className={styles.paginationButton}
                 >

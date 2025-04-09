@@ -4,9 +4,12 @@ import API from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import styles from "./Profile.module.css";
 
+// Ảnh mặc định khi không có ảnh đại diện
+const DEFAULT_AVATAR =
+  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiBmaWxsPSJub25lIj48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjEwMCIgZmlsbD0iI0UyRThGMCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSI0MCIgZmlsbD0iIzAyODhEMSIvPjxwYXRoIGQ9Ik0xNjAgMTkwQzE2MCAxNTYuODYzIDEzMy4xMzcgMTMwIDEwMCAxMzBDNjYuODYzIDEzMCA0MCAxNTYuODYzIDQwIDE5MEg2MEg4MEgxMjBIMTQwSDE2MFoiIGZpbGw9IiMwMjg4RDEiLz48L3N2Zz4=";
+
 const Profile = () => {
-  const { user, setUser, isAuthenticated, isLoading, logout } =
-    useContext(AuthContext);
+  const { user, setUser, isAuthenticated, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState({
     username: "",
@@ -15,7 +18,7 @@ const Profile = () => {
     fullName: "",
     avatar: "",
   });
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(DEFAULT_AVATAR);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editProfile, setEditProfile] = useState({});
@@ -50,8 +53,8 @@ const Profile = () => {
         const backendBaseUrl = "http://localhost:8080";
         const imageUrl = fetchedUser.avatar
           ? `${backendBaseUrl}${fetchedUser.avatar}?t=${Date.now()}`
-          : null;
-        console.log("Initial Image URL:", imageUrl); // Debug URL ban đầu
+          : DEFAULT_AVATAR;
+
         setPreviewImage(imageUrl);
       } catch (error) {
         console.error("Không thể tải thông tin hồ sơ:", error);
@@ -59,7 +62,7 @@ const Profile = () => {
           text: error.message || "Không thể tải thông tin hồ sơ.",
           type: "error",
         });
-        setPreviewImage(null);
+        setPreviewImage(DEFAULT_AVATAR);
       } finally {
         setIsLoadingProfile(false);
       }
@@ -69,10 +72,8 @@ const Profile = () => {
   }, [isAuthenticated, navigate, user, isLoading]);
 
   const handleImageChange = async (e) => {
-    console.log("handleImageChange called");
     const file = e.target.files[0];
     if (file) {
-      console.log("File selected:", file.name);
       setIsLoadingProfile(true);
       const formData = new FormData();
       formData.append("file", file);
@@ -88,14 +89,12 @@ const Profile = () => {
           throw new Error(updatedUser.error);
         }
 
-        console.log("Avatar URL:", updatedUser.avatar);
-
         setUserProfile(updatedUser);
         const backendBaseUrl = "http://localhost:8080";
         const imageUrl = updatedUser.avatar
           ? `${backendBaseUrl}${updatedUser.avatar}?t=${Date.now()}`
-          : null;
-        console.log("Full Image URL:", imageUrl);
+          : DEFAULT_AVATAR;
+
         setPreviewImage(imageUrl);
         setMessage({
           text: "Cập nhật ảnh đại diện thành công!",
@@ -114,8 +113,6 @@ const Profile = () => {
         setIsLoadingProfile(false);
         setTimeout(() => setMessage(null), 3000);
       }
-    } else {
-      console.log("No file selected");
     }
   };
 
@@ -168,13 +165,13 @@ const Profile = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
   if (isLoading) {
-    return <div>Đang tải...</div>;
+    return (
+      <div className={styles.loaderContainer}>
+        <div className={styles.spinner}></div>
+        <div className={styles.loaderText}>Đang tải hồ sơ...</div>
+      </div>
+    );
   }
 
   return (
@@ -190,10 +187,44 @@ const Profile = () => {
         </div>
       )}
       <div className={styles.profileCard}>
+        {/* Di chuyển phần ảnh đại diện lên trên đầu */}
+        <div className={styles.imageSection}>
+          <div className={styles.avatarWrapper}>
+            {isLoadingProfile ? (
+              <div className={styles.loader}>Đang tải ảnh...</div>
+            ) : (
+              <img
+                src={previewImage}
+                alt="Ảnh đại diện"
+                className={styles.avatar}
+                onError={(e) => {
+                  console.log("Image load error:", e);
+                  e.target.src = DEFAULT_AVATAR;
+                }}
+              />
+            )}
+          </div>
+          <div className={styles.uploadButtonContainer}>
+            <label htmlFor="imageUpload" className={styles.uploadButton}>
+              Tải Ảnh Lên
+            </label>
+            <input
+              id="imageUpload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className={styles.fileInput}
+            />
+          </div>
+        </div>
+
+        {/* Phần thông tin hồ sơ */}
         <div className={styles.formSection}>
           <div className={styles.profileField}>
             <label className={styles.label}>Họ và Tên</label>
-            <div className={styles.value}>{userProfile.fullName}</div>
+            <div className={styles.value}>
+              {userProfile.fullName || "Chưa cập nhật"}
+            </div>
           </div>
           <div className={styles.profileField}>
             <label className={styles.label}>Tên Đăng Nhập</label>
@@ -201,43 +232,23 @@ const Profile = () => {
           </div>
           <div className={styles.profileField}>
             <label className={styles.label}>Số Điện Thoại</label>
-            <div className={styles.value}>{userProfile.phone}</div>
+            <div className={styles.value}>
+              {userProfile.phone || "Chưa cập nhật"}
+            </div>
           </div>
           <div className={styles.profileField}>
             <label className={styles.label}>Địa Chỉ</label>
-            <div className={styles.value}>{userProfile.address}</div>
+            <div className={styles.value}>
+              {userProfile.address || "Chưa cập nhật"}
+            </div>
           </div>
+        </div>
+
+        {/* Phần nút bấm - đã xóa nút đăng xuất */}
+        <div className={styles.buttonContainer}>
           <button className={styles.editButton} onClick={openModal}>
             Chỉnh Sửa Hồ Sơ
           </button>
-        </div>
-        <div className={styles.imageSection}>
-          <div className={styles.avatarWrapper}>
-            {isLoadingProfile ? (
-              <div className={styles.loader}>Đang tải ảnh...</div>
-            ) : (
-              previewImage && (
-                <img
-                  src={previewImage}
-                  alt="Ảnh đại diện"
-                  className={styles.avatar}
-                  onError={(e) => {
-                    console.log("Image load error:", e); // Debug lỗi tải ảnh
-                  }}
-                />
-              )
-            )}
-          </div>
-          <label htmlFor="imageUpload" className={styles.uploadButton}>
-            Tải Ảnh Lên
-          </label>
-          <input
-            id="imageUpload"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className={styles.fileInput}
-          />
         </div>
       </div>
 

@@ -10,8 +10,12 @@
 
 /* Animation fadeIn */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .topSpacing {
@@ -43,7 +47,6 @@
   border-radius: 15px;
   transition: transform 0.5s ease;
 }
-
 
 .sliderArrow {
   position: absolute;
@@ -101,7 +104,11 @@
 }
 
 .activeCategory {
-  background: linear-gradient(45deg, #3b82f6, #60a5fa); /* Gradient cho nổi bật */
+  background: linear-gradient(
+    45deg,
+    #3b82f6,
+    #60a5fa
+  ); /* Gradient cho nổi bật */
   color: white;
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
   transform: scale(1.05);
@@ -124,8 +131,14 @@
 }
 
 @keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .sectionTitle {
@@ -138,7 +151,7 @@
 }
 
 .sectionTitle::after {
-  content: '';
+  content: "";
   width: 60px;
   height: 4px;
   background: linear-gradient(90deg, #3b82f6, #60a5fa);
@@ -222,7 +235,6 @@
   transition: transform 0.3s ease;
 }
 
-
 /* Pagination */
 .pagination {
   display: flex;
@@ -253,4 +265,59 @@
   background: #cbd5e1;
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+/* Loading Container */
+.loadingWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Chiếm toàn bộ chiều cao màn hình */
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+/* Spinner */
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid #3b82f6; /* Màu đồng bộ với giao diện */
+  border-top: 6px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Loading Text */
+.loadingText {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b; /* Màu chữ đậm hơn */
+  animation: pulseText 1.5s ease-in-out infinite;
+}
+
+/* Keyframes cho spinner */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Keyframes cho text */
+@keyframes pulseText {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
