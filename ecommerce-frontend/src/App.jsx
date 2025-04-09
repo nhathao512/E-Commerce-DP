@@ -13,15 +13,8 @@ import ReviewForm from "./components/review/ReviewForm";
 import ReviewList from "./components/review/ReviewList";
 import HomePage from "./components/home/HomePage";
 import ProductDetail from "./components/detail/ProductDetail";
-import Profile from "./components/profile/Profile"; // Thêm Profile
-
-import Dashboard from "./components/admin/Dashboard/Dashboard";
-import Products from "./components/admin/Products/Products";
-import Categories from "./components/admin/Categories/Categories";
-import Orders from "./components/admin/Orders/Orders";
-import Users from "./components/admin/Users/Users";
-import NavbarAdmin from "./components/admin/NavbarAdmin/Navbar";
-import OrdersDetail from "./components/ordersDetail/OrdersDetail";
+<<<<<<< trung
+import AdminPage from "./components/admin/AdminPage";
 function App() {
   return (
     <AuthProvider>
@@ -30,6 +23,7 @@ function App() {
           {/* Các trang không có Navbar và Footer */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin/*" element={<AdminPage />} />
 
           {/* Các trang người dùng thông thường với Navbar và Footer */}
           <Route
