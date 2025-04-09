@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Dashboard from "../../common/Dashboard";
 import styles from "./ProductManagement.module.css";
+import { ShoppingBag } from "lucide-react";
 
 function ProductManagement() {
   const [products, setProducts] = useState([
@@ -77,7 +78,7 @@ function ProductManagement() {
 
   return (
     <div className={styles.container}>
-      <h1>Quản lý sản phẩm</h1>
+      <h1><ShoppingBag /> Quản lý sản phẩm</h1>
       <div className={styles.controls}>
         <button onClick={handleCreate}>➕ CREATE</button>
         <button onClick={() => setSortAsc(!sortAsc)}>

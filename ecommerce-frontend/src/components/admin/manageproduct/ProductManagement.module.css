@@ -1,113 +1,144 @@
 .container {
-    padding: 20px;
+  padding: 20px;
+}
+
+/* Title cải tiến */
+ h1 {
+  font-size: 28px;
+  color: #1e293b;
+  font-weight: 900;
+  font-size: 40px;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+h1 svg {
+  width: 40px;
+  height: 40px;
+}
+
+/* Controls bar */
+.controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.controls input {
+  padding: 10px 14px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #94a3b8;
+  flex-grow: 1;
+  max-width: 280px;
+  min-width: 200px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.controls button {
+  padding: 10px 16px;
+  font-size: 15px;
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.controls button:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+/* Overlay mờ toàn màn hình */
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* nền mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Nội dung popup */
+.popupContent {
+  background-color: #fff;
+  padding: 24px 32px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Các input */
+.popupContent input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Tiêu đề form */
+.popupContent h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+/* Nút Save và Cancel */
+.popupButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.popupButtons button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.popupButtons button[type="submit"] {
+  background-color: #28a745;
+  color: white;
+}
+
+.popupButtons button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+.popupButtons button[type="button"] {
+  background-color: #dc3545;
+  color: white;
+}
+
+.popupButtons button[type="button"]:hover {
+  background-color: #c82333;
+}
+
+/* Hiệu ứng vào */
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
   }
-  
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
-  
-  .controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    align-items: center;
-  }
-  
-  .controls button {
-    padding: 8px 12px;
-    background-color: #007bff;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .controls button:hover {
-    background-color: #0056b3;
-  }
-  
-  .controls input {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    flex-grow: 1;
-    max-width: 300px;
-  }
-  
-  /* Popup styling */
-  .popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-  }
-  
-  .popupContent {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    width: 400px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .popupContent h2 {
-    margin-top: 0;
-    text-align: center;
-  }
-  
-  .popupContent form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .popupContent input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-  }
-  
-  .popupButtons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-  }
-  
-  .popupButtons button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .popupButtons button[type="submit"] {
-    background-color: #28a745;
-    color: white;
-  }
-  
-  .popupButtons button[type="submit"]:hover {
-    background-color: #218838;
-  }
-  
-  .popupButtons button[type="button"] {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .popupButtons button[type="button"]:hover {
-    background-color: #c82333;
-  }
-  
+}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Dashboard from "../../common/Dashboard";
 import styles from "./UserManagement.module.css";
+import { FaUsersCog } from "react-icons/fa";
 
 function UserManagement() {
   const [users, setUsers] = useState([
@@ -64,7 +65,7 @@ function UserManagement() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1>Quản lý người dùng</h1>
+        <h1><FaUsersCog /> Quản lý người dùng</h1>
     
         <div className={styles.controls}>
           <input

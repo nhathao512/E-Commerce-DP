@@ -1,187 +1,150 @@
-import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
-import UsersPage from "./manageuser/UserManagement"; // Quản lý người dùng
-import ProductsPage from "./manageproduct/ProductManagement"; // Quản lý sản phẩm
-import CategoriesPage from "./managecategories/CategoriesManagement"; // Quản lý danh mục
-import OrderPage from "./manageorder/OrderManagement"; // Quản lý đơn hàng
+import { Routes, Route, Link, useLocation } from "react-router-dom";
+import { FaUserCog, FaBoxOpen, FaClipboardList, FaTags, FaCogs } from "react-icons/fa";
+import UsersPage from "./manageuser/UserManagement";
+import ProductsPage from "./manageproduct/ProductManagement";
+import CategoriesPage from "./managecategories/CategoriesManagement";
+import OrderPage from "./manageorder/OrderManagement";
 import styles from "./AdminPage.module.css";
-
-
 
 function AdminPage() {
   const location = useLocation();
 
   const navLinkClass = (path) =>
-    `${styles.link} ${location.pathname === path ? styles.active : ""}`;
-  
+    `${location.pathname === path ? styles.activeLink : ""}`;
 
   return (
-    <div className={styles.container}>
-      <nav className={styles.navbar}>
-        <div className={styles.navTitle}>Admin Panel</div>
+    <div className={styles.adminLayout}>
+      <div className={styles.sidebar}>
+        <Link to="/admin" className={styles.logo}>
+          <FaCogs style={{ marginRight: 8 }} /> Admin Panel
+        </Link>
         <div className={styles.navLinks}>
           <Link to="/admin/users" className={navLinkClass("/admin/users")}>
-            Quản lý người dùng
+            <FaUserCog /> Quản lý người dùng
           </Link>
           <Link to="/admin/products" className={navLinkClass("/admin/products")}>
-            Quản lý sản phẩm
+            <FaBoxOpen /> Quản lý sản phẩm
           </Link>
           <Link to="/admin/categories" className={navLinkClass("/admin/categories")}>
-            Quản lý danh mục
+            <FaTags /> Quản lý danh mục
           </Link>
           <Link to="/admin/orders" className={navLinkClass("/admin/orders")}>
-            Quản lý đơn hàng
+            <FaClipboardList /> Quản lý đơn hàng
           </Link>
         </div>
-      </nav>
+      </div>
 
       <main className={styles.main}>
         <Routes>
-          {/* Trang chính khi vào /admin */}
           <Route
             path="/"
             element={
-              <div>
-                <div className={styles.headerBox}>
-                  <h2>Chào mừng đến với trang quản trị</h2>
-                  <p>Chọn một mục bên trên để bắt đầu quản lý.</p>
+              <>
+                <div className={styles.welcomeBox}>
+                  <h2 className={styles.welcomeTitle}>Chào mừng đến với trang quản trị</h2>
+                  <p className={styles.welcomeSubtitle}>Chọn một mục bên trái để bắt đầu quản lý.</p>
+                </div>
+                <div className={styles.cardsContainer}>
+                  <div className={`${styles.card} ${styles.cardUsers}`}>
+                    <h4>Người dùng</h4>
+                    <p>4 người</p>
+                  </div>
+                  <div className={`${styles.card} ${styles.cardProducts}`}>
+                    <h4>Sản phẩm</h4>
+                    <p>2 sản phẩm</p>
+                  </div>
+                  <div className={`${styles.card} ${styles.cardOrders}`}>
+                    <h4>Đơn hàng</h4>
+                    <p>2 đơn</p>
+                  </div>
+                  <div className={`${styles.card} ${styles.cardCategories}`}>
+                    <h4>Danh mục</h4>
+                    <p>2 loại</p>
+                  </div>
                 </div>
 
-                <div className={styles.section}>
-                  {/* Bảng User */}
+                <div className={styles.tableSection}>
                   <h3>Danh sách người dùng</h3>
-                  <table className={styles.table}>
-                    <thead> 
-                      <tr>
-                        <th>Id</th>
-                        <th>username</th>
-                        <th>password</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>viet</td>
-                        <td>admin123</td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>hao</td>
-                        <td>admin123</td>
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td>huy</td>
-                        <td>admin123</td>
-                      </tr>
-                      <tr>
-                        <td>4</td>
-                        <td>trung</td>
-                        <td>admin123</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div className={styles.section}>
-                  {/* Bảng Order */}
-                  <h3>Danh sách đơn hàng</h3>
                   <table className={styles.table}>
                     <thead>
                       <tr>
-                        <th>id</th>
-                        <th>userId</th>
-                        <th>items</th>
-                        <th>total</th>
-                        <th>paymentMethod</th>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Password</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>Product name</td>
-                        <td>100,000</td>
-                        <th>Bank transfer</th>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>2</td>
-                        <td>Product name</td>
-                        <td>90,000</td>
-                        <th>Credit Card</th>
-                      </tr>
+                      <tr><td>1</td><td>viet</td><td>admin123</td></tr>
+                      <tr><td>2</td><td>hao</td><td>admin123</td></tr>
+                      <tr><td>3</td><td>huy</td><td>admin123</td></tr>
+                      <tr><td>4</td><td>trung</td><td>admin123</td></tr>
                     </tbody>
                   </table>
                 </div>
-                <div className={styles.section}>
-                  {/* Bảng Order */}
+
+                <div className={styles.tableSection}>
                   <h3>Danh sách sản phẩm</h3>
                   <table className={styles.table}>
                     <thead>
                       <tr>
-                        <th>id</th>
-                        <th>productCode</th>
-                        <th>name</th>
-                        <th>description</th>
-                        <th>price</th>
-                        <th>image</th>
-                        <th>categoryId</th>
-                        <th>quantity</th>
+                        <th>ID</th>
+                        <th>Product Code</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Image</th>
+                        <th>Category ID</th>
+                        <th>Quantity</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>Product name</td>
-                        <td>Product description</td>
-                        <td>100,000</td>
-                        <td>Image URL</td>
-                        <td>1</td>
-                        <td>10</td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>2</td>
-                        <td>Product name</td>
-                        <td>Product description</td>
-                        <td>90,000</td>
-                        <td>Image URL</td>
-                        <td>2</td>
-                        <td>20</td>
-                      </tr>
+                      <tr><td>1</td><td>1</td><td>Product 1</td><td>Description 1</td><td>100,000</td><td>URL</td><td>1</td><td>10</td></tr>
+                      <tr><td>2</td><td>2</td><td>Product 2</td><td>Description 2</td><td>90,000</td><td>URL</td><td>2</td><td>20</td></tr>
                     </tbody>
                   </table>
                 </div>
-                <div className={styles.section}>
-                  {/* Bảng Categories */}
-                  <h3>Danh sách thể loại sản phẩm</h3>
+
+                <div className={styles.tableSection}>
+                  <h3>Danh sách đơn hàng</h3>
                   <table className={styles.table}>
                     <thead>
                       <tr>
-                        <th>id</th>
-                        <th>name</th>
+                        <th>ID</th>
+                        <th>User ID</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Payment Method</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>Category 1</td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>Category 2</td>
-                      </tr>
+                      <tr><td>1</td><td>1</td><td>Product 1</td><td>100,000</td><td>Bank transfer</td></tr>
+                      <tr><td>2</td><td>2</td><td>Product 2</td><td>90,000</td><td>Credit Card</td></tr>
                     </tbody>
                   </table>
                 </div>
-              </div>
+
+                <div className={styles.tableSection}>
+                  <h3>Danh sách danh mục</h3>
+                  <table className={styles.table}>
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr><td>1</td><td>Category 1</td></tr>
+                      <tr><td>2</td><td>Category 2</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </>
             }
           />
           <Route path="users" element={<UsersPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="categories" element={<CategoriesPage />} />
           <Route path="orders" element={<OrderPage />} />
-          {/* Chuyển hướng nếu không tìm thấy route */} 
         </Routes>
       </main>
     </div>
@@ -189,5 +152,3 @@ function AdminPage() {
 }
 
 export default AdminPage;
-
-  
