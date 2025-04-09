@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-
 import Navbar from "./components/common/Navbar";
 import Footer from "./components/common/Footer";
 import Register from "./components/auth/Register";
@@ -14,6 +13,7 @@ import ReviewList from "./components/review/ReviewList";
 import HomePage from "./components/home/HomePage";
 import ProductDetail from "./components/detail/ProductDetail";
 import AdminPage from "./components/admin/AdminPage";
+
 function App() {
   return (
     <AuthProvider>
@@ -24,46 +24,25 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/admin/*" element={<AdminPage />} />
 
-          {/* Các trang người dùng thông thường với Navbar và Footer */}
+          {/* Các trang có Navbar và Footer */}
           <Route
             path="*"
             element={
               <div>
                 <Navbar />
-                <div style={{ padding: "20px", minHeight: "90vh" }}>
+                <div style={{ padding: "20px" , minHeight: "90vh"}}>
                   <Routes>
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/payment" element={<Payment />} />
-                    <Route path="/orders" element={<OrdersDetail />} />
                     <Route path="/product/:id" element={<ProductDetail />} />
                     <Route path="/review" element={<ReviewForm />} />
                     <Route path="/reviews" element={<ReviewList />} />
-                    <Route path="/profile" element={<Profile />} />{" "}
-                    {/* Thêm route Profile */}
                     <Route path="/" element={<HomePage />} />
+                    
                   </Routes>
                 </div>
                 <Footer />
-              </div>
-            }
-          />
-
-          {/* Các trang Admin không có Navbar và Footer */}
-          <Route
-            path="/admin/*"
-            element={
-              <div>
-                <NavbarAdmin />
-                <div style={{ padding: "20px", minHeight: "100vh" }}>
-                  <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/products" element={<Products />} />
-                    <Route path="/categories" element={<Categories />} />
-                    <Route path="/orders" element={<Orders />} />
-                    <Route path="/users" element={<Users />} />
-                  </Routes>
-                </div>
               </div>
             }
           />
@@ -73,4 +52,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;       
