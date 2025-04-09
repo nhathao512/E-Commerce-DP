@@ -1,0 +1,113 @@
+.container {
+    padding: 20px;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+  
+  .controls button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .controls button:hover {
+    background-color: #0056b3;
+  }
+  
+  .controls input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    flex-grow: 1;
+    max-width: 300px;
+  }
+  
+  /* Popup styling */
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .popupContent {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .popupContent h2 {
+    margin-top: 0;
+    text-align: center;
+  }
+  
+  .popupContent form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .popupContent input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+  }
+  
+  .popupButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .popupButtons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .popupButtons button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .popupButtons button[type="submit"]:hover {
+    background-color: #218838;
+  }
+  
+  .popupButtons button[type="button"] {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .popupButtons button[type="button"]:hover {
+    background-color: #c82333;
+  }
+  

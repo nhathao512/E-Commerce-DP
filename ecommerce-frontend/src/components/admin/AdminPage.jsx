@@ -1,35 +1,34 @@
 import { Routes, Route, Navigate, Link, useLocation } from "react-router-dom";
-import UsersPage from "./UserManagement"; // Quản lý người dùng
-import ProductsPage from "./ProductManagement"; // Quản lý sản phẩm
-import CategoriesPage from "./CategoriesManagement"; // Quản lý danh mục
-import OrderPage from "./OrderManagement"; // Quản lý đơn hàng
+import UsersPage from "./manageuser/UserManagement"; // Quản lý người dùng
+import ProductsPage from "./manageproduct/ProductManagement"; // Quản lý sản phẩm
+import CategoriesPage from "./managecategories/CategoriesManagement"; // Quản lý danh mục
+import OrderPage from "./manageorder/OrderManagement"; // Quản lý đơn hàng
 import styles from "./AdminPage.module.css";
-import OrderManagement from "./OrderManagement";
+
 
 
 function AdminPage() {
   const location = useLocation();
 
   const navLinkClass = (path) =>
-    `${styles.link} ${
-      location.pathname === `/admin/${path}` ? styles.active : ""
-    }`;
+    `${styles.link} ${location.pathname === path ? styles.active : ""}`;
+  
 
   return (
     <div className={styles.container}>
       <nav className={styles.navbar}>
         <div className={styles.navTitle}>Admin Panel</div>
         <div className={styles.navLinks}>
-          <Link to="/admin/users" className={navLinkClass("users")}>
+          <Link to="/admin/users" className={navLinkClass("/admin/users")}>
             Quản lý người dùng
           </Link>
-          <Link to="/admin/products" className={navLinkClass("products")}>
+          <Link to="/admin/products" className={navLinkClass("/admin/products")}>
             Quản lý sản phẩm
           </Link>
-          <Link to="/admin/categories" className={navLinkClass("categories")}>
+          <Link to="/admin/categories" className={navLinkClass("/admin/categories")}>
             Quản lý danh mục
           </Link>
-          <Link to="/admin/orders" className={navLinkClass("orders")}>
+          <Link to="/admin/orders" className={navLinkClass("/admin/orders")}>
             Quản lý đơn hàng
           </Link>
         </div>
