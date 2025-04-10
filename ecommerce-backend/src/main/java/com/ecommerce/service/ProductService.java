@@ -22,7 +22,8 @@ public class ProductService {
                 request.getCategoryId(),
                 request.getImageUrl(),
                 request.getDescription(),
-                request.getQuantity()
+                request.getQuantity(),
+                request.getExtraAttributes()
         );
         return productRepository.save(product);
     }

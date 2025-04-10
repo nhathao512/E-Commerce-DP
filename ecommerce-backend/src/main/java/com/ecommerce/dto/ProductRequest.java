@@ -8,6 +8,7 @@ public class ProductRequest {
     private String categoryId;
     private int quantity;
     private String imageUrl; // Giữ nguyên để tạo sản phẩm với một ảnh ban đầu
+    private String[] extraAttributes;
 
     // Getters và Setters
     public String getType() { return type; }
@@ -24,4 +25,6 @@ public class ProductRequest {
     public void setQuantity(int quantity) { this.quantity = quantity; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public String[] getExtraAttributes() { return extraAttributes; }
+    public void setExtraAttributes(String... extraAttributes) { this.extraAttributes = extraAttributes; }
 }
