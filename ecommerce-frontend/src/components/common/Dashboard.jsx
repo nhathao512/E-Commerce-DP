@@ -19,23 +19,34 @@ function Dashboard({ title, columns, data, onEdit, onDelete }) {
             data.map((item) => (
               <tr key={item.id}>
                 {columns.map((col) => (
-                  <td key={col.key}>
-                    {item[col.key]}
-                  </td>
+                  <td key={col.key}>{item[col.key]}</td>
                 ))}
                 <td>
                   {onEdit && (
-                    <button className={styles.editBtn} onClick={() => onEdit(item)}>✏ Sửa</button>
+                    <button
+                      className={styles.editBtn}
+                      onClick={() => onEdit(item)}
+                    >
+                      ✏ Sửa
+                    </button>
                   )}
                   {onDelete && (
-                    <button className={styles.deleteBtn} onClick={() => onDelete(item.id)}>🗑 Xóa</button>
+                    <button
+                      className={styles.deleteBtn}
+                      onClick={() => onDelete(item.id)}
+                    >
+                      🗑 Xóa
+                    </button>
                   )}
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={columns.length + 1} style={{ textAlign: "center", color: "#888" }}>
+              <td
+                colSpan={columns.length + 1}
+                style={{ textAlign: "center", color: "#888" }}
+              >
                 Không có dữ liệu.
               </td>
             </tr>
