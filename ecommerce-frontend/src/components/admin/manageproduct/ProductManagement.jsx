@@ -49,7 +49,9 @@ function ProductManagement() {
   const handleSave = (newProduct) => {
     if (editingProduct) {
       // Edit existing
-      setProducts(products.map((p) => (p.id === newProduct.id ? newProduct : p)));
+      setProducts(
+        products.map((p) => (p.id === newProduct.id ? newProduct : p))
+      );
     } else {
       // Create new
       setProducts([...products, { ...newProduct, id: Date.now() }]);
@@ -58,11 +60,11 @@ function ProductManagement() {
   };
 
   const filteredData = [...products]
-    .filter((product) => product.name.toLowerCase().includes(search.toLowerCase()))
+    .filter((product) =>
+      product.name.toLowerCase().includes(search.toLowerCase())
+    )
     .sort((a, b) =>
-      sortAsc
-        ? a.name.localeCompare(b.name)
-        : b.name.localeCompare(a.name)
+      sortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
     );
 
   const columns = [
@@ -78,7 +80,9 @@ function ProductManagement() {
 
   return (
     <div className={styles.container}>
-      <h1><ShoppingBag /> Quản lý sản phẩm</h1>
+      <h1>
+        <ShoppingBag /> Quản lý sản phẩm
+      </h1>
       <div className={styles.controls}>
         <button onClick={handleCreate}>➕ CREATE</button>
         <button onClick={() => setSortAsc(!sortAsc)}>
@@ -121,16 +125,48 @@ function ProductManagement() {
                 handleSave(newProduct);
               }}
             >
-              <input name="productCode" placeholder="Product Code" defaultValue={editingProduct?.productCode || ""} />
-              <input name="name" placeholder="Name" defaultValue={editingProduct?.name || ""} />
-              <input name="description" placeholder="Description" defaultValue={editingProduct?.description || ""} />
-              <input name="price" placeholder="Price" type="number" defaultValue={editingProduct?.price || 0} />
-              <input name="images" placeholder="Image URL" defaultValue={editingProduct?.images || ""} />
-              <input name="categoryId" placeholder="Category ID" defaultValue={editingProduct?.categoryId || ""} />
-              <input name="quantity" placeholder="Quantity" type="number" defaultValue={editingProduct?.quantity || 0} />
+              <input
+                name="productCode"
+                placeholder="Product Code"
+                defaultValue={editingProduct?.productCode || ""}
+              />
+              <input
+                name="name"
+                placeholder="Name"
+                defaultValue={editingProduct?.name || ""}
+              />
+              <input
+                name="description"
+                placeholder="Description"
+                defaultValue={editingProduct?.description || ""}
+              />
+              <input
+                name="price"
+                placeholder="Price"
+                type="number"
+                defaultValue={editingProduct?.price || 0}
+              />
+              <input
+                name="images"
+                placeholder="Image URL"
+                defaultValue={editingProduct?.images || ""}
+              />
+              <input
+                name="categoryId"
+                placeholder="Category ID"
+                defaultValue={editingProduct?.categoryId || ""}
+              />
+              <input
+                name="quantity"
+                placeholder="Quantity"
+                type="number"
+                defaultValue={editingProduct?.quantity || 0}
+              />
               <div className={styles.popupButtons}>
                 <button type="submit">💾 Save</button>
-                <button type="button" onClick={() => setPopupOpen(false)}>❌ Cancel</button>
+                <button type="button" onClick={() => setPopupOpen(false)}>
+                  ❌ Cancel
+                </button>
               </div>
             </form>
           </div>

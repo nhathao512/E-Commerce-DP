@@ -14,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -108,5 +109,15 @@ public class AuthService {
         if (avatar != null && !avatar.isEmpty()) user.setAvatar(avatar);
         User updatedUser = userRepository.save(user);
         return new UserResponse(updatedUser);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public void deleteUser(String id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
+        userRepository.delete(user);
     }
 }

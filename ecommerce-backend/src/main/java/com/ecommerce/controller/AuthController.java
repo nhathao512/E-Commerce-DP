@@ -3,11 +3,15 @@ package com.ecommerce.controller;
 import com.ecommerce.dto.LoginRequest;
 import com.ecommerce.dto.RegisterRequest;
 import com.ecommerce.dto.UserResponse;
+import com.ecommerce.model.User;
 import com.ecommerce.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -41,6 +45,25 @@ public class AuthController {
             UserResponse errorResponse = new UserResponse("Tên đăng nhập hoặc mật khẩu không đúng");
             errorResponse.setUsername(loginRequest.getUsername());
             return ResponseEntity.status(401).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<User> users = authService.getAllUsers();
+        List<UserResponse> userResponses = users.stream()
+                .map(UserResponse::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userResponses);
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable String id) {
+        try {
+            authService.deleteUser(id);
+            return ResponseEntity.ok("User deleted successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("User not found: " + e.getMessage());
         }
     }
 
