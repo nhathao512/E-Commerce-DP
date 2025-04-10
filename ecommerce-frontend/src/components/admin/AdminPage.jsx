@@ -56,9 +56,6 @@ function AdminPage() {
                   <h2 className={styles.welcomeTitle}>
                     Chào mừng đến với trang quản trị
                   </h2>
-                  <p className={styles.welcomeSubtitle}>
-                    Chọn một mục bên trái để bắt đầu quản lý.
-                  </p>
                 </div>
                 <div className={styles.cardsContainer}>
                   <div className={`${styles.card} ${styles.cardUsers}`}>
