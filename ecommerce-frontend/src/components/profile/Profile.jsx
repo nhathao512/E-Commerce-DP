@@ -183,11 +183,44 @@ const Profile = () => {
             message.type === "success" ? styles.success : styles.error
           }`}
         >
-          <span className={styles.messageText}>{message.text}</span>
+          <span>{message.text}</span>
         </div>
       )}
       <div className={styles.profileCard}>
-        {/* Di chuyển phần ảnh đại diện lên trên đầu */}
+        {/* Thông tin và nút chỉnh sửa bên trái */}
+        <div className={styles.infoSection}>
+          <div className={styles.formSection}>
+            <div className={styles.profileField}>
+              <label className={styles.label}>Họ và Tên</label>
+              <div className={styles.value}>
+                {userProfile.fullName || "Chưa cập nhật"}
+              </div>
+            </div>
+            <div className={styles.profileField}>
+              <label className={styles.label}>Tên Đăng Nhập</label>
+              <div className={styles.value}>{userProfile.username}</div>
+            </div>
+            <div className={styles.profileField}>
+              <label className={styles.label}>Số Điện Thoại</label>
+              <div className={styles.value}>
+                {userProfile.phone || "Chưa cập nhật"}
+              </div>
+            </div>
+            <div className={styles.profileField}>
+              <label className={styles.label}>Địa Chỉ</label>
+              <div className={styles.value}>
+                {userProfile.address || "Chưa cập nhật"}
+              </div>
+            </div>
+          </div>
+          <div className={styles.buttonContainer}>
+            <button className={styles.editButton} onClick={openModal}>
+              Chỉnh Sửa Hồ Sơ
+            </button>
+          </div>
+        </div>
+
+        {/* Hình ảnh bên phải */}
         <div className={styles.imageSection}>
           <div className={styles.avatarWrapper}>
             {isLoadingProfile ? (
@@ -217,39 +250,6 @@ const Profile = () => {
             />
           </div>
         </div>
-
-        {/* Phần thông tin hồ sơ */}
-        <div className={styles.formSection}>
-          <div className={styles.profileField}>
-            <label className={styles.label}>Họ và Tên</label>
-            <div className={styles.value}>
-              {userProfile.fullName || "Chưa cập nhật"}
-            </div>
-          </div>
-          <div className={styles.profileField}>
-            <label className={styles.label}>Tên Đăng Nhập</label>
-            <div className={styles.value}>{userProfile.username}</div>
-          </div>
-          <div className={styles.profileField}>
-            <label className={styles.label}>Số Điện Thoại</label>
-            <div className={styles.value}>
-              {userProfile.phone || "Chưa cập nhật"}
-            </div>
-          </div>
-          <div className={styles.profileField}>
-            <label className={styles.label}>Địa Chỉ</label>
-            <div className={styles.value}>
-              {userProfile.address || "Chưa cập nhật"}
-            </div>
-          </div>
-        </div>
-
-        {/* Phần nút bấm - đã xóa nút đăng xuất */}
-        <div className={styles.buttonContainer}>
-          <button className={styles.editButton} onClick={openModal}>
-            Chỉnh Sửa Hồ Sơ
-          </button>
-        </div>
       </div>
 
       {isModalOpen && (
@@ -258,7 +258,7 @@ const Profile = () => {
             <h3 className={styles.modalTitle}>Chỉnh Sửa Hồ Sơ</h3>
             <div className={styles.modalContent}>
               <div className={styles.modalField}>
-                <label className={styles.label}>Họ và Tên</label>
+                <label>Họ và Tên</label>
                 <input
                   type="text"
                   name="fullName"
@@ -268,7 +268,7 @@ const Profile = () => {
                 />
               </div>
               <div className={styles.modalField}>
-                <label className={styles.label}>Tên Đăng Nhập</label>
+                <label>Tên Đăng Nhập</label>
                 <input
                   type="text"
                   name="username"
@@ -278,7 +278,7 @@ const Profile = () => {
                 />
               </div>
               <div className={styles.modalField}>
-                <label className={styles.label}>Số Điện Thoại</label>
+                <label>Số Điện Thoại</label>
                 <input
                   type="text"
                   name="phone"
@@ -288,7 +288,7 @@ const Profile = () => {
                 />
               </div>
               <div className={styles.modalField}>
-                <label className={styles.label}>Địa Chỉ</label>
+                <label>Địa Chỉ</label>
                 <input
                   type="text"
                   name="address"

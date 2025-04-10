@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import logo from "../../assets/logo.png";
@@ -9,6 +9,8 @@ function Navbar() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null); // Ref để theo dõi vùng dropdown
   const navigate = useNavigate();
 
   const backendBaseUrl = "http://localhost:8080";
@@ -45,6 +47,7 @@ function Navbar() {
 
   const handleLogoutWithReload = () => {
     logout();
+    setIsDropdownOpen(false);
     window.location.reload();
   };
 
@@ -52,6 +55,15 @@ function Navbar() {
     if (!fullName) return "";
     const nameParts = fullName.trim().split(" ");
     return nameParts[nameParts.length - 1];
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
+
+  // Đóng dropdown khi chuột rời khỏi vùng navBarProfile
+  const handleMouseLeave = () => {
+    setIsDropdownOpen(false);
   };
 
   return (
@@ -109,32 +121,41 @@ function Navbar() {
         </Link>
 
         {isAuthenticated ? (
-          <div className={styles.navBarProfile}>
+          <div
+            className={styles.navBarProfile}
+            onClick={toggleDropdown}
+            onMouseLeave={handleMouseLeave} // Thêm sự kiện rời chuột
+            ref={dropdownRef}
+          >
             <div className={styles.profileTrigger}>
               {avatarUrl ? (
                 <img
                   src={avatarUrl}
                   alt="Avatar"
-                  className={styles.userAvatar} // Thêm class CSS cho avatar
+                  className={styles.userAvatar}
                   onError={(e) => {
                     console.log("Avatar load error:", e);
-                    e.target.style.display = "none"; // Ẩn ảnh nếu lỗi
+                    e.target.style.display = "none";
                   }}
                 />
               ) : (
                 <img
                   src={defaultAvatar}
                   alt="Avatar"
-                  className={styles.userAvatar} // Thêm class CSS cho avatar
+                  className={styles.userAvatar}
                   onError={(e) => {
                     console.log("Avatar load error:", e);
-                    e.target.style.display = "none"; // Ẩn ảnh nếu lỗi
+                    e.target.style.display = "none";
                   }}
                 />
               )}
               <span>{user.fullName}</span>
             </div>
-            <ul className={styles.navProfileDropdown}>
+            <ul
+              className={`${styles.navProfileDropdown} ${
+                isDropdownOpen ? styles.show : ""
+              }`}
+            >
               <li onClick={() => navigate("/profile")}>
                 <svg
                   width="20"

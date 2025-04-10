@@ -1,80 +1,176 @@
-/* Popup.module.css */
+/* Popup Overlay */
 .popupOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease-in-out;
+  z-index: 2000;
+  animation: fadeIn 0.25s ease-out;
 }
 
+/* Popup Container */
 .popup {
   position: relative;
-  width: 350px;
-  max-width: 90%;
-  padding: 20px;
-  border-radius: 12px;
-  background: #F1F5F9;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  width: 420px;
+  max-width: 92%;
+  padding: 30px 25px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), inset 0 -1px 10px rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  animation: slideIn 0.3s ease-out;
+  overflow: hidden;
+  animation: popIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Success Styling */
 .success {
-  border: 2px solid #007BFF;
-  color: #007BFF;
+  color: #059669; /* Xanh ngọc */
 }
 
+.success .icon {
+  color: #059669;
+}
+
+.success .progressBar {
+  background: linear-gradient(90deg, #059669, #34d399);
+}
+
+/* Error Styling */
 .error {
-  border: 2px solid #FF4D4F;
-  color: #FF4D4F;
+  color: #dc2626; /* Đỏ đậm */
 }
 
+.error .icon {
+  color: #dc2626;
+}
+
+.error .progressBar {
+  background: linear-gradient(90deg, #dc2626, #f87171);
+}
+
+/* Warning Styling */
+.warning {
+  color: #d97706; /* Cam đậm */
+}
+
+.warning .icon {
+  color: #d97706;
+}
+
+.warning .progressBar {
+  background: linear-gradient(90deg, #d97706, #fbbf24);
+}
+
+/* Info Styling */
+.info {
+  color: #3b82f6; /* Xanh dương */
+}
+
+.info .icon {
+  color: #3b82f6;
+}
+
+.info .progressBar {
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
+}
+
+/* Loading Styling */
+.loading {
+  color: #8b5cf6; /* Tím */
+}
+
+.loading .icon {
+  color: #8b5cf6;
+  animation: spin 1.5s linear infinite; /* Icon xoay cho loading */
+}
+
+.loading .progressBar {
+  background: linear-gradient(90deg, #8b5cf6, #c084fc);
+}
+
+/* Icon */
 .icon {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s ease;
 }
 
+.popup:hover .icon {
+  transform: scale(1.1);
+}
+
+/* Message */
 .message {
-  font-size: 1.1rem;
-  font-weight: 500;
-  margin: 0 0 20px;
-  line-height: 1.4;
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-family: "Inter", sans-serif;
+  color: #1e293b;
+  margin: 0 0 25px;
+  line-height: 1.6;
+  word-wrap: break-word;
 }
 
+/* Close Button */
 .closeButton {
-  background: #007BFF;
+  background: linear-gradient(90deg, #3b82f6, #06b6d4);
   border: none;
-  padding: 8px 20px;
-  border-radius: 20px;
-  color: #FFFFFF;
-  font-weight: 600;
+  padding: 10px 30px;
+  border-radius: 30px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.closeButton::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s ease;
+}
+
+.closeButton:hover::before {
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .closeButton:hover {
-  background: #0056b3;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+  transform: translateY(-2px);
 }
 
+/* Progress Bar */
 .progressBar {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 4px;
-  background: #007BFF;
+  height: 6px;
   transform-origin: left;
-  animation: progress 2s linear forwards; /* Explicitly set to 3s */
+  animation: progress linear forwards;
 }
 
+/* Animations */
 @keyframes progress {
   from {
     transform: scaleX(1);
@@ -93,29 +189,42 @@
   }
 }
 
-@keyframes slideIn {
+@keyframes popIn {
   from {
-    transform: translateY(-20px);
+    transform: scale(0.9) translateY(-20px);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: scale(1) translateY(0);
     opacity: 1;
   }
 }
 
-/* Responsive adjustments */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Adjustments */
 @media (max-width: 480px) {
   .popup {
-    width: 300px;
-    padding: 15px;
+    width: 340px;
+    padding: 20px;
   }
 
   .message {
-    font-size: 1rem;
+    font-size: 1.15rem;
   }
 
   .closeButton {
-    padding: 6px 16px;
+    padding: 8px 25px;
+  }
+
+  .icon {
+    margin-bottom: 15px;
   }
 }

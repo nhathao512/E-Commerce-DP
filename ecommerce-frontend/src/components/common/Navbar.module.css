@@ -1,300 +1,473 @@
+/* Navbar */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 25px;
-    background-color: #3090f1;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    height: 70px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(145deg, #0f172a, #1e293b, #0f172a);
+  background-size: 200% 200%;
+  animation: gradientShift 15s ease infinite;
+  height: 85px;
+  font-family: "Poppins", sans-serif;
+  font-weight: bold;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  border-bottom: 4px solid rgba(34, 211, 238, 0.2);
+  backdrop-filter: blur(25px);
+  box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
-.searchIcon {
-    width: 20px;
-    height: 20px;
-    color: #6b7280; /* Màu mặc định */
-    transition: all 0.3s ease; /* Hiệu ứng mượt mà cho tất cả thay đổi */
-    cursor: pointer; /* Con trỏ tay khi hover để báo hiệu có thể nhấn */
-  }
-  
-  /* Hiệu ứng hover */
-  .searchIcon:hover {
-    color: #2563eb; /* Đổi màu khi hover (xanh đậm) */
-    transform: scale(1.2); /* Phóng to 20% */
-  }
-
-.navbar > div:first-child {
-    display: flex;
-    align-items: center;
-    gap: 30px;
+.navbar.scrolled {
+  background: linear-gradient(145deg, #1e293b, #111827);
+  padding: 0.8rem 2.5rem;
+  border-bottom: 4px solid rgba(34, 211, 238, 0.5);
 }
 
-.navbar > div:last-child {
-    display: flex;
-    align-items: center;
-    gap: 35px; /* Tăng gap từ 25px lên 35px để các phần tử xa nhau hơn */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
+/* Để tránh navbar che body */
+body {
+  padding-top: 100px;
+}
+
+/* Logo */
 .logo {
-    height: 150px;
-    width: auto;
-    transition: transform 0.2s ease;
-    padding-bottom: 10px;
+  height: 110px;
+  width: auto;
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.322)) brightness(1.2);
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
 
 .logo:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.438)) brightness(1.3);
 }
 
+/* Left section */
+.navbar > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+/* Right section */
+.navbar > div:last-child {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+/* NavLink */
 .navLink {
-    color: #eceef1;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 700;
-    transition: color 0.3s ease, transform 0.2s ease;
+  color: #e5e7eb;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 50px;
+  position: relative;
+  background: linear-gradient(145deg, #1e293b, #111827);
+  box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -4px -4px 10px rgba(255, 255, 255, 0.08);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.navLink::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  padding: 2px;
+  background: linear-gradient(45deg, #22d3ee, #8b5cf6);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.navLink:hover::before {
+  opacity: 1;
 }
 
 .navLink:hover {
-    color: #090909af;
-    transform: translateY(-2px);
+  color: #ffffff;
+  background: linear-gradient(90deg, #22d3ee, #8b5cf6);
+  transform: translateY(-2px);
 }
 
+.navLink::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: scale(0);
+  pointer-events: none;
+  animation: ripple 0.6s linear;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Search Container */
 .searchContainer {
-    display: flex;
-    align-items: center;
-    position: relative;
-    width: 300px;
-    margin-right: 15px; /* Thêm margin-right để tách xa cartContainer */
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 320px;
+  margin-right: 20px;
+  transition: width 0.4s ease;
 }
 
+.searchContainer:hover {
+  width: 340px;
+}
+
+/* Search Input */
 .searchInput {
-    width: 100%;
-    padding: 10px 40px 10px 15px;
-    border: 1px solid #d1d5db;
-    border-radius: 25px;
-    font-size: 16px;
-    font-family: 'Poppins', sans-serif;
-    outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  padding: 14px 50px 14px 20px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  outline: none;
+  background: linear-gradient(145deg, #f3f4f6, #ffffff);
+  box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.25), inset -4px -4px 10px rgba(255, 255, 255, 0.8);
+  transition: box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .searchInput::placeholder {
-    font-size: 16px;
-    color: #9ca3af;
+  font-size: 16px;
+  color: #9ca3af;
+  font-style: italic;
+  transition: color 0.3s ease;
 }
 
 .searchInput:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  background: #ffffff;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.7), inset 0 0 8px rgba(34, 211, 238, 0.25);
 }
 
+.searchInput:focus::placeholder {
+  color: #6b7280;
+}
+
+/* Search Icon */
 .searchIcon {
-    position: absolute;
-    bottom: 19px;
-    right: -5px;
-    width: 25px;
-    height: 22px;
-    color: #6b7280;
-    transition: color 0.3s ease;
+  position: absolute;
+  top: 50%;
+  right: -15px;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 0.3s ease, filter 0.3s ease, transform 0.3s ease;
 }
 
-.searchInput:focus + .searchIcon {
-    color: #090909af;
+.searchInput:focus + .searchIcon,
+.searchIcon:hover {
+
+
+  transform: translateY(-50%) scale(1.1);
 }
 
+/* Cart Container */
 .cartContainer {
-    position: relative;
-    display: flex;
-    align-items: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.cartContainer:hover {
+  transform: scale(1.1);
 }
 
 .cartIcon {
-    width: 26px;
-    height: 26px;
-    color: #ffffffca;
-    transition: color 0.3s ease, transform 0.2s ease;
+  width: 28px;
+  height: 28px;
+  color: #e5e7eb;
+  transition: color 0.3s ease, filter 0.3s ease;
 }
 
 .cartContainer:hover .cartIcon {
-    color: #090909af;
-    transform: scale(1.1);
+  color: #ffffff;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.7));
 }
 
 .cartCount {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background-color: #eb2525;
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    font-weight: bold;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: linear-gradient(45deg, #ff3f81, #ff6b6b);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(255, 63, 129, 0.7);
+  transition: transform 0.3s ease;
 }
 
+.cartContainer:hover .cartCount {
+  transform: scale(1.2);
+}
+
+.notificationBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 10px;
+  height: 10px;
+  background: #ff3f81;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 63, 129, 0.7);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* Logout Button */
 .logoutBtn {
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    font-family: 'Poppins', sans-serif;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+  background: linear-gradient(145deg, #1e293b, #111827);
+  color: #e5e7eb;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 17px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  position: relative;
+  box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -4px -4px 10px rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
-/* Các style cũ giữ nguyên, chỉ cập nhật phần profile */
+.logoutBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50px;
+  padding: 2px;
+  background: linear-gradient(45deg, #ff3f81, #ff6b6b);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
 
-/* Container của profile */
-.navBarProfile {
-    position: relative;
-    display: inline-block;
-  }
-  
-  /* Phần trigger (Xin chào + biểu tượng user) */
-  .profileTrigger {
-    display: flex;
-    gap: 5px;
-    align-items: center;
-    padding: 8px 12px;
-    cursor: pointer;
-    border-radius: 25px;
-    background-color: rgba(255, 255, 255, 0.1);
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .profileTrigger:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-  }
-  
-  /* Biểu tượng user */
-  .userIcon {
-    margin-right: 8px;
-    color: #eceef1;
-    transition: color 0.3s ease;
-  }
-  
-  .profileTrigger:hover .userIcon {
-    color: #090909af;
-  }
-
-  .userAvatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
-  
-  /* Text "Xin chào, Hồ Việt" */
-  .profileTrigger span {
-    color: #eceef1;
-    font-size: 16px;
-    font-weight: 500;
-    font-family: 'Poppins', sans-serif;
-    transition: color 0.3s ease;
-  }
-  
-  .profileTrigger:hover span {
-    color: #090909af;
-  }
-  
-  /* Dropdown */
-  .navProfileDropdown {
-    position: absolute;
-    display: none;
-    right: 0;
-    top: 100%; /* Đặt sát ngay dưới trigger, không có khoảng cách */
-    z-index: 1;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    min-width: 200px;
-    padding: 10px 0;
-    margin-top: 0; /* Loại bỏ margin-top để không có khe hở */
-  }
-  
-  /* Mũi tên giống giao diện Shopee */
-  .navProfileDropdown::before {
-    content: "";
-    position: absolute;
-    top: -8px; /* Điều chỉnh vị trí mũi tên vì không còn khoảng cách */
-    right: 20px;
-    border-left: 8px solid transparent; /* Giảm kích thước mũi tên để phù hợp */
-    border-right: 8px solid transparent;
-    border-bottom: 8px solid #fff;
-    z-index: 2;
-  }
-  
-  .navProfileDropdown::after {
-    content: "";
-    position: absolute;
-    top: -9px; /* Điều chỉnh viền mũi tên */
-    right: 20px;
-    border-left: 8px solid transparent;
-    border-right: 8px solid transparent;
-    border-bottom: 8px solid #ddd;
-    z-index: 1;
-  }
-  
-  .navBarProfile:hover .navProfileDropdown {
-    display: block;
-  }
-  
-  /* Các mục trong dropdown */
-  .navProfileDropdown li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 15px;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    color: #333;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .navProfileDropdown li:hover {
-    background-color: #f5f5f5;
-    color: #2563eb;
-  }
-  
-  /* Biểu tượng trong dropdown */
-  .navProfileDropdown svg {
-    width: 20px;
-    height: 20px;
-    color: #6b7280;
-    transition: color 0.3s ease;
-  }
-  
-  .navProfileDropdown li:hover svg {
-    color: #2563eb;
-  }
-  
-  /* Đường phân cách */
-  .navProfileDropdown hr {
-    margin: 5px 0;
-    border-color: #e5e7eb;
-  }
+.logoutBtn:hover::before {
+  opacity: 1;
+}
 
 .logoutBtn:hover {
-    background-color: #9c9fa7;
-    transform: translateY(-2px);
+  background: linear-gradient(90deg, #ff3f81, #ff6b6b);
+  color: #ffffff;
+  box-shadow: 0 15px 50px rgba(255, 63, 129, 0.7), 0 0 25px rgba(255, 107, 107, 0.5);
+  transform: translateY(-2px);
 }
 
-.navbar > div:last-child > span {
-    color: #6b7280;
-    font-size: 16px;
-    font-weight: 500;
-    font-family: 'Poppins', sans-serif;
+.logoutBtn::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: scale(0);
+  pointer-events: none;
+  animation: ripple 0.6s linear;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+}
+
+/* Profile Section */
+.navBarProfile {
+  position: relative;
+  display: inline-block;
+  z-index: 1100;
+}
+
+.profileTrigger {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-radius: 50px;
+  background: linear-gradient(145deg, #1e293b, #111827);
+  box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.5), inset -4px -4px 10px rgba(255, 255, 255, 0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.profileTrigger:hover {
+  background: linear-gradient(90deg, #22d3ee, #8b5cf6);
+ 
+ 
+}
+
+.profileTrigger::after {
+  content: "";
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: scale(0);
+  pointer-events: none;
+  animation: ripple 0.6s linear;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+}
+
+.userIcon {
+  margin-right: 10px;
+  color: #e5e7eb;
+  width: 24px;
+  height: 24px;
+  transition: color 0.3s ease, filter 0.3s ease;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.profileTrigger:hover .userAvatar {
+  filter: drop-shadow(0 0 15px rgba(34, 211, 238, 0.7));
+ 
+}
+
+.profileTrigger:hover .userIcon {
+  color: #ffffff;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
+}
+
+.profileTrigger span {
+  color: #e5e7eb;
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  transition: color 0.3s ease;
+}
+
+.profileTrigger:hover span {
+  color: #ffffff;
+}
+
+/* Dropdown */
+.navProfileDropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 1200;
+  background: linear-gradient(145deg, #ffffff, #f3f4f6);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 12px 50px rgba(0, 0, 0, 0.3);
+  min-width: 220px;
+  padding: 12px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.navBarProfile:hover .navProfileDropdown,
+.navProfileDropdown:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: scaleY(1);
+}
+
+.navProfileDropdown::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid #ffffff;
+}
+
+.navProfileDropdown li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  color: #333;
+  position: relative;
+  z-index: 1300;
+  transition: all 0.3s ease;
+}
+
+.navProfileDropdown li:hover {
+  
+  color: #000000;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.15);
+
+}
+
+.navProfileDropdown svg {
+  width: 22px;
+  height: 22px;
+  color: #000000;
+  transition: color 0.3s ease;
+}
+
+.navProfileDropdown li:hover svg {
+
+  color: #000000;}
+
+.navProfileDropdown hr {
+  margin: 6px 0;
+  border-color: rgba(0, 0, 0, 0.15);
 }
