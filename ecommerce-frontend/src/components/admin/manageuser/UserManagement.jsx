@@ -10,8 +10,9 @@ function UserManagement() {
   const [isAsc, setIsAsc] = useState(true);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false); // Trạng thái cho popup xóa
+  const [userToDelete, setUserToDelete] = useState(null); // Lưu thông tin user cần xóa
 
-  // Hàm lấy dữ liệu từ API
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -48,10 +49,20 @@ function UserManagement() {
     setIsPopupOpen(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
+    const user = users.find((u) => u.id === id);
+    setUserToDelete(user); // Lưu user cần xóa
+    setIsDeletePopupOpen(true); // Mở popup xác nhận
+  };
+
+  const confirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/auth/users/${id}`);
-      setUsers((prev) => prev.filter((user) => user.id !== id));
+      await axios.delete(
+        `http://localhost:8080/api/auth/users/${userToDelete.id}`
+      );
+      setUsers((prev) => prev.filter((user) => user.id !== userToDelete.id));
+      setIsDeletePopupOpen(false); // Đóng popup
+      setUserToDelete(null); // Xóa thông tin user tạm thời
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -138,7 +149,6 @@ function UserManagement() {
                   required
                 />
               </div>
-
               <div className={styles.formGroup}>
                 <label>Họ và Tên:</label>
                 <input
@@ -163,7 +173,6 @@ function UserManagement() {
                   defaultValue={editingUser?.address || ""}
                 />
               </div>
-
               <div className={styles.buttonGroup}>
                 <button type="submit">Lưu</button>
                 <button type="button" onClick={() => setIsPopupOpen(false)}>
@@ -171,6 +180,29 @@ function UserManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {isDeletePopupOpen && (
+        <div className={styles.overlay}>
+          <div className={styles.modal}>
+            <h2>Xác nhận xóa</h2>
+            <p>
+              Bạn có chắc chắn muốn xóa người dùng{" "}
+              <strong>{userToDelete?.username}</strong> không?
+            </p>
+            <div className={styles.buttonGroup}>
+              <button onClick={confirmDelete}>Xóa</button>
+              <button
+                onClick={() => {
+                  setIsDeletePopupOpen(false);
+                  setUserToDelete(null);
+                }}
+              >
+                Hủy
+              </button>
+            </div>
           </div>
         </div>
       )}

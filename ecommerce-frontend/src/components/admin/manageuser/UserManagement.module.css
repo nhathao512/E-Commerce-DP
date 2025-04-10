@@ -24,7 +24,6 @@
   gap: 10px;
 }
 
-
 .controls {
   display: flex;
   gap: 10px;
@@ -38,7 +37,7 @@
   border-radius: 8px;
   border: 1px solid #94a3b8;
   min-width: 180px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .controls button {
@@ -46,7 +45,7 @@
   font-size: 15px;
   background-color: #3b82f6;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
 }
 
@@ -54,7 +53,6 @@
   background-color: #2563eb;
   transform: translateY(-1px);
 }
-
 
 /* Popup styles giữ nguyên nếu đã có */
 /* Popup Overlay */
@@ -144,4 +142,38 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+
+/* Trong UserManagement.module.css */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.actions button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.actions button:first-child {
+  /* Nút Sửa */
+  background-color: #28a745;
+}
+
+.actions button:first-child:hover {
+  background-color: #218838;
+}
+
+.actions button:last-child {
+  /* Nút Xóa */
+  background-color: #dc3545;
+}
+
+.actions button:last-child:hover {
+  background-color: #c82333;
 }
