@@ -1,31 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Dashboard from "../../common/Dashboard";
 import styles from "./UserManagement.module.css";
 import { FaUsersCog } from "react-icons/fa";
-import axios from "axios";
 
 function UserManagement() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([
+    { id: 1, username: "viet", password: "admin123" },
+    { id: 2, username: "hao", password: "admin123" },
+    { id: 3, username: "huy", password: "admin123" },
+    { id: 4, username: "trung", password: "admin123" },
+  ]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [isAsc, setIsAsc] = useState(true);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false); // Trạng thái cho popup xóa
-  const [userToDelete, setUserToDelete] = useState(null); // Lưu thông tin user cần xóa
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/api/auth/users"
-        );
-        setUsers(response.data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-    fetchUsers();
-  }, []);
 
   const filteredUsers = users
     .filter(
@@ -34,10 +23,8 @@ function UserManagement() {
         user.password.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) =>
-      isAsc
-        ? a.username.localeCompare(b.username)
-        : b.username.localeCompare(a.username)
-    );
+      isAsc ? a.id - b.id : b.id - a.id
+    )
 
   const handleCreate = () => {
     setEditingUser(null);
@@ -50,64 +37,35 @@ function UserManagement() {
   };
 
   const handleDelete = (id) => {
-    const user = users.find((u) => u.id === id);
-    setUserToDelete(user); // Lưu user cần xóa
-    setIsDeletePopupOpen(true); // Mở popup xác nhận
+    setUsers((prev) => prev.filter((user) => user.id !== id));
   };
 
-  const confirmDelete = async () => {
-    try {
-      await axios.delete(
-        `http://localhost:8080/api/auth/users/${userToDelete.id}`
-      );
-      setUsers((prev) => prev.filter((user) => user.id !== userToDelete.id));
-      setIsDeletePopupOpen(false); // Đóng popup
-      setUserToDelete(null); // Xóa thông tin user tạm thời
-    } catch (error) {
-      console.error("Error deleting user:", error);
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
-    const id = editingUser ? editingUser.id : null;
+    const id = editingUser ? editingUser.id : Date.now();
     const newUser = {
       id,
       username: form.username.value,
       password: form.password.value,
-      phone: form.phone?.value || "",
-      address: form.address?.value || "",
-      fullName: form.fullName?.value || "",
-      avatar: form.avatar?.value || "",
     };
 
-    try {
+    setUsers((prev) => {
       if (editingUser) {
-        const response = await axios.put(
-          `http://localhost:8080/api/auth/me?username=${newUser.username}`,
-          newUser
-        );
-        setUsers((prev) => prev.map((u) => (u.id === id ? response.data : u)));
-      } else {
-        const response = await axios.post(
-          "http://localhost:8080/api/auth/register",
-          newUser
-        );
-        setUsers((prev) => [...prev, response.data]);
+        return prev.map((u) => (u.id === id ? newUser : u));
       }
-      setIsPopupOpen(false);
-    } catch (error) {
-      console.error("Error submitting user:", error);
-    }
+      return [...prev, newUser];
+    });
+
+    setIsPopupOpen(false);
   };
 
   return (
     <div className={styles.container}>
+      
       <div className={styles.header}>
-        <h1>
-          <FaUsersCog /> Quản lý người dùng
-        </h1>
+        <h1><FaUsersCog /> Quản lý người dùng</h1>
+    
         <div className={styles.controls}>
           <input
             type="text"
@@ -115,7 +73,7 @@ function UserManagement() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button onClick={handleCreate}>➕ Tạo</button>
+          <button onClick={handleCreate}>➕ Tạo mới</button>
           <button onClick={() => setIsAsc(!isAsc)}>
             {isAsc ? "⬇ DESC" : "⬆ ASC"}
           </button>
@@ -125,10 +83,8 @@ function UserManagement() {
       <Dashboard
         columns={[
           { key: "id", label: "ID" },
-          { key: "username", label: "Tên đăng nhập" },
-          { key: "fullName", label: "Họ và Tên" },
-          { key: "phone", label: "Số điện thoại" },
-          { key: "address", label: "Địa chỉ" },
+          { key: "username", label: "Username" },
+          { key: "password", label: "Password" },
         ]}
         data={filteredUsers}
         onEdit={handleEdit}
@@ -138,10 +94,10 @@ function UserManagement() {
       {isPopupOpen && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
-            <h2>{editingUser ? "Chỉnh sửa thông tin" : "Tạo tài khoản"}</h2>
+            <h2>{editingUser ? "Sửa người dùng" : "Thêm người dùng mới"}</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGroup}>
-                <label>Tên đăng nhập:</label>
+                <label>Username:</label>
                 <input
                   type="text"
                   name="username"
@@ -150,27 +106,12 @@ function UserManagement() {
                 />
               </div>
               <div className={styles.formGroup}>
-                <label>Họ và Tên:</label>
+                <label>Password:</label>
                 <input
-                  type="text"
-                  name="fullName"
-                  defaultValue={editingUser?.fullName || ""}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Số điện thoại:</label>
-                <input
-                  type="text"
-                  name="phone"
-                  defaultValue={editingUser?.phone || ""}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Địa chỉ:</label>
-                <input
-                  type="text"
-                  name="address"
-                  defaultValue={editingUser?.address || ""}
+                  type="password"
+                  name="password"
+                  defaultValue={editingUser?.password || ""}
+                  required
                 />
               </div>
               <div className={styles.buttonGroup}>
@@ -184,28 +125,6 @@ function UserManagement() {
         </div>
       )}
 
-      {isDeletePopupOpen && (
-        <div className={styles.overlay}>
-          <div className={styles.modal}>
-            <h2>Xác nhận xóa</h2>
-            <p>
-              Bạn có chắc chắn muốn xóa người dùng{" "}
-              <strong>{userToDelete?.username}</strong> không?
-            </p>
-            <div className={styles.buttonGroup}>
-              <button onClick={confirmDelete}>Xóa</button>
-              <button
-                onClick={() => {
-                  setIsDeletePopupOpen(false);
-                  setUserToDelete(null);
-                }}
-              >
-                Hủy
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

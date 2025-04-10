@@ -1,69 +1,68 @@
 /* Dashboard.module.css */
 
 .container {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  h2 {
-    margin-bottom: 16px;
-    color: #333;
-    font-size: 24px;
-  }
-  
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-  
-  .table th,
-  .table td {
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .table th {
-    background-color: #f0f0f0;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  .table tr:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .editBtn,
-  .deleteBtn {
-    padding: 6px 12px;
-    margin-right: 6px;
-    font-size: 14px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-  
-  .editBtn {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .editBtn:hover {
-    background-color: #0056b3;
-  }
-  
-  .deleteBtn {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .deleteBtn:hover {
-    background-color: #b02a37;
-  }
-  
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  margin-bottom: 16px;
+  color: #333;
+  font-size: 24px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table th,
+.table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f0f0f0;
+  color: #333;
+  font-weight: 600;
+}
+
+.table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.editBtn,
+.deleteBtn {
+  padding: 6px 12px;
+  margin-right: 6px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.editBtn {
+  background-color: #007bff;
+  color: white;
+}
+
+.editBtn:hover {
+  background-color: #0056b3;
+}
+
+.deleteBtn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.deleteBtn:hover {
+  background-color: #b02a37;
+}
