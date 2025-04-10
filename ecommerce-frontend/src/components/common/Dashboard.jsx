@@ -11,7 +11,7 @@ function Dashboard({ title, columns, data, onEdit, onDelete }) {
             {columns.map((col) => (
               <th key={col.key}>{col.label}</th>
             ))}
-            <th>Actions</th>
+            <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
@@ -25,10 +25,10 @@ function Dashboard({ title, columns, data, onEdit, onDelete }) {
                 ))}
                 <td>
                   {onEdit && (
-                    <button className={styles.editBtn} onClick={() => onEdit(item)}>✏ EDIT</button>
+                    <button className={styles.editBtn} onClick={() => onEdit(item)}>✏ Sửa</button>
                   )}
                   {onDelete && (
-                    <button className={styles.deleteBtn} onClick={() => onDelete(item.id)}>🗑 DELETE</button>
+                    <button className={styles.deleteBtn} onClick={() => onDelete(item.id)}>🗑 Xóa</button>
                   )}
                 </td>
               </tr>

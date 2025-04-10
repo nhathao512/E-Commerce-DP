@@ -44,7 +44,7 @@ function ProductManagement() {
   const handleCreate = () => {
     setEditingProduct(null);
     setPopupOpen(true);
-  };
+  }
 
   const handleSave = (newProduct) => {
     if (editingProduct) {
@@ -67,33 +67,33 @@ function ProductManagement() {
 
   const columns = [
     { key: "id", label: "ID" },
-    { key: "productCode", label: "Product Code" },
+    { key: "productCode", label: "Mã sản phẩm" },
     { key: "name", label: "Name" },
-    { key: "description", label: "Description" },
-    { key: "price", label: "Price" },
-    { key: "images", label: "Image" },
-    { key: "categoryId", label: "Category ID" },
-    { key: "quantity", label: "Quantity" },
+    { key: "description", label: "Mô tả" },
+    { key: "price", label: "Giá" },
+    { key: "images", label: "Ảnh" },
+    { key: "categoryId", label: "Mã danh mục" },
+    { key: "quantity", label: "Số lượng" },
   ];
 
   return (
     <div className={styles.container}>
       <h1><ShoppingBag /> Quản lý sản phẩm</h1>
       <div className={styles.controls}>
-        <button onClick={handleCreate}>➕ CREATE</button>
+        <button onClick={handleCreate}>➕ Tạo mới</button>
         <button onClick={() => setSortAsc(!sortAsc)}>
           {sortAsc ? "⬇ DESC" : "⬆ ASC"}
         </button>
         <input
           type="text"
-          placeholder="🔍 Search by name"
+          placeholder="🔍 Tìm kiếm"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
       <Dashboard
-        title="Product List"
+        title="Danh sách sản phẩm"
         columns={columns}
         data={filteredData}
         onEdit={handleEdit}
@@ -103,7 +103,7 @@ function ProductManagement() {
       {popupOpen && (
         <div className={styles.popup}>
           <div className={styles.popupContent}>
-            <h2>{editingProduct ? "Edit Product" : "Create Product"}</h2>
+            <h2>{editingProduct ? "Sửa sản phẩm" : "Tạo sản phẩm mới"}</h2>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -121,13 +121,13 @@ function ProductManagement() {
                 handleSave(newProduct);
               }}
             >
-              <input name="productCode" placeholder="Product Code" defaultValue={editingProduct?.productCode || ""} />
-              <input name="name" placeholder="Name" defaultValue={editingProduct?.name || ""} />
-              <input name="description" placeholder="Description" defaultValue={editingProduct?.description || ""} />
-              <input name="price" placeholder="Price" type="number" defaultValue={editingProduct?.price || 0} />
-              <input name="images" placeholder="Image URL" defaultValue={editingProduct?.images || ""} />
-              <input name="categoryId" placeholder="Category ID" defaultValue={editingProduct?.categoryId || ""} />
-              <input name="quantity" placeholder="Quantity" type="number" defaultValue={editingProduct?.quantity || 0} />
+              <input name="productCode" placeholder="Mả sản phẩm" defaultValue={editingProduct?.productCode || ""} />
+              <input name="name" placeholder="Tên sản phẩm" defaultValue={editingProduct?.name || ""} />
+              <input name="description" placeholder="Mô tả" defaultValue={editingProduct?.description || ""} />
+              <input name="price" placeholder="Giá" type="number" defaultValue={editingProduct?.price || 0} />
+              <input name="images" placeholder="URL ảnh" defaultValue={editingProduct?.images || ""} />
+              <input name="categoryId" placeholder="Mã danh mục" defaultValue={editingProduct?.categoryId || ""} />
+              <input name="quantity" placeholder="Số lượng" type="number" defaultValue={editingProduct?.quantity || 0} />
               <div className={styles.popupButtons}>
                 <button type="submit">💾 Save</button>
                 <button type="button" onClick={() => setPopupOpen(false)}>❌ Cancel</button>

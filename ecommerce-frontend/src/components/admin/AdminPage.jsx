@@ -1,40 +1,70 @@
-import { Routes, Route, Link, useLocation } from "react-router-dom";
-import { FaUserCog, FaBoxOpen, FaClipboardList, FaTags, FaCogs } from "react-icons/fa";
-import UsersPage from "./manageuser/UserManagement";
-import ProductsPage from "./manageproduct/ProductManagement";
-import CategoriesPage from "./managecategories/CategoriesManagement";
-import OrderPage from "./manageorder/OrderManagement";
-import styles from "./AdminPage.module.css";
+import React, { useEffect, useState } from 'react';
+import styles from './AdminPage.module.css';
+import { FaUserCog, FaBoxOpen, FaClipboardList, FaTags, FaMoon, FaSun } from 'react-icons/fa';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import UsersPage from './manageuser/UserManagement';
+import ProductsPage from './manageproduct/ProductManagement';
+import CategoriesPage from './managecategories/CategoriesManagement';
+import OrderPage from './manageorder/OrderManagement';
+
+const Header = () => {
+  const [darkMode, setDarkMode] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      setDarkMode(true);
+      document.body.classList.add('dark-theme');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const newMode = !darkMode;
+    setDarkMode(newMode);
+    document.body.classList.toggle('dark-theme', newMode);
+    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+  };
+
+  return (
+    <div className={styles.header}>
+      <button className={styles.themeToggleBtn} onClick={toggleTheme}>
+        {darkMode ? <FaSun /> : <FaMoon />}
+      </button>
+      <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Avatar" className={styles.userAvatar} />
+    </div>
+  );
+};
 
 function AdminPage() {
   const location = useLocation();
 
   const navLinkClass = (path) =>
-    `${location.pathname === path ? styles.activeLink : ""}`;
+    `${location.pathname === path ? styles.activeLink : ''}`;
 
   return (
     <div className={styles.adminLayout}>
       <div className={styles.sidebar}>
         <Link to="/admin" className={styles.logo}>
-          <FaCogs style={{ marginRight: 8 }} /> Admin Panel
+          Admin Panel
         </Link>
         <div className={styles.navLinks}>
-          <Link to="/admin/users" className={navLinkClass("/admin/users")}>
+          <Link to="/admin/users" className={navLinkClass('/admin/users')}>
             <FaUserCog /> Quản lý người dùng
           </Link>
-          <Link to="/admin/products" className={navLinkClass("/admin/products")}>
+          <Link to="/admin/products" className={navLinkClass('/admin/products')}>
             <FaBoxOpen /> Quản lý sản phẩm
           </Link>
-          <Link to="/admin/categories" className={navLinkClass("/admin/categories")}>
+          <Link to="/admin/categories" className={navLinkClass('/admin/categories')}>
             <FaTags /> Quản lý danh mục
           </Link>
-          <Link to="/admin/orders" className={navLinkClass("/admin/orders")}>
+          <Link to="/admin/orders" className={navLinkClass('/admin/orders')}>
             <FaClipboardList /> Quản lý đơn hàng
           </Link>
         </div>
       </div>
 
       <main className={styles.main}>
+        <Header />
         <Routes>
           <Route
             path="/"
@@ -88,12 +118,12 @@ function AdminPage() {
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th>Product Code</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Image</th>
-                        <th>Category ID</th>
+                        <th>Mã Sản phẩm</th>
+                        <th>Tên</th>
+                        <th>Mô tả</th>
+                        <th>Giá</th>
+                        <th>Ảnh</th>
+                        <th>Mã danh mục</th>
                         <th>Quantity</th>
                       </tr>
                     </thead>

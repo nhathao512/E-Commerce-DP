@@ -23,10 +23,8 @@ function UserManagement() {
         user.password.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) =>
-      isAsc
-        ? a.username.localeCompare(b.username)
-        : b.username.localeCompare(a.username)
-    );
+      isAsc ? a.id - b.id : b.id - a.id
+    )
 
   const handleCreate = () => {
     setEditingUser(null);
@@ -64,17 +62,18 @@ function UserManagement() {
 
   return (
     <div className={styles.container}>
+      
       <div className={styles.header}>
         <h1><FaUsersCog /> Quản lý người dùng</h1>
     
         <div className={styles.controls}>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Tìm kiếm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button onClick={handleCreate}>➕ Create</button>
+          <button onClick={handleCreate}>➕ Tạo mới</button>
           <button onClick={() => setIsAsc(!isAsc)}>
             {isAsc ? "⬇ DESC" : "⬆ ASC"}
           </button>
@@ -95,7 +94,7 @@ function UserManagement() {
       {isPopupOpen && (
         <div className={styles.overlay}>
           <div className={styles.modal}>
-            <h2>{editingUser ? "Edit user" : "Add new user"}</h2>
+            <h2>{editingUser ? "Sửa người dùng" : "Thêm người dùng mới"}</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGroup}>
                 <label>Username:</label>
