@@ -52,7 +52,7 @@ public abstract class FileUploadTemplate {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         File destinationFile = new File(fullDir + fileName);
         file.transferTo(destinationFile);
-        return "/api/images/" + subDir + "/" + fileName;
+        return subDir + "/" + fileName;
     }
 
     // Các phương thức trừu tượng mà lớp con phải triển khai
