@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import ProductItem from "./ProductItem";
 import styles from "./ProductList.module.css";
-import { FaFilter, FaAngleLeft, FaAngleRight } from "react-icons/fa";
-import { getProducts, getAllCategories } from "../../services/api"; // Thêm getAllCategories
+import { getProducts, getAllCategories } from "../../services/api";
 import notFound from "../../assets/productnotfound.png";
 
 function ProductList() {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [categories, setCategories] = useState([]); // Thêm state cho categories
+  const [categories, setCategories] = useState([]);
   const [showFilter, setShowFilter] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Tất cả");
   const [isLoading, setIsLoading] = useState(true);
@@ -27,7 +26,6 @@ function ProductList() {
         setFilteredProducts(productResponse.data);
 
         const categoryResponse = await getAllCategories();
-        // Thêm "Tất cả" vào danh sách categories từ API
         setCategories([{ id: "Tất cả", name: "Tất cả" }, ...categoryResponse.data]);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -45,7 +43,6 @@ function ProductList() {
 
     let filtered = products;
 
-    // Lọc theo từ khóa tìm kiếm
     if (searchQuery) {
       filtered = filtered.filter(
         (p) =>
@@ -54,13 +51,12 @@ function ProductList() {
       );
     }
 
-    // Lọc theo danh mục
     if (selectedCategory !== "Tất cả") {
       filtered = filtered.filter((p) => p.categoryId === selectedCategory);
     }
 
     setFilteredProducts(filtered);
-    setCurrentPage(1); // Reset về trang 1 khi lọc
+    setCurrentPage(1);
   }, [selectedCategory, products, location.search]);
 
   // Tính toán sản phẩm hiển thị trên trang hiện tại
@@ -85,7 +81,7 @@ function ProductList() {
   };
 
   const handleCategorySelect = (categoryId) => {
-    setSelectedCategory(categoryId); // Lưu category.id thay vì name
+    setSelectedCategory(categoryId);
     setShowFilter(false);
   };
 
@@ -95,7 +91,7 @@ function ProductList() {
         <h2 className={styles.title}>Danh sách sản phẩm</h2>
         <div className={styles.filterWrapper}>
           <button className={styles.filterButton} onClick={toggleFilter}>
-            <FaFilter /> Bộ lọc
+            <span>☰</span> Bộ lọc
           </button>
           <div
             className={`${styles.filterDropdown} ${
@@ -110,7 +106,7 @@ function ProductList() {
                 }`}
                 onClick={() => handleCategorySelect(category.id)}
               >
-                {category.name} {/* Hiển thị tên category */}
+                {category.name}
               </button>
             ))}
           </div>
@@ -119,7 +115,7 @@ function ProductList() {
       {isLoading ? (
         <div className={styles.loading}>Đang tải sản phẩm...</div>
       ) : filteredProducts.length === 0 ? (
-        <img className={styles.notFound} src={notFound}></img>
+        <img className={styles.notFound} src={notFound} alt="Không tìm thấy sản phẩm" />
       ) : (
         <>
           <div className={styles.productGrid}>
@@ -134,25 +130,17 @@ function ProductList() {
                 onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
               >
-                <FaAngleLeft />
+                Trước
               </button>
-              {Array.from({ length: totalPages }, (_, index) => (
-                <button
-                  key={index + 1}
-                  className={`${styles.pageButton} ${
-                    currentPage === index + 1 ? styles.active : ""
-                  }`}
-                  onClick={() => handlePageChange(index + 1)}
-                >
-                  {index + 1}
-                </button>
-              ))}
+              <span>
+                Trang {currentPage} / {totalPages}
+              </span>
               <button
                 className={styles.pageButton}
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
               >
-                <FaAngleRight />
+                Sau
               </button>
             </div>
           )}

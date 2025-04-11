@@ -5,12 +5,26 @@ import logo from "../../assets/logo.png";
 import defaultAvatar from "../../assets/defaultAvatar.jpg";
 import { AuthContext } from "../../context/AuthContext";
 
+// Hàm debounce để giới hạn tần suất gọi hàm
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
 function Navbar() {
   const { isAuthenticated, user, logout } = useContext(AuthContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [cartCount, setCartCount] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef(null); // Ref để theo dõi vùng dropdown
+  const [isScrolled, setIsScrolled] = useState(false);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
   const backendBaseUrl = "http://localhost:8080";
@@ -18,23 +32,41 @@ function Navbar() {
     ? `${backendBaseUrl}${user.avatar}?t=${Date.now()}`
     : null;
 
+  // Update cart count
   const updateCartCount = () => {
     const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     setCartCount(cartItems.length);
   };
 
+  // Handle scroll for fixed navbar
+  useEffect(() => {
+    const handleScroll = debounce(() => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    }, 100); // Debounce 100ms
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Initialize cart count and listen for storage changes
   useEffect(() => {
     updateCartCount();
     window.addEventListener("storage", updateCartCount);
     return () => window.removeEventListener("storage", updateCartCount);
   }, []);
 
+  // Listen for custom cart update event
   useEffect(() => {
     const handleCartUpdate = () => updateCartCount();
     window.addEventListener("cartUpdated", handleCartUpdate);
     return () => window.removeEventListener("cartUpdated", handleCartUpdate);
   }, []);
 
+  // Handle search submission
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
@@ -45,29 +77,32 @@ function Navbar() {
     }
   };
 
+  // Handle logout with page reload
   const handleLogoutWithReload = () => {
     logout();
     setIsDropdownOpen(false);
     window.location.reload();
   };
 
+  // Extract last name from full name
   const getLastName = (fullName) => {
     if (!fullName) return "";
     const nameParts = fullName.trim().split(" ");
     return nameParts[nameParts.length - 1];
   };
 
+  // Toggle dropdown visibility
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  // Đóng dropdown khi chuột rời khỏi vùng navBarProfile
+  // Close dropdown on mouse leave
   const handleMouseLeave = () => {
     setIsDropdownOpen(false);
   };
 
   return (
-    <nav className={styles.navbar}>
+    <nav className={`${styles.navbar} ${isScrolled ? styles.scrolled : ""}`}>
       <div>
         <Link to="/">
           <img src={logo} alt="Logo" className={styles.logo} />
@@ -124,7 +159,7 @@ function Navbar() {
           <div
             className={styles.navBarProfile}
             onClick={toggleDropdown}
-            onMouseLeave={handleMouseLeave} // Thêm sự kiện rời chuột
+            onMouseLeave={handleMouseLeave}
             ref={dropdownRef}
           >
             <div className={styles.profileTrigger}>

@@ -63,7 +63,7 @@ function Login() {
           <FaArrowLeft />
         </button>
         <h2 className={styles.title}>Welcome back!</h2>
-        <h3>Login to continue</h3>
+        <h3>Đăng nhập để tiếp tục</h3>
         <form className={styles.form} onSubmit={handleSubmit}>
           <input
             type="text"

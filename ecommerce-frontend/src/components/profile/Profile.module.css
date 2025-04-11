@@ -1,12 +1,3 @@
-/* Đảm bảo nội dung không bị che bởi navbar */
-body {
-  margin: 0;
-  padding: 0;
-  /* Gradient từ xanh dương nhạt đến tím nhạt, thêm ánh sáng nhẹ */
-  background: linear-gradient(135deg, #e0f2fe 0%, #ede9fe 100%);
-  
-  padding-top: 70px; /* Thêm padding-top để tránh navbar che nội dung */
-}
 
 .profileContainer {
   max-width: 960px;

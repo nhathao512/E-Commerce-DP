@@ -1,204 +1,242 @@
 .card {
-  border: none;
-  border-radius: 8px;
+  background: #f9fafb;
+  border-radius: 24px;
   overflow: hidden;
-  background: white;
-  position: relative;
-  transition: all 0.4s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 3px 8px rgba(109, 40, 217, 0.06);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Đảm bảo card có chiều cao đồng đều */
+  height: 100%;
+  min-height: 500px; /* Đảm bảo chiều cao tối thiểu để các ô đồng đều */
+  cursor: pointer;
+  position: relative;
+  border: 1px solid #bfdbfe;
+  animation: slideUp 0.8s ease-in-out;
 }
 
 .card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15), 0 4px 12px rgba(109, 40, 217, 0.12);
 }
 
-.image {
-  width: 100%;
-  height: 220px;
-  object-fit: contain;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: #fff;
+.card:focus-within {
+  outline: 2px solid #2563eb;
+  outline-offset: 3px;
 }
 
-.content {
-  padding: 15px;
-  position: relative;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 247, 250, 1) 100%);
-  border-radius: 0 0 8px 8px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.name {
-  font-size: 1.2rem;
-  color: #1a2b49;
-  margin: 0 0 10px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
-  transition: color 0.3s ease;
-}
-
-
-/* Phần chứa name và description */
-.textWrapper {
-  min-height: 100px; /* Đặt chiều cao tối thiểu để đảm bảo price luôn ở cùng vị trí */
-  display: flex;
-  flex-direction: column;
-}
-
-.description {
-  font-size: 0.9rem;
-  color: #5a6b87;
-  margin: 0 0 10px;
-  line-height: 1.5;
-  opacity: 0.9;
-  max-height: 60px; /* Giới hạn chiều cao tối đa của description */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  flex-grow: 1; /* Đảm bảo description chiếm không gian còn lại trong textWrapper */
-}
-
-.price {
-  font-size: 1.1rem;
-  color: #ff0000;
-  font-weight: 700;
-  margin: 0 0 15px;
-  background: linear-gradient(90deg, #ff0000, #fe0000);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  order: 1;
-}
-
-.addButton {
-  width: 100%;
-  padding: 10px;
-  background: linear-gradient(135deg, #2c7be5 0%, #4a9cff 100%);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all 0.4s ease;
-  box-shadow: 0 5px 15px rgba(44, 123, 229, 0.3);
-  position: relative;
-  overflow: hidden;
-  margin-top: auto;
-  order: 2;
-}
-
-.addButton::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  transition: width 0.6s ease, height 0.6s ease;
-}
-
-.addButton:hover::before {
-  width: 200px;
-  height: 200px;
-}
-
-.addButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(44, 123, 229, 0.5);
-}
-
-.addButton:active {
-  transform: scale(0.98);
-}
-
-/* Hiệu ứng ánh sáng khi hover */
 .card::before {
   content: '';
   position: absolute;
   top: 0;
-  left: -100%;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: all 0.6s ease;
+  background: linear-gradient(to top, rgba(109, 40, 217, 0.05), transparent);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
 }
 
 .card:hover::before {
-  left: 100%;
+  opacity: 1;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: 300px; /* Chiều cao cố định để đồng bộ các ô */
+  background: #f1f5f9; /* Nền cho khoảng trống */
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Hiển thị toàn bộ ảnh, không cắt */
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.content {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #f9fafb;
+  position: relative;
+  z-index: 1;
+}
+
+.name {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #111827;
+  margin: 0;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -0.015em;
+  position: relative;
+}
+
+.name::after {
+  content: '';
+  width: 40px;
+  height: 2px;
+  background: #2563eb;
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  border-radius: 2px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.card:hover .name::after {
+  opacity: 1;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-weight: 400;
+}
+
+.priceWrapper {
+  margin-top: auto;
+}
+
+.price {
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: #1e3a8a;
+  transition: transform 0.3s ease;
+}
+
+.card:hover .price {
+  transform: scale(1.03);
+}
+
+.addButton {
+  width: 100%;
+  padding: 0.875rem;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.addButton:hover {
+  background: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.25);
+}
+
+.addButton:focus {
+  outline: 2px solid #1e40af;
+  outline-offset: 3px;
+}
+
+.addButton:active {
+  transform: translateY(0);
+  background: #1e40af;
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.15);
+}
+
+@media (max-width: 1024px) {
   .card {
-      border-radius: 8px;
-      margin: 0 auto;
+    border-radius: 20px;
+    min-height: 450px; /* Giảm chiều cao tối thiểu trên màn hình nhỏ */
   }
 
-  .image {
-      height: 180px;
+  .imageWrapper {
+    height: 250px; /* Giảm chiều cao trên màn hình nhỏ */
   }
 
   .content {
-      padding: 15px;
-  }
-
-  .textWrapper {
-      min-height: 90px; /* Giảm chiều cao trên mobile */
+    padding: 1.25rem;
+    gap: 0.5rem;
   }
 
   .name {
-      font-size: 1.2rem;
+    font-size: 1.125rem;
+  }
+
+  .description {
+    font-size: 0.8125rem;
   }
 
   .price {
-      font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .addButton {
-      padding: 10px;
-      font-size: 1rem;
-  }
-
-  .description {
-      max-height: 54px;
-      -webkit-line-clamp: 3;
+    padding: 0.75rem;
+    font-size: 0.8125rem;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .card {
-      margin: 0 auto;
-      max-width: 300px;
+    border-radius: 16px;
+    min-height: 400px; /* Giảm chiều cao tối thiểu trên màn hình nhỏ hơn */
   }
 
-  .image {
-      height: 180px;
+  .imageWrapper {
+    height: 200px; /* Giảm chiều cao trên màn hình nhỏ hơn */
   }
 
-  .textWrapper {
-      min-height: 90px;
+  .content {
+    padding: 1rem;
+  }
+
+  .name {
+    font-size: 1rem;
   }
 
   .description {
-      font-size: 0.9rem;
-      max-height: 54px;
-      -webkit-line-clamp: 3;
+    font-size: 0.75rem;
+    -webkit-line-clamp: 1;
+  }
+
+  .price {
+    font-size: 0.9375rem;
+  }
+
+  .addButton {
+    padding: 0.625rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Animation slideUp */
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
