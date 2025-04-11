@@ -166,7 +166,7 @@ const UserOrderManagement = () => {
             <div className={styles.popupButtons}>
               <button
                 className={styles.actionBtn}
-                disabled={selectedOrder.status !== 'Hoàn thành' && selectedOrder.status !== 'Đã hủy'}
+                disabled={selectedOrder.status !== 'Hoàn thành' && selectedOrder.status !== 'Hủy'}
               >
                 Đánh giá
               </button>
