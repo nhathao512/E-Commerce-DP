@@ -71,29 +71,54 @@ function ProductDetail() {
       setShowLoginPopup(true);
       return;
     }
-
+  
     if (!selectedSize) {
       alert("Vui lòng chọn kích thước!");
       return;
     }
-
-    // Kiểm tra số lượng tồn kho cho kích thước đã chọn
-    const availableQuantity = product.quantity[selectedSize] || 0;
+  
+    const availableQuantity = product.quantity?.[selectedSize] ?? 0;
     if (quantity > availableQuantity) {
-      alert(
-        `Chỉ còn ${availableQuantity} sản phẩm cho kích thước ${selectedSize}!`
-      );
+      alert(`Chỉ còn ${availableQuantity} sản phẩm cho kích thước ${selectedSize}!`);
       return;
     }
-
+  
     try {
-      await addToCart(product.id, quantity); // Cần gửi thêm selectedSize nếu API yêu cầu
+      // Use full product object like ProductItem for consistency
+      await addToCart(product, quantity, selectedSize);
       alert(
-        `Đã thêm ${quantity} sản phẩm ${product.name} (kích thước: ${selectedSize}) vào giỏ hàng!`
+        `Đã thêm sản phẩm: ${product.name} vào giỏ hàng!`
       );
+  
+      // Update localStorage
+      let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+      const existingItemIndex = cartItems.findIndex(
+        (item) => item.id === product.id && item.size === selectedSize
+      );
+      if (existingItemIndex >= 0) {
+        cartItems[existingItemIndex].quantity += quantity;
+      } else {
+        cartItems.push({
+          id: product.id,
+          productName: product.name,
+          imageUrl: product.images?.[0]
+            ? `${API_URL}/images/${product.images[0]}`
+            : null,
+          price: product.price,
+          quantity,
+          size: selectedSize,
+        });
+      }
+  
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
-      console.error("Error adding to cart:", error);
-      alert("Thêm vào giỏ hàng thất bại!");
+      console.error("Error adding to cart:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+      alert("Thêm vào giỏ hàng thất bại! Vui lòng thử lại.");
     }
   };
 
