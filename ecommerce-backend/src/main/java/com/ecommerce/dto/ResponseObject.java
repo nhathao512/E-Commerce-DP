@@ -1,4 +1,4 @@
-package com.ecommerce.controller;
+package com.ecommerce.dto;
 
 import org.springframework.http.HttpStatus;
 
