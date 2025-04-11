@@ -2,14 +2,13 @@ import React, { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash, FaArrowLeft } from "react-icons/fa";
-import Popup from "../common/Popup";
 import styles from "./Login.module.css";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [popup, setPopup] = useState(null);
+  const [notification, setNotification] = useState(null); // Thay popup bằng notification
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -17,39 +16,38 @@ function Login() {
     e.preventDefault();
     try {
       await login(username, password);
-      setPopup({ message: "Đăng nhập thành công!", type: "success" });
+      setNotification({ message: "Đăng nhập thành công!", type: "success" });
       setTimeout(() => {
-        setPopup(null);
+        setNotification(null);
         navigate("/");
       }, 2000);
     } catch (error) {
-      // Xử lý lỗi để đảm bảo message là chuỗi
       let errorMsg = "Đăng nhập không thành công! Vui lòng kiểm tra lại.";
       if (error.response && error.response.data) {
         if (typeof error.response.data === "string") {
           errorMsg = error.response.data;
         } else if (error.response.data.error) {
-          errorMsg = error.response.data.error; // Lấy trường error nếu có
+          errorMsg = error.response.data.error;
         } else {
-          errorMsg = JSON.stringify(error.response.data); // Chuyển object thành chuỗi nếu cần
+          errorMsg = JSON.stringify(error.response.data);
         }
       }
-      setPopup({ message: errorMsg, type: "error" });
+      setNotification({ message: errorMsg, type: "error" });
+      setTimeout(() => setNotification(null), 3000); // Thông báo lỗi biến mất sau 3s
     }
   };
 
   const handleSocialLogin = (platform) => {
-    setPopup({
+    setNotification({
       message: `Đăng nhập bằng ${platform} đang được phát triển!`,
       type: "error",
     });
+    setTimeout(() => setNotification(null), 3000);
   };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-
-  const closePopup = () => setPopup(null);
 
   return (
     <div className={styles.container}>
@@ -134,8 +132,16 @@ function Login() {
           </button>
         </div>
       </div>
-      {popup && (
-        <Popup message={popup.message} type={popup.type} onClose={closePopup} />
+      {notification && (
+        <div
+          className={`${styles.notification} ${
+            notification.type === "success"
+              ? styles.notificationSuccess
+              : styles.notificationError
+          }`}
+        >
+          {notification.message}
+        </div>
       )}
     </div>
   );

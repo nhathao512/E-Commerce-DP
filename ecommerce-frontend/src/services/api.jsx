@@ -20,7 +20,12 @@ export const getCart = () => API.get("/cart");
 export const addToCart = (product, quantity) =>
   API.post(`/cart/add?quantity=${quantity}`, product);
 export const processPayment = (method) => API.post("/payment", { method });
-export const addReview = (data) => API.post("/reviews", data);
+export const addReview = (data) => API.post("/reviews", data); // Sửa từ GET thành POST
 export const getReviews = (productCode) =>
   API.get(`/reviews/product/${productCode}`);
 export const getAllCategories = () => API.get("/categories");
+export const addCategory = (name, icon) =>
+  API.post("/categories", null, { params: { name, icon } });
+export const updateCategory = (id, name, icon) =>
+  API.put(`/categories/${id}`, null, { params: { name, icon } });
+export const deleteCategory = (id) => API.delete(`/categories/${id}`);

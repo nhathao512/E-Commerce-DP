@@ -1,30 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Dashboard from "../dashboard/Dashboard";
 import styles from "./CategoriesManagement.module.css";
 import { FaTags } from "react-icons/fa";
+import {
+  getAllCategories,
+  addCategory,
+  updateCategory,
+  deleteCategory,
+} from "../../../services/api";
 
 function CategoriesManagement() {
-  const [categories, setCategories] = useState([
-    { id: 1, name: "Electronics", icon: "🔌" },
-    { id: 2, name: "Books", icon: "📚" },
-    { id: 3, name: "Fashion", icon: "👗" },
-    { id: 4, name: "Sports", icon: "🏀" },
-  ]);
-
+  const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isAsc, setIsAsc] = useState(true);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false); // State cho popup xác nhận xóa
+  const [categoryToDelete, setCategoryToDelete] = useState(null); // Lưu danh mục cần xóa
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch danh sách danh mục khi component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllCategories();
+        setCategories(response.data || []);
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setError("Không thể tải danh mục");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const filteredCategories = categories
     .filter(
       (cat) =>
-        cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cat.icon.toLowerCase().includes(searchTerm.toLowerCase())
+        (cat.name &&
+          cat.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (cat.icon && cat.icon.toLowerCase().includes(searchTerm.toLowerCase()))
     )
     .sort((a, b) =>
-      isAsc ? a.id - b.id : b.id - a.id
-    )
+      isAsc ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id)
+    );
 
   const handleCreate = () => {
     setEditingCategory(null);
@@ -37,40 +59,75 @@ function CategoriesManagement() {
   };
 
   const handleDelete = (id) => {
-    setCategories((prev) => prev.filter((cat) => cat.id !== id));
+    // Mở popup xác nhận xóa thay vì xóa ngay
+    const category = categories.find((cat) => cat.id === id);
+    setCategoryToDelete(category);
+    setIsDeletePopupOpen(true);
   };
 
-  const handleSubmit = (e) => {
+  const confirmDelete = async () => {
+    try {
+      await deleteCategory(categoryToDelete.id);
+      setCategories((prev) =>
+        prev.filter((cat) => cat.id !== categoryToDelete.id)
+      );
+      setIsDeletePopupOpen(false);
+      setCategoryToDelete(null);
+    } catch (err) {
+      console.error("Error deleting category:", err);
+      setError("Không thể xóa danh mục");
+      setIsDeletePopupOpen(false);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDeletePopupOpen(false);
+    setCategoryToDelete(null);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
-    const id = editingCategory
-      ? editingCategory.id
-      : categories.length === 0
-        ? 1
-        : Math.max(...categories.map((c) => c.id)) + 1;
+    const name = form.name.value;
+    const icon = form.icon.value;
 
-    const newCategory = {
-      id,
-      name: form.name.value,
-      icon: form.icon.value,
-    };
-
-    setCategories((prev) => {
+    try {
       if (editingCategory) {
-        return prev.map((cat) => (cat.id === id ? newCategory : cat));
+        console.log("Updating category with ID:", editingCategory.id);
+        const updatedCategory = await updateCategory(
+          editingCategory.id,
+          name,
+          icon
+        );
+        setCategories((prev) =>
+          prev.map((cat) =>
+            cat.id === editingCategory.id ? updatedCategory.data : cat
+          )
+        );
+      } else {
+        const newCategory = await addCategory(name, icon);
+        setCategories((prev) => [...prev, newCategory.data]);
       }
-      return [...prev, newCategory];
-    });
-
-    setIsPopupOpen(false);
+      setIsPopupOpen(false);
+    } catch (err) {
+      console.error("Error saving category:", err);
+      setError("Không thể lưu danh mục");
+    }
   };
+
+  if (loading) {
+    return <div className={styles.loading}>Đang tải danh mục...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
+  }
 
   return (
     <div className={styles.container}>
-      
       <div className={styles.header}>
         <h1>
-          <FaTags/> Quản lý danh mục
+          <FaTags /> Quản lý danh mục
         </h1>
 
         <div className={styles.controls}>
@@ -98,6 +155,7 @@ function CategoriesManagement() {
         onDelete={handleDelete}
       />
 
+      {/* Popup thêm/sửa danh mục */}
       {isPopupOpen && (
         <div className={styles.overlay} onClick={() => setIsPopupOpen(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -128,6 +186,25 @@ function CategoriesManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Popup xác nhận xóa */}
+      {isDeletePopupOpen && (
+        <div className={styles.overlay} onClick={cancelDelete}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h2>Xác nhận xóa</h2>
+            <p>
+              Bạn có chắc chắn muốn xóa danh mục{" "}
+              <strong>{categoryToDelete?.name}</strong> không?
+            </p>
+            <div className={styles.buttonGroup}>
+              <button onClick={confirmDelete} className={styles.deleteButton}>
+                Xóa
+              </button>
+              <button onClick={cancelDelete}>Hủy</button>
+            </div>
           </div>
         </div>
       )}

@@ -18,4 +18,16 @@ public class CategoryService {
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
+
+    public Category updateCategory(String id, String name, String icon) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        category.setName(name);
+        category.setIcon(icon);
+        return categoryRepository.save(category);
+    }
+
+    public void deleteCategory(String id) {
+        categoryRepository.deleteById(id);
+    }
 }

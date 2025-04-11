@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/categories") // Thêm /api để khớp với frontend
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
@@ -21,5 +21,19 @@ public class CategoryController {
     @GetMapping
     public List<Category> getAllCategories() {
         return categoryService.getAllCategories();
+    }
+
+    @PutMapping("/{id}")
+    public Category updateCategory(
+            @PathVariable String id,
+            @RequestParam String name,
+            @RequestParam String icon) {
+        System.out.println("PUT /api/categories/" + id + " - name: " + name + ", icon: " + icon); // Debug
+        return categoryService.updateCategory(id, name, icon);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteCategory(@PathVariable String id) {
+        categoryService.deleteCategory(id);
     }
 }

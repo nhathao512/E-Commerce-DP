@@ -16,19 +16,23 @@ function ProductList() {
   const productsPerPage = 8;
   const location = useLocation();
 
-  // Fetch danh sách sản phẩm và categories từ API khi component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         const productResponse = await getProducts();
-        setProducts(productResponse.data);
-        setFilteredProducts(productResponse.data);
+        setProducts(productResponse.data || []);
+        setFilteredProducts(productResponse.data || []);
 
         const categoryResponse = await getAllCategories();
-        setCategories([{ id: "Tất cả", name: "Tất cả" }, ...categoryResponse.data]);
+        console.log("Category Response:", categoryResponse.data); // Debug
+        const categoryData = categoryResponse.data || [];
+        setCategories([{ id: "Tất cả", name: "Tất cả" }, ...categoryData]);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setProducts([]);
+        setFilteredProducts([]);
+        setCategories([{ id: "Tất cả", name: "Tất cả" }]);
       } finally {
         setIsLoading(false);
       }
@@ -36,7 +40,6 @@ function ProductList() {
     fetchData();
   }, []);
 
-  // Lọc sản phẩm dựa trên danh mục và từ khóa tìm kiếm
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const searchQuery = searchParams.get("search")?.toLowerCase() || "";
@@ -59,7 +62,6 @@ function ProductList() {
     setCurrentPage(1);
   }, [selectedCategory, products, location.search]);
 
-  // Tính toán sản phẩm hiển thị trên trang hiện tại
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentProducts = filteredProducts.slice(
@@ -67,7 +69,6 @@ function ProductList() {
     indexOfLastProduct
   );
 
-  // Tính tổng số trang
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   const handlePageChange = (page) => {
@@ -115,7 +116,11 @@ function ProductList() {
       {isLoading ? (
         <div className={styles.loading}>Đang tải sản phẩm...</div>
       ) : filteredProducts.length === 0 ? (
-        <img className={styles.notFound} src={notFound} alt="Không tìm thấy sản phẩm" />
+        <img
+          className={styles.notFound}
+          src={notFound}
+          alt="Không tìm thấy sản phẩm"
+        />
       ) : (
         <>
           <div className={styles.productGrid}>

@@ -14,7 +14,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%233b82f6" fill-opacity="0.2" d="M0,128L48,144C96,160,192,192,288,181.3C384,171,480,117,576,112C672,107,768,149,864,149.3C960,149,1056,107,1152,85.3C1248,64,1344,64,1392,64L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"%3E%3C/path%3E%3C/svg%3E') no-repeat bottom;
+  background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"%3E%3Cpath fill="%233b82f6" fill-opacity="0.2" d="M0,128L48,144C96,160,192,192,288,181.3C384,171,480,117,576,112C672,107,768,149,864,149.3C960,149,1056,107,1152,85.3C1248,64,1344,64,1392,64L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"%3E%3C/path%3E%3C/svg%3E')
+    no-repeat bottom;
   background-size: cover;
   z-index: 1;
 }
@@ -30,7 +31,7 @@
   max-width: 400px;
   text-align: center;
   animation: fadeIn 0.6s ease-in-out;
-  margin: 0 auto; /* Thêm để đảm bảo căn giữa */
+  margin: 0 auto;
 }
 
 @keyframes fadeIn {
@@ -53,21 +54,22 @@ h3 {
 
 .backButton {
   position: absolute;
-  top: 0.8rem;
-  left: 0.8rem;
-  font-size: 0.9rem;
-  color: #6b7280;
-  background: none;
+  top: 3px;
+  left: 15px;
+  display: flex;
+  align-items: center;
+  gap: 200px;
+  padding: 8px 12px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: rgb(122, 181, 249);
   border: none;
+  border-radius: 4px;
   cursor: pointer;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .backButton:hover {
-  color: #1e40af;
-  transform: translateX(-4px);
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .title {
@@ -131,33 +133,10 @@ h3 {
 .togglePassword:hover {
   color: #1e40af;
 }
-/* Thêm vào Login.module.css */
-.backButton {
-  position: absolute;
 
-  top: 3px;
-  left: 15px;
-  display: flex;
-  align-items: center;
-  gap: 200px;
-  padding: 8px 12px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: rgb(122, 181, 249);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-
-
-}
-
-.backButton:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
 .forgotPassword {
   display: block;
   text-align: right;
- 
   margin-top: -0.3rem;
   margin-bottom: 0.8rem;
   font-size: 0.9rem;
@@ -189,7 +168,6 @@ h3 {
 .loginButton:hover {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-  
 }
 
 .orLogin {
@@ -285,4 +263,45 @@ h3 {
   color: #1e3a8a;
   transform: scale(1.05);
   background-color: white;
+}
+
+/* Toast Notification */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.95rem;
+  z-index: 1000;
+  animation: slideIn 0.5s ease-in-out, fadeOut 0.5s ease-in-out 2.5s forwards;
+}
+
+.notificationSuccess {
+  background-color: #10b981; /* Màu xanh cho thành công */
+}
+
+.notificationError {
+  background-color: #ef4444; /* Màu đỏ cho lỗi */
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

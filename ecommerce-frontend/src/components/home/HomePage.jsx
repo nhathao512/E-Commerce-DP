@@ -10,7 +10,7 @@ import notFound from "../../assets/productnotfound.png";
 function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState(null); // Lưu category.id
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,25 +20,26 @@ function HomePage() {
 
   const sliderImages = [slider1, slider2, slider3];
 
-  // Fetch danh sách sản phẩm và categories từ API
   useEffect(() => {
     const fetchData = async () => {
       try {
         const productResponse = await getProducts();
-        setProducts(productResponse.data);
+        setProducts(productResponse.data || []);
 
         const categoryResponse = await getAllCategories();
-        setCategories(categoryResponse.data);
+        console.log("Category Response:", categoryResponse.data); // Debug
+        setCategories(categoryResponse.data || []);
         setLoading(false);
       } catch (error) {
         console.error("Lỗi khi lấy dữ liệu:", error);
+        setCategories([]);
+        setProducts([]);
         setLoading(false);
       }
     };
     fetchData();
   }, []);
 
-  // Lọc sản phẩm dựa trên category.id
   const filteredProducts = selectedCategory
     ? products.filter((product) => product.categoryId === selectedCategory)
     : products;
@@ -110,29 +111,37 @@ function HomePage() {
       </div>
 
       <div className={styles.categoriesBar}>
-        {categories.map((category) => (
-          <div
-            key={category.id}
-            className={`${styles.categoryItem} ${
-              selectedCategory === category.id ? styles.activeCategory : ""
-            }`}
-            onClick={() => {
-              setSelectedCategory(
-                category.id === selectedCategory ? null : category.id
-              );
-              setCurrentPage(1);
-            }}
-          >
-            <span className={styles.categoryIcon}>{category.icon}</span>
-            <span>{category.name}</span>
-          </div>
-        ))}
+        {categories.length > 0 ? (
+          categories.map((category) => (
+            <div
+              key={category.id}
+              className={`${styles.categoryItem} ${
+                selectedCategory === category.id ? styles.activeCategory : ""
+              }`}
+              onClick={() => {
+                setSelectedCategory(
+                  category.id === selectedCategory ? null : category.id
+                );
+                setCurrentPage(1);
+              }}
+            >
+              <span className={styles.categoryIcon}>{category.icon}</span>
+              <span>{category.name}</span>
+            </div>
+          ))
+        ) : (
+          <p>Không có danh mục nào để hiển thị.</p>
+        )}
       </div>
 
       <div className={styles.featuredProducts}>
         <div className={styles.productsContainer}>
           {filteredProducts.length === 0 ? (
-            <img className={styles.notFound} src={notFound}></img>
+            <img
+              className={styles.notFound}
+              src={notFound}
+              alt="Không tìm thấy sản phẩm"
+            />
           ) : (
             <>
               <h2 className={styles.sectionTitle}>SẢN PHẨM NỔI BẬT</h2>
