@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Dashboard from "../../common/Dashboard";
+import Dashboard from "../dashboard/Dashboard";
 import styles from "./UserManagement.module.css";
 import { FaUsersCog } from "react-icons/fa";
 import axios from "axios";

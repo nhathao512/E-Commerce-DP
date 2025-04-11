@@ -1,3 +1,16 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: white; /* hoặc màu bạn muốn mặc định */
+}
+
+.adminWrapper {
+  background-color: #f4f6f8;
+  min-height: 100vh;
+}
+
+
 .adminLayout {
   display: flex;
   min-height: 100vh;

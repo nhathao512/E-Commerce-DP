@@ -1,0 +1,116 @@
+.container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .controls input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .controls button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+  
+  .controls button:hover {
+    background-color: #0056b3;
+  }
+  
+  .popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .popupContent {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .popupContent h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 20px;
+    text-align: center;
+  }
+  
+  .popupContent form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .popupContent input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .popupButtons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .popupButtons button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .popupButtons button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .popupButtons button[type="submit"]:hover {
+    background-color: #218838;
+  }
+  
+  .popupButtons button[type="button"] {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .popupButtons button[type="button"]:hover {
+    background-color: #c82333;
+  }
+  

@@ -12,7 +12,7 @@ const Header = () => {
   };
 
   return (
-    <div className={styles.header}>
+    <div className={styles.headerMinimal}>
       <div className={styles.themeToggle} onClick={toggleTheme}>
         {darkMode ? <FaSun /> : <FaMoon />}
       </div>
