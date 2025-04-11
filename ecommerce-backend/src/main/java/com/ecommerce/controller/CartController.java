@@ -16,7 +16,7 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping("/add")
-    public ResponseEntity<Void> addToCart(@RequestBody Product product, @RequestParam(name = "quantity", defaultValue = "1") int quantity) {
+    public ResponseEntity<Void> addToCart(@RequestBody Product product, @RequestParam(name = "quantity", defaultValue = "1") int quantity, @RequestParam(name = "size", defaultValue = "S") String size) {
         String productID = product.getId();
 
         if(cartService.isProductInCart(productID)){
@@ -26,9 +26,9 @@ public class CartController {
         }
 
         if(product instanceof ClothingProduct){
-            cartService.addToCart((ClothingProduct) product, quantity);
+            cartService.addToCart((ClothingProduct) product, quantity, size);
         } else if(product instanceof ShoeProduct){
-            cartService.addToCart((ShoeProduct) product, quantity);
+            cartService.addToCart((ShoeProduct) product, quantity, size);
         }
 
         return ResponseEntity.ok().build();

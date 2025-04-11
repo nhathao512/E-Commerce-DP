@@ -28,8 +28,8 @@ public class Cart {
     }
 
     // Thêm sản phẩm vào giỏ hàng
-    public void addItem(Product product, int quantity) {
-        CartItem item = new CartItem(product, quantity);
+    public void addItem(Product product, int quantity, String size) {
+        CartItem item = new CartItem(product, quantity, size);
         items.add(item);
         notifyObservers(); // Thông báo cho các observer
     }

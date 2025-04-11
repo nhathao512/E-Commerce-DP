@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 public class CartService {
     private final Cart cart = Cart.getInstance();
 
-    public void addToCart(Product product, int quantity) {
-        cart.addItem(product, quantity);
+    public void addToCart(Product product, int quantity, String size) {
+        cart.addItem(product, quantity, size);
     }
 
     public boolean isProductInCart(String id){
