@@ -319,3 +319,142 @@
  
     box-shadow: 0 1px 4px rgba(75, 85, 99, 0.2);
   }
+  /* Các style hiện có giữ nguyên, chỉ thêm phần mới cho cart items */
+
+.cartItems {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(100, 116, 139, 0.03);
+}
+
+.cartTitle {
+  color: #1e3a8a;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.cartTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: linear-gradient(90deg, #2563eb, #60a5fa);
+  border-radius: 1px;
+}
+
+.cartItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem;
+  margin-bottom: 0.8rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(100, 116, 139, 0.05);
+  transition: all 0.3s ease;
+}
+
+.cartItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(100, 116, 139, 0.1);
+}
+
+.cartItemImage {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+}
+
+.cartItemDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.cartItemName {
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.cartItemQuantity {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.cartItemPrice {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Cập nhật media query để đảm bảo responsive */
+@media (max-width: 768px) {
+  .cartItem {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .cartItemImage {
+    width: 80px;
+    height: 80px;
+  }
+
+  .cartItemDetails {
+    width: 100%;
+  }
+}
+/* Các style hiện có giữ nguyên, chỉ thêm/chỉnh sửa cho kích thước */
+
+.cartItemDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem; /* Tăng nhẹ gap để chứa thêm kích thước */
+}
+
+.cartItemSize {
+  color: #64748b;
+  font-weight: 500;
+  background: rgba(100, 116, 139, 0.05);
+  border-radius: 4px;
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.85rem;
+}
+
+.cartItemSize:hover {
+  background: rgba(100, 116, 139, 0.1);
+}
+
+/* Cập nhật media query để đảm bảo responsive */
+@media (max-width: 768px) {
+  .cartItem {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+
+  .cartItemImage {
+    width: 80px;
+    height: 80px;
+  }
+
+  .cartItemDetails {
+    width: 100%;
+  }
+
+  .cartItemSize {
+    font-size: 0.9rem; /* Tăng nhẹ font size trên mobile cho dễ đọc */
+  }
+}

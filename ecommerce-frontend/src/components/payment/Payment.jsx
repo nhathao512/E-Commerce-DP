@@ -17,6 +17,24 @@ function Payment() {
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
   const [transferCode, setTransferCode] = useState("");
 
+  // Danh sách sản phẩm mẫu (có thể thay bằng dữ liệu thực từ API hoặc props)
+  const cartItems = [
+    {
+      id: 1,
+      name: "Áo thun nam cao cấp",
+      quantity: 2,
+      price: 200000,
+      image: "https://via.placeholder.com/60" // Ảnh mẫu
+    },
+    {
+      id: 2,
+      name: "Quần jeans nam",
+      quantity: 1,
+      price: 300000,
+      image: "https://via.placeholder.com/60" // Ảnh mẫu
+    }
+  ];
+
   // Generate random transfer code when bank method is selected
   useEffect(() => {
     if (method === "bank") {
@@ -121,33 +139,33 @@ function Payment() {
             </select>
 
             {method === "bank" && (
-  <div className={styles.bankInfo}>
-    <img 
-      src={logo}
-      alt="Banking Info"
-      className={styles.bankImage}
-    />
-    <div className={styles.timerContainer}>
-      <span className={styles.timerText}>
-        Mã sẽ hết hạn trong vòng: {formatTime(timeLeft)}
-      </span>
-      <div className={styles.codeWrapper}>
-        <span className={styles.transferCode}>
-          Mã chuyển khoản: {transferCode}
-        </span>
-        <button
-          onClick={() => {
-            navigator.clipboard.writeText(transferCode);
-            alert("Đã sao chép mã: " + transferCode);
-          }}
-          className={styles.copyButton}
-        >
-          Copy
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+              <div className={styles.bankInfo}>
+                <img 
+                  src={logo}
+                  alt="Banking Info"
+                  className={styles.bankImage}
+                />
+                <div className={styles.timerContainer}>
+                  <span className={styles.timerText}>
+                    Mã sẽ hết hạn trong vòng: {formatTime(timeLeft)}
+                  </span>
+                  <div className={styles.codeWrapper}>
+                    <span className={styles.transferCode}>
+                      Mã chuyển khoản: {transferCode}
+                    </span>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(transferCode);
+                        alert("Đã sao chép mã: " + transferCode);
+                      }}
+                      className={styles.copyButton}
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {method === "credit" && (
               <div className={styles.creditForm}>
@@ -208,6 +226,29 @@ function Payment() {
 
         <div className={styles.paymentSummary}>
           <h3>Tóm tắt thanh toán</h3>
+          <div className={styles.cartItems}>
+            <h4 className={styles.cartTitle}>Sản phẩm</h4>
+            {cartItems.map(item => (
+              <div key={item.id} className={styles.cartItem}>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className={styles.cartItemImage}
+                />
+                <div className={styles.cartItemDetails}>
+                  <span className={styles.cartItemName}>{item.name}</span>
+                  
+                  <span className={styles.cartItemQuantity}>
+                    Số lượng: {item.quantity}
+                  </span>
+                  <span className={styles.cartItemSize}>Kích thước: {item.size}</span>
+                  <span className={styles.cartItemPrice}>
+                    {(item.price * item.quantity).toLocaleString()} VNĐ
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
           <div className={styles.summaryItem}>
             <span>Tổng tiền hàng:</span>
             <span>{paymentDetails.subtotal.toLocaleString()} VNĐ</span>
