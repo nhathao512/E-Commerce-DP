@@ -24,7 +24,6 @@
   gap: 10px;
 }
 
-
 .controls {
   display: flex;
   gap: 10px;
@@ -32,13 +31,14 @@
   justify-content: center;
   flex-wrap: wrap;
 }
+
 .controls input {
   padding: 10px 14px;
   font-size: 16px;
   border-radius: 8px;
   border: 1px solid #94a3b8;
   min-width: 180px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .controls button {
@@ -46,7 +46,7 @@
   font-size: 15px;
   background-color: #3b82f6;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
 }
 
@@ -55,9 +55,6 @@
   transform: translateY(-1px);
 }
 
-
-/* Popup styles giữ nguyên nếu đã có */
-/* Popup Overlay */
 .overlay {
   position: fixed;
   top: 0;
@@ -71,7 +68,6 @@
   z-index: 1000;
 }
 
-/* Modal Box */
 .modal {
   background-color: #fff;
   padding: 24px 32px;
@@ -81,7 +77,6 @@
   animation: fadeIn 0.2s ease-in-out;
 }
 
-/* Form Layout */
 .form {
   display: flex;
   flex-direction: column;
@@ -104,7 +99,30 @@
   border: 1px solid #ccc;
 }
 
-/* Buttons */
+.passwordContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordContainer input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #666;
+  font-size: 18px;
+  user-select: none;
+}
+
+.eyeIcon:hover {
+  color: #333;
+}
+
 .buttonGroup {
   display: flex;
   justify-content: flex-end;
@@ -134,7 +152,6 @@
   background-color: #a71d2a;
 }
 
-/* Fade in animation */
 @keyframes fadeIn {
   from {
     transform: scale(0.95);
@@ -144,4 +161,41 @@
     transform: scale(1);
     opacity: 1;
   }
+}
+/* Existing styles remain unchanged */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #007bffd2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination .activePage {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+  font-weight: bold;
 }

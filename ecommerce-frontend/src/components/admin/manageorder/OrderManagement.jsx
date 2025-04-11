@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Dashboard from "../dashboard/Dashboard";
+import Dashboard from "../Dashboard/Dashboard";
 import styles from "./OrderManagement.module.css"; // Dùng lại CSS
 import { ShoppingCart } from "lucide-react";
 import Header from "../Header";

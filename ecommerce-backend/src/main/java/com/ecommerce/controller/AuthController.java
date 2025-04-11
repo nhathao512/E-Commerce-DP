@@ -78,12 +78,12 @@ public class AuthController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserResponse> updateCurrentUser(
-            @RequestParam(value = "phone", required = false) String phone,
-            @RequestParam(value = "address", required = false) String address,
-            @RequestParam(value = "fullName", required = false) String fullName,
-            @RequestParam(value = "avatar", required = false) String avatar,
-            @RequestParam("username") String username) {
+public ResponseEntity<UserResponse> updateCurrentUser(
+    @RequestParam(value = "phone", required = false) String phone,
+    @RequestParam(value = "address", required = false) String address,
+    @RequestParam(value = "fullName", required = false) String fullName,
+    @RequestParam(value = "avatar", required = false) String avatar,
+    @RequestParam("username") String username) {
         try {
             UserResponse userResponse = authService.updateUser(username, phone, address, fullName, avatar);
             return ResponseEntity.ok(userResponse);

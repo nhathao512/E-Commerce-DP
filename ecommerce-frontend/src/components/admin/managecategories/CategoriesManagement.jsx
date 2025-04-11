@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Dashboard from "../dashboard/Dashboard";
+import Dashboard from "../Dashboard/Dashboard";
 import styles from "./CategoriesManagement.module.css";
 import { FaTags } from "react-icons/fa";
 import {

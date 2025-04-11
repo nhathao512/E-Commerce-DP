@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import Dashboard from "../dashboard/Dashboard";
+import React, { useState, useEffect, useMemo } from "react";
+import Dashboard from "../Dashboard/Dashboard";
 import styles from "./UserManagement.module.css";
-import { FaUsersCog } from "react-icons/fa";
+import { FaUsersCog, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 function UserManagement() {
   const [users, setUsers] = useState([]);
@@ -12,102 +13,179 @@ function UserManagement() {
   const [editingUser, setEditingUser] = useState(null);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1); // New state for current page
+  const usersPerPage = 10; // Number of users per page
 
+  // Fetch list of users
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get("http://localhost:8080/api/auth/users");
+      console.log("Fetched users:", response.data);
+      setUsers(response.data || []);
+      setCurrentPage(1); // Reset to first page when fetching new data
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast.error("Không thể tải danh sách người dùng!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Call API when component mounts
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/api/auth/users"
-        );
-        setUsers(response.data || []); // Đảm bảo users là mảng rỗng nếu không có dữ liệu
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
     fetchUsers();
   }, []);
 
-  const filteredUsers = users
-    .filter((user) => {
-      const username = user.username || ""; // Gán giá trị mặc định nếu undefined
-      const fullName = user.fullName || "";
-      return (
-        username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        fullName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    })
-    .sort((a, b) =>
-      isAsc
-        ? (a.username || "").localeCompare(b.username || "")
-        : (b.username || "").localeCompare(a.username || "")
-    );
+  // Memoize filtered and sorted users
+  const filteredUsers = useMemo(() => {
+    return users
+      .filter((user) => {
+        const username = user.username?.toLowerCase() || "";
+        const fullName = user.fullName?.toLowerCase() || "";
+        return (
+          username.includes(searchTerm.toLowerCase()) ||
+          fullName.includes(searchTerm.toLowerCase())
+        );
+      })
+      .sort((a, b) => {
+        const usernameA = a.username || "";
+        const usernameB = b.username || "";
+        return isAsc
+          ? usernameA.localeCompare(usernameB)
+          : usernameB.localeCompare(usernameA);
+      });
+  }, [users, searchTerm, isAsc]);
 
+  // Calculate paginated users
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * usersPerPage;
+    const endIndex = startIndex + usersPerPage;
+    return filteredUsers.slice(startIndex, endIndex);
+  }, [filteredUsers, currentPage]);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  // Open form to create new user
   const handleCreate = () => {
     setEditingUser(null);
     setIsPopupOpen(true);
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   };
 
+  // Open form to edit user
   const handleEdit = (user) => {
     setEditingUser(user);
     setIsPopupOpen(true);
+    setShowPassword(false);
+    setShowConfirmPassword(false);
   };
 
+  // Open delete confirmation popup
   const handleDelete = (id) => {
     const user = users.find((u) => u.id === id);
     setUserToDelete(user);
     setIsDeletePopupOpen(true);
   };
 
+  // Confirm user deletion
   const confirmDelete = async () => {
+    setIsLoading(true);
     try {
-      await axios.delete(
-        `http://localhost:8080/api/auth/users/${userToDelete.id}`
-      );
-      setUsers((prev) => prev.filter((user) => user.id !== userToDelete.id));
+      await axios.delete(`http://localhost:8080/api/auth/users/${userToDelete.id}`);
+      await fetchUsers();
+      toast.success(`Đã xóa người dùng ${userToDelete.username}`);
       setIsDeletePopupOpen(false);
       setUserToDelete(null);
     } catch (error) {
       console.error("Error deleting user:", error);
+      toast.error("Không thể xóa người dùng!");
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // Handle form submission (create or edit)
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
     const newUser = {
       username: form.username.value,
+      password: form.password?.value || undefined,
+      confirmPassword: form.confirmPassword?.value || undefined,
       phone: form.phone.value || "",
       address: form.address.value || "",
       fullName: form.fullName.value || "",
       avatar: form.avatar?.value || "",
     };
 
+    if (!editingUser && newUser.password !== newUser.confirmPassword) {
+      toast.error("Mật khẩu và xác nhận mật khẩu không khớp!");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       if (editingUser) {
-        const response = await axios.put(
-          `http://localhost:8080/api/auth/me?username=${newUser.username}`,
-          null,
-          { params: newUser }
-        );
-        setUsers((prev) =>
-          prev.map((u) => (u.id === editingUser.id ? response.data : u))
-        );
-      } else {
-        const password = prompt("Vui lòng nhập mật khẩu cho người dùng mới:");
-        if (!password) {
-          alert("Mật khẩu là bắt buộc khi tạo người dùng mới!");
+        console.log("Current users:", users);
+        const userExists = users.some((u) => u.username === newUser.username);
+        if (!userExists) {
+          console.error(`User ${newUser.username} does not exist`);
+          toast.error(`Người dùng ${newUser.username} không tồn tại!`);
+          setIsLoading(false);
           return;
         }
-        newUser.password = password;
-        const response = await axios.post(
-          "http://localhost:8080/api/auth/register",
-          newUser
-        );
-        setUsers((prev) => [...prev, response.data]);
+        console.log("Sending update for user:", newUser);
+        const response = await axios.put("http://localhost:8080/api/auth/me", null, {
+          params: {
+            username: newUser.username,
+            phone: newUser.phone,
+            address: newUser.address,
+            fullName: newUser.fullName,
+            avatar: newUser.avatar,
+          },
+        });
+        console.log("Update response:", response.data);
+        toast.success(`Đã cập nhật thông tin cho ${newUser.username}`);
+      } else {
+        if (!newUser.password) {
+          toast.error("Mật khẩu là bắt buộc khi tạo người dùng mới!");
+          setIsLoading(false);
+          return;
+        }
+        console.log("Creating user:", newUser);
+        const response = await axios.post("http://localhost:8080/api/auth/register", {
+          ...newUser,
+          confirmPassword: undefined,
+        });
+        console.log("Create response:", response.data);
+        toast.success(`Đã tạo người dùng ${newUser.username}`);
       }
+      await fetchUsers();
       setIsPopupOpen(false);
+      setEditingUser(null);
+      setShowPassword(false);
+      setShowConfirmPassword(false);
     } catch (error) {
       console.error("Error submitting user:", error);
+      if (error.response) {
+        console.error("Error response:", error.response.data);
+      }
+      toast.error(`Lỗi: ${error.response?.data?.message || "Không thể lưu người dùng!"}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -123,26 +201,61 @@ function UserManagement() {
             placeholder="Tìm kiếm..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            disabled={isLoading}
           />
-          <button onClick={handleCreate}>➕ Tạo</button>
-          <button onClick={() => setIsAsc(!isAsc)}>
+          <button onClick={handleCreate} disabled={isLoading}>
+            ➕ Tạo
+          </button>
+          <button onClick={() => setIsAsc(!isAsc)} disabled={isLoading}>
             {isAsc ? "⬇ DESC" : "⬆ ASC"}
           </button>
         </div>
       </div>
 
-      <Dashboard
-        columns={[
-          { key: "id", label: "ID" },
-          { key: "username", label: "Tên đăng nhập" },
-          { key: "fullName", label: "Họ và Tên" },
-          { key: "phone", label: "Số điện thoại" },
-          { key: "address", label: "Địa chỉ" },
-        ]}
-        data={filteredUsers}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {isLoading ? (
+        <div className={styles.loading}>Đang tải...</div>
+      ) : (
+        <>
+          <Dashboard
+            columns={[
+              { key: "id", label: "ID" },
+              { key: "username", label: "Tên đăng nhập" },
+              { key: "fullName", label: "Họ và Tên" },
+              { key: "phone", label: "Số điện thoại" },
+              { key: "address", label: "Địa chỉ" },
+            ]}
+            data={paginatedUsers} // Use paginated users instead of filteredUsers
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+          {totalPages > 1 && (
+            <div className={styles.pagination}>
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1 || isLoading}
+              >
+                Trước
+              </button>
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={page === currentPage ? styles.activePage : ""}
+                  disabled={isLoading}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages || isLoading}
+              >
+                Sau
+              </button>
+            </div>
+          )}
+        </>
+      )}
 
       {isPopupOpen && (
         <div className={styles.overlay}>
@@ -156,14 +269,54 @@ function UserManagement() {
                   name="username"
                   defaultValue={editingUser?.username || ""}
                   required
+                  disabled={isLoading || editingUser}
                 />
               </div>
+              {!editingUser && (
+                <>
+                  <div className={styles.formGroup}>
+                    <label>Mật khẩu:</label>
+                    <div className={styles.passwordContainer}>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        required
+                        disabled={isLoading}
+                      />
+                      <span
+                        className={styles.eyeIcon}
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </div>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label>Xác nhận mật khẩu:</label>
+                    <div className={styles.passwordContainer}>
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        name="confirmPassword"
+                        required
+                        disabled={isLoading}
+                      />
+                      <span
+                        className={styles.eyeIcon}
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                      </span>
+                    </div>
+                  </div>
+                </>
+              )}
               <div className={styles.formGroup}>
                 <label>Họ và Tên:</label>
                 <input
                   type="text"
                   name="fullName"
                   defaultValue={editingUser?.fullName || ""}
+                  disabled={isLoading}
                 />
               </div>
               <div className={styles.formGroup}>
@@ -172,6 +325,7 @@ function UserManagement() {
                   type="text"
                   name="phone"
                   defaultValue={editingUser?.phone || ""}
+                  disabled={isLoading}
                 />
               </div>
               <div className={styles.formGroup}>
@@ -180,11 +334,23 @@ function UserManagement() {
                   type="text"
                   name="address"
                   defaultValue={editingUser?.address || ""}
+                  disabled={isLoading}
                 />
               </div>
+              
               <div className={styles.buttonGroup}>
-                <button type="submit">Lưu</button>
-                <button type="button" onClick={() => setIsPopupOpen(false)}>
+                <button type="submit" disabled={isLoading}>
+                  {isLoading ? "Đang lưu..." : "Lưu"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsPopupOpen(false);
+                    setShowPassword(false);
+                    setShowConfirmPassword(false);
+                  }}
+                  disabled={isLoading}
+                >
                   Hủy
                 </button>
               </div>
@@ -202,12 +368,15 @@ function UserManagement() {
               <strong>{userToDelete?.username}</strong> không?
             </p>
             <div className={styles.buttonGroup}>
-              <button onClick={confirmDelete}>Xóa</button>
+              <button onClick={confirmDelete} disabled={isLoading}>
+                {isLoading ? "Đang xóa..." : "Xóa"}
+              </button>
               <button
                 onClick={() => {
                   setIsDeletePopupOpen(false);
                   setUserToDelete(null);
                 }}
+                disabled={isLoading}
               >
                 Hủy
               </button>

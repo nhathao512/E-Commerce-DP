@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Dashboard from "../dashboard/Dashboard";
+import Dashboard from "../Dashboard/Dashboard";
 import styles from "./ProductManagement.module.css";
 import { ShoppingBag } from "lucide-react";
 
