@@ -11,16 +11,105 @@ import ProductsPage from "./manageproduct/ProductManagement";
 import CategoriesPage from "./managecategories/CategoriesManagement";
 import OrderPage from "./manageorder/OrderManagement";
 import styles from "./AdminPage.module.css";
-
+import { useState, useRef } from "react";
 
 function AdminPage() {
   const location = useLocation();
+  const [currentPage, setCurrentPage] = useState({
+    users: 1,
+    products: 1,
+    orders: 1,
+    categories: 1,
+  });
+
+  const usersTableRef = useRef(null);
+  const productsTableRef = useRef(null);
+  const ordersTableRef = useRef(null);
+  const categoriesTableRef = useRef(null);
+
+  const itemsPerPage = 5;
 
   const navLinkClass = (path) =>
     `${location.pathname === path ? styles.activeLink : ""}`;
 
+  // Sample data (replace with your actual data source)
+  const usersData = [
+    { id: 1, username: "viet", password: "admin123" },
+    { id: 2, username: "hao", password: "admin123" },
+    { id: 3, username: "huy", password: "admin123" },
+    { id: 4, username: "trung", password: "admin123" },
+    { id: 5, username: "user5", password: "admin123" },
+    { id: 6, username: "user6", password: "admin123" },
+    { id: 7, username: "user7", password: "admin123" },
+  ];
+
+  const productsData = [
+    { id: 1, code: 1, name: "Product 1", description: "Description 1", price: "100,000", image: "URL", categoryId: 1, quantity: 10 },
+    { id: 2, code: 2, name: "Product 2", description: "Description 2", price: "90,000", image: "URL", categoryId: 2, quantity: 20 },
+    { id: 3, code: 3, name: "Product 3", description: "Description 3", price: "80,000", image: "URL", categoryId: 1, quantity: 15 },
+    { id: 4, code: 4, name: "Product 4", description: "Description 4", price: "70,000", image: "URL", categoryId: 2, quantity: 25 },
+    { id: 5, code: 5, name: "Product 5", description: "Description 5", price: "60,000", image: "URL", categoryId: 1, quantity: 30 },
+    { id: 6, code: 6, name: "Product 6", description: "Description 6", price: "50,000", image: "URL", categoryId: 2, quantity: 40 },
+  ];
+
+  const ordersData = [
+    { id: 1, userId: 1, items: "Product 1", total: "100,000", paymentMethod: "Bank transfer" },
+    { id: 2, userId: 2, items: "Product 2", total: "90,000", paymentMethod: "Credit Card" },
+    { id: 3, userId: 3, items: "Product 3", total: "80,000", paymentMethod: "Cash" },
+    { id: 4, userId: 4, items: "Product 4", total: "70,000", paymentMethod: "Bank transfer" },
+    { id: 5, userId: 1, items: "Product 5", total: "60,000", paymentMethod: "Credit Card" },
+    { id: 6, userId: 2, items: "Product 6", total: "50,000", paymentMethod: "Cash" },
+  ];
+
+  const categoriesData = [
+    { id: 1, name: "Category 1" },
+    { id: 2, name: "Category 2" },
+    { id: 3, name: "Category 3" },
+    { id: 4, name: "Category 4" },
+    { id: 5, name: "Category 5" },
+    { id: 6, name: "Category 6" },
+  ];
+
+  // Scroll to table
+  const scrollToTable = (ref) => {
+    ref.current.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Pagination logic
+  const getPaginatedData = (data, page) => {
+    const startIndex = (page - 1) * itemsPerPage;
+    return data.slice(startIndex, startIndex + itemsPerPage);
+  };
+
+  const getTotalPages = (data) => {
+    return Math.ceil(data.length / itemsPerPage);
+  };
+
+  const handlePageChange = (section, page) => {
+    setCurrentPage((prev) => ({ ...prev, [section]: page }));
+  };
+
+  // Render pagination buttons
+  const renderPagination = (section, totalPages) => {
+    const pages = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(
+        <button
+          key={i}
+          className={`${styles.paginationButton} ${
+            currentPage[section] === i ? styles.activePagination : ""
+          }`}
+          onClick={() => handlePageChange(section, i)}
+        >
+          {i}
+        </button>
+      );
+    }
+    return <div className={styles.pagination}>{pages}</div>;
+  };
+
   return (
-    <div className="adminWrapper">
+    <div className={styles.adminWrapper}>
       <div className={styles.adminLayout}>
         <div className={styles.sidebar}>
           <Link to="/admin" className={styles.logo}>
@@ -54,32 +143,43 @@ function AdminPage() {
               path="/"
               element={
                 <>
-                  {/* <Header/> */}
                   <div className={styles.welcomeBox}>
                     <h2 className={styles.welcomeTitle}>
                       Chào mừng đến với trang quản trị
                     </h2>
                   </div>
                   <div className={styles.cardsContainer}>
-                    <div className={`${styles.card} ${styles.cardUsers}`}>
+                    <div
+                      className={`${styles.card} ${styles.cardUsers}`}
+                      onClick={() => scrollToTable(usersTableRef)}
+                    >
                       <h4>Người dùng</h4>
-                      <p>4 người</p>
+                      <p>{usersData.length} người</p>
                     </div>
-                    <div className={`${styles.card} ${styles.cardProducts}`}>
+                    <div
+                      className={`${styles.card} ${styles.cardProducts}`}
+                      onClick={() => scrollToTable(productsTableRef)}
+                    >
                       <h4>Sản phẩm</h4>
-                      <p>2 sản phẩm</p>
+                      <p>{productsData.length} sản phẩm</p>
                     </div>
-                    <div className={`${styles.card} ${styles.cardOrders}`}>
+                    <div
+                      className={`${styles.card} ${styles.cardOrders}`}
+                      onClick={() => scrollToTable(ordersTableRef)}
+                    >
                       <h4>Đơn hàng</h4>
-                      <p>2 đơn</p>
+                      <p>{ordersData.length} đơn</p>
                     </div>
-                    <div className={`${styles.card} ${styles.cardCategories}`}>
+                    <div
+                      className={`${styles.card} ${styles.cardCategories}`}
+                      onClick={() => scrollToTable(categoriesTableRef)}
+                    >
                       <h4>Danh mục</h4>
-                      <p>2 loại</p>
+                      <p>{categoriesData.length} loại</p>
                     </div>
                   </div>
 
-                  <div className={styles.tableSection}>
+                  <div className={styles.tableSection} ref={usersTableRef}>
                     <h3>Danh sách người dùng</h3>
                     <table className={styles.table}>
                       <thead>
@@ -90,31 +190,19 @@ function AdminPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>viet</td>
-                          <td>admin123</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>hao</td>
-                          <td>admin123</td>
-                        </tr>
-                        <tr>
-                          <td>3</td>
-                          <td>huy</td>
-                          <td>admin123</td>
-                        </tr>
-                        <tr>
-                          <td>4</td>
-                          <td>trung</td>
-                          <td>admin123</td>
-                        </tr>
+                        {getPaginatedData(usersData, currentPage.users).map((user) => (
+                          <tr key={user.id}>
+                            <td>{user.id}</td>
+                            <td>{user.username}</td>
+                            <td>{user.password}</td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
+                    {renderPagination("users", getTotalPages(usersData))}
                   </div>
 
-                  <div className={styles.tableSection}>
+                  <div className={styles.tableSection} ref={productsTableRef}>
                     <h3>Danh sách sản phẩm</h3>
                     <table className={styles.table}>
                       <thead>
@@ -130,31 +218,24 @@ function AdminPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>1</td>
-                          <td>Product 1</td>
-                          <td>Description 1</td>
-                          <td>100,000</td>
-                          <td>URL</td>
-                          <td>1</td>
-                          <td>10</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>2</td>
-                          <td>Product 2</td>
-                          <td>Description 2</td>
-                          <td>90,000</td>
-                          <td>URL</td>
-                          <td>2</td>
-                          <td>20</td>
-                        </tr>
+                        {getPaginatedData(productsData, currentPage.products).map((product) => (
+                          <tr key={product.id}>
+                            <td>{product.id}</td>
+                            <td>{product.code}</td>
+                            <td>{product.name}</td>
+                            <td>{product.description}</td>
+                            <td>{product.price}</td>
+                            <td>{product.image}</td>
+                            <td>{product.categoryId}</td>
+                            <td>{product.quantity}</td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
+                    {renderPagination("products", getTotalPages(productsData))}
                   </div>
 
-                  <div className={styles.tableSection}>
+                  <div className={styles.tableSection} ref={ordersTableRef}>
                     <h3>Danh sách đơn hàng</h3>
                     <table className={styles.table}>
                       <thead>
@@ -167,25 +248,21 @@ function AdminPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>1</td>
-                          <td>Product 1</td>
-                          <td>100,000</td>
-                          <td>Bank transfer</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>2</td>
-                          <td>Product 2</td>
-                          <td>90,000</td>
-                          <td>Credit Card</td>
-                        </tr>
+                        {getPaginatedData(ordersData, currentPage.orders).map((order) => (
+                          <tr key={order.id}>
+                            <td>{order.id}</td>
+                            <td>{order.userId}</td>
+                            <td>{order.items}</td>
+                            <td>{order.total}</td>
+                            <td>{order.paymentMethod}</td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
+                    {renderPagination("orders", getTotalPages(ordersData))}
                   </div>
 
-                  <div className={styles.tableSection}>
+                  <div className={styles.tableSection} ref={categoriesTableRef}>
                     <h3>Danh sách danh mục</h3>
                     <table className={styles.table}>
                       <thead>
@@ -195,16 +272,15 @@ function AdminPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td>Category 1</td>
-                        </tr>
-                        <tr>
-                          <td>2</td>
-                          <td>Category 2</td>
-                        </tr>
+                        {getPaginatedData(categoriesData, currentPage.categories).map((category) => (
+                          <tr key={category.id}>
+                            <td>{category.id}</td>
+                            <td>{category.name}</td>
+                          </tr>
+                        ))}
                       </tbody>
                     </table>
+                    {renderPagination("categories", getTotalPages(categoriesData))}
                   </div>
                 </>
               }
@@ -217,7 +293,6 @@ function AdminPage() {
         </main>
       </div>
     </div>
-    
   );
 }
 
