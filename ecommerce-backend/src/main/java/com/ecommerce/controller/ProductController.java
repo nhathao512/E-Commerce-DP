@@ -3,9 +3,13 @@ package com.ecommerce.controller;
 import com.ecommerce.dto.ProductRequest;
 import com.ecommerce.dto.ProductResponse;
 import com.ecommerce.dto.ResponseObject;
+import com.ecommerce.model.ClothingProduct;
 import com.ecommerce.model.Product;
+import com.ecommerce.model.ShoeProduct;
 import com.ecommerce.service.ProductService;
 import com.ecommerce.template.ProductImageUploader;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -17,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -31,10 +36,48 @@ public class ProductController {
         this.productImageUploader = productImageUploader;
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseObject> addProduct(@RequestBody ProductRequest request) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseObject> addProduct(
+            @RequestParam("name") String name,
+            @RequestParam("description") String description,
+            @RequestParam("price") Double price,
+            @RequestParam("categoryId") String categoryId,
+            @RequestParam("type") String type,
+            @RequestParam(value = "sole", required = false) String sole,
+            @RequestParam(value = "material", required = false) String material,
+            @RequestParam("sizes") String sizesJson,
+            @RequestParam("quantity") String quantityJson,
+            @RequestParam(value = "image", required = false) List<MultipartFile> images) {
         try {
+            // Parse JSON strings
+            ObjectMapper mapper = new ObjectMapper();
+            List<String> sizes = mapper.readValue(sizesJson, new TypeReference<List<String>>(){});
+            Map<String, Integer> quantity = mapper.readValue(quantityJson, new TypeReference<Map<String, Integer>>(){});
+
+            // Create ProductRequest
+            ProductRequest request = new ProductRequest();
+            request.setName(name);
+            request.setPrice(price);
+            request.setCategoryId(categoryId);
+            request.setDescription(description);
+            request.setType(type);
+            request.setSole(sole);
+            request.setMaterial(material);
+            request.setSizes(sizes);
+            request.setQuantity(quantity);
+
+            // Add product
             Product product = productService.addProduct(request);
+
+            // Upload images if provided
+            if (images != null && !images.isEmpty()) {
+                List<String> imageUrls = productImageUploader.uploadMultipleImages(images);
+                for (String imageUrl : imageUrls) {
+                    product.addImage(imageUrl);
+                }
+                productService.updateProduct(product);
+            }
+
             return ResponseEntity.ok(ResponseObject.builder()
                     .message("Tạo sản phẩm mới thành công")
                     .status(HttpStatus.CREATED)
@@ -139,18 +182,45 @@ public class ProductController {
         return ResponseEntity.ok(new ProductResponse(product));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ResponseObject> updateProduct(@PathVariable String id, @RequestBody ProductRequest request) {
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseObject> updateProduct(
+            @PathVariable String id,
+            @RequestParam("name") String name,
+            @RequestParam("description") String description,
+            @RequestParam("price") Double price,
+            @RequestParam("categoryId") String categoryId,
+            @RequestParam("type") String type,
+            @RequestParam(value = "sole", required = false) String sole,
+            @RequestParam(value = "material", required = false) String material,
+            @RequestParam("sizes") String sizesJson,
+            @RequestParam("quantity") String quantityJson,
+            @RequestParam(value = "image", required = false) List<MultipartFile> images) {
         try {
             Product existingProduct = productService.getProductById(id);
-            // Cập nhật các trường
-            existingProduct.setName(request.getName());
-            existingProduct.setPrice(request.getPrice());
-            existingProduct.setDescription(request.getDescription());
-            existingProduct.setImages(request.getImageUrl() != null ? List.of(request.getImageUrl()) : existingProduct.getImages());
-            existingProduct.setCategoryId(request.getCategoryId());
-            existingProduct.setQuantity(request.getQuantity());
-            existingProduct.setSizes(request.getSizes());
+
+            // Parse JSON strings
+            ObjectMapper mapper = new ObjectMapper();
+            List<String> sizes = mapper.readValue(sizesJson, new TypeReference<List<String>>(){});
+            Map<String, Integer> quantity = mapper.readValue(quantityJson, new TypeReference<Map<String, Integer>>(){});
+
+            // Update fields
+            existingProduct.setName(name);
+            existingProduct.setDescription(description);
+            existingProduct.setPrice(price);
+            existingProduct.setCategoryId(categoryId);
+            if (type.equalsIgnoreCase("shoe")) {
+                ((ShoeProduct) existingProduct).setSole(sole);
+            } else if (type.equalsIgnoreCase("clothing")) {
+                ((ClothingProduct) existingProduct).setMaterial(material);
+            }
+            existingProduct.setSizes(sizes);
+            existingProduct.setQuantity(quantity);
+
+            // Upload new images if provided
+            if (images != null && !images.isEmpty()) {
+                List<String> imageUrls = productImageUploader.uploadMultipleImages(images);
+                existingProduct.setImages(imageUrls);
+            }
 
             Product updatedProduct = productService.updateProduct(existingProduct);
             return ResponseEntity.ok(ResponseObject.builder()
