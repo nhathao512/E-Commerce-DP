@@ -17,7 +17,7 @@ public class ProductResponse {
     private String categoryId;
     private List<String> sizes = new ArrayList<>();
     private Map<String, Integer> quantity = new HashMap<>();
-
+    private String _class;
 
     public ProductResponse(Product product) {
         this.id = product.getId();
@@ -29,6 +29,7 @@ public class ProductResponse {
         this.categoryId = product.getCategoryId();
         this.quantity = product.getQuantity() != null ? product.getQuantity() : new HashMap<>();
         this.sizes = product.getSizes() != null ? product.getSizes() : new ArrayList<>();
+        this._class = product.getClass().getName();
     }
 
     public String getId() {
@@ -37,6 +38,10 @@ public class ProductResponse {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String get_class() {
+        return _class;
     }
 
     public String getProductCode() {

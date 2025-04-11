@@ -44,6 +44,7 @@ function ProductItem({ product }) {
     } catch (error) {
       console.error("Error adding to cart:", error.response || error);
       alert("Thêm vào giỏ hàng thất bại!");
+      console.log(product);
     }
   };
 
