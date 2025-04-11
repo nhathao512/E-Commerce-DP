@@ -14,7 +14,7 @@ import HomePage from "./components/home/HomePage";
 import ProductDetail from "./components/detail/ProductDetail";
 import AdminPage from "./components/admin/AdminPage";
 import Profile from "./components/profile/Profile";
-
+import UserOrderManagement from "./components/manageUserOrders/UserOrderManagement";
 function App() {
   return (
     <AuthProvider>
@@ -40,6 +40,7 @@ function App() {
                     <Route path="/review" element={<ReviewForm />} />
                     <Route path="/reviews" element={<ReviewList />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/orders" element={<UserOrderManagement />} />
                     <Route path="/" element={<HomePage />} />
                   </Routes>
                 </div>
@@ -51,6 +52,7 @@ function App() {
       </Router>
     </AuthProvider>
   );
+
 }
 
 export default App;

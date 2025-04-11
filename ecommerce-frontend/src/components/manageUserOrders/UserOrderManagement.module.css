@@ -1,0 +1,132 @@
+.container {
+    padding: 2rem;
+    background: linear-gradient(145deg, #e0eaff, #f6f6ff);
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 100, 0.1);
+    border: 1px solid #d3d9ff;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Canh giữa nội dung */
+  }
+  
+  .title {
+    font-size: 2rem;
+    color: #273c75;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-shadow: 0 1px 3px rgba(0, 0, 100, 0.2);
+  }
+  
+  .filterContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  .filterSelect,
+  .searchInput {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  
+  .tableContainer {
+    overflow-x: auto;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 0 12px rgba(0, 0, 100, 0.05);
+  }
+  
+  .orderTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+  }
+  
+  .orderTable th,
+  .orderTable td {
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .orderTable thead tr {
+    background: linear-gradient(to right, #667eea, #8f94fb);
+  }
+  
+  .orderTable th {
+    background: transparent;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+
+  
+  .orderTable tr:hover {
+    background-color: #f4f6ff;
+    transform: scale(1.005);
+    box-shadow: 0 0 8px rgba(150, 150, 255, 0.1);
+  }
+  
+  .productImage {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 100, 0.1);
+  }
+  
+  .actionBtn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    background: linear-gradient(to right, #4e54c8, #8f94fb);
+    transition: background 0.3s, transform 0.2s;
+    cursor: pointer;
+    margin: 0 0.25rem;
+  }
+  
+  .actionBtn:hover {
+    background: linear-gradient(to right, #667eea, #764ba2);
+    transform: scale(1.05);
+  }
+  
+  .disabledBtn {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: linear-gradient(to right, #ccc, #ddd);
+  }
+  
+  .reviewIcon {
+    margin-right: 0.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .orderTable th,
+    .orderTable td {
+      padding: 0.5rem;
+    }
+  
+    .productImage {
+      width: 40px;
+      height: 40px;
+    }
+  
+    .actionBtn {
+      padding: 0.4rem 0.8rem;
+    }
+  
+    .filterSelect,
+    .searchInput {
+      width: 100%;
+      font-size: 0.9rem;
+    }
+  }
+  
