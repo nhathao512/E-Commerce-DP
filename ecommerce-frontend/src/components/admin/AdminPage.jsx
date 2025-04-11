@@ -62,12 +62,12 @@ function AdminPage() {
   ];
 
   const categoriesData = [
-    { id: 1, name: "Category 1" },
-    { id: 2, name: "Category 2" },
-    { id: 3, name: "Category 3" },
-    { id: 4, name: "Category 4" },
-    { id: 5, name: "Category 5" },
-    { id: 6, name: "Category 6" },
+    { id: 1, name: "Category 1", icon: "https://via.placeholder.com/24" },
+    { id: 2, name: "Category 2", icon: "https://via.placeholder.com/24" },
+    { id: 3, name: "Category 3", icon: "https://via.placeholder.com/24" },
+    { id: 4, name: "Category 4", icon: "https://via.placeholder.com/24" },
+    { id: 5, name: "Category 5", icon: "https://via.placeholder.com/24" },
+    { id: 6, name: "Category 6", icon: "https://via.placeholder.com/24" },
   ];
 
   // Scroll to table
@@ -264,22 +264,32 @@ function AdminPage() {
 
                   <div className={styles.tableSection} ref={categoriesTableRef}>
                     <h3>Danh sách danh mục</h3>
-                    <table className={styles.table}>
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Name</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {getPaginatedData(categoriesData, currentPage.categories).map((category) => (
-                          <tr key={category.id}>
-                            <td>{category.id}</td>
-                            <td>{category.name}</td>
+                    <div className={styles.tableContainer}>
+                      <table className={`${styles.table} ${styles.centeredTable}`}>
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Icon</th>
+                            <th>Name</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {getPaginatedData(categoriesData, currentPage.categories).map((category) => (
+                            <tr key={category.id}>
+                              <td>{category.id}</td>
+                              <td>
+                                <img
+                                  src={category.icon}
+                                  alt={`${category.name} icon`}
+                                  className={styles.categoryIcon}
+                                />
+                              </td>
+                              <td>{category.name}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                     {renderPagination("categories", getTotalPages(categoriesData))}
                   </div>
                 </>
