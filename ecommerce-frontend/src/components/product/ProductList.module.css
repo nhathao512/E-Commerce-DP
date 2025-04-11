@@ -41,7 +41,7 @@
   content: '';
   width: 60px;
   height: 3px;
-  background: #6d28d9;
+  background: #45c1fb;
   position: absolute;
   bottom: -8px;
   left: 50%;
@@ -118,13 +118,13 @@
 }
 
 .filterItem:hover {
-  background: #6d28d9;
-  color: #ffffff;
+  background: #d3d3d3a4;
+  color: #000000;
 }
 
 .filterItem.active {
-  background: #6d28d9;
-  color: #ffffff;
+  background: #f5f5f5cc;
+  color: #000000;
   font-weight: 700;
 }
 
@@ -157,7 +157,7 @@
 .spinner {
   width: 56px;
   height: 56px;
-  border: 5px solid #6d28d9;
+  border: 5px solid #aeaeae;
   border-top: 5px solid transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
