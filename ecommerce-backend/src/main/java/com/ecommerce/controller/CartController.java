@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Book;
 import java.util.List;
 
 @RestController
@@ -28,12 +27,8 @@ public class CartController {
 
         if(product instanceof ClothingProduct){
             cartService.addToCart((ClothingProduct) product, quantity);
-        } else if(product instanceof ElectronicsProduct){
-            cartService.addToCart((ElectronicsProduct) product, quantity);
-        } else if(product instanceof  BookProduct){
-            cartService.addToCart((BookProduct) product, quantity);
-        } else if(product instanceof HouseholdProduct){
-            cartService.addToCart((HouseholdProduct) product, quantity);
+        } else if(product instanceof ShoeProduct){
+            cartService.addToCart((ShoeProduct) product, quantity);
         }
 
         return ResponseEntity.ok().build();
