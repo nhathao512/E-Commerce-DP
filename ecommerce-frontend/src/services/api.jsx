@@ -17,8 +17,10 @@ export default API;
 export const getProducts = () => API.get("/products");
 export const getProductById = (id) => API.get(`/products/${id}`);
 export const getCart = () => API.get("/cart");
-export const addToCart = (product, quantity) => API.post(`/cart/add?quantity=${quantity}`, product);
+export const addToCart = (product, quantity) =>
+  API.post(`/cart/add?quantity=${quantity}`, product);
 export const processPayment = (method) => API.post("/payment", { method });
 export const addReview = (data) => API.post("/reviews", data);
-export const getReviews = (productCode) => API.get(`/reviews/product/${productCode}`);
+export const getReviews = (productCode) =>
+  API.get(`/reviews/product/${productCode}`);
 export const getAllCategories = () => API.get("/categories");
