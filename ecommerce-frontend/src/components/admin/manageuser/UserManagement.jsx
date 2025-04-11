@@ -10,8 +10,8 @@ function UserManagement() {
   const [isAsc, setIsAsc] = useState(true);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false); // Trạng thái cho popup xóa
-  const [userToDelete, setUserToDelete] = useState(null); // Lưu thông tin user cần xóa
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -19,7 +19,7 @@ function UserManagement() {
         const response = await axios.get(
           "http://localhost:8080/api/auth/users"
         );
-        setUsers(response.data);
+        setUsers(response.data || []); // Đảm bảo users là mảng rỗng nếu không có dữ liệu
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -28,15 +28,18 @@ function UserManagement() {
   }, []);
 
   const filteredUsers = users
-    .filter(
-      (user) =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.password.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    .filter((user) => {
+      const username = user.username || ""; // Gán giá trị mặc định nếu undefined
+      const fullName = user.fullName || "";
+      return (
+        username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fullName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    })
     .sort((a, b) =>
       isAsc
-        ? a.username.localeCompare(b.username)
-        : b.username.localeCompare(a.username)
+        ? (a.username || "").localeCompare(b.username || "")
+        : (b.username || "").localeCompare(a.username || "")
     );
 
   const handleCreate = () => {
@@ -51,8 +54,8 @@ function UserManagement() {
 
   const handleDelete = (id) => {
     const user = users.find((u) => u.id === id);
-    setUserToDelete(user); // Lưu user cần xóa
-    setIsDeletePopupOpen(true); // Mở popup xác nhận
+    setUserToDelete(user);
+    setIsDeletePopupOpen(true);
   };
 
   const confirmDelete = async () => {
@@ -61,8 +64,8 @@ function UserManagement() {
         `http://localhost:8080/api/auth/users/${userToDelete.id}`
       );
       setUsers((prev) => prev.filter((user) => user.id !== userToDelete.id));
-      setIsDeletePopupOpen(false); // Đóng popup
-      setUserToDelete(null); // Xóa thông tin user tạm thời
+      setIsDeletePopupOpen(false);
+      setUserToDelete(null);
     } catch (error) {
       console.error("Error deleting user:", error);
     }
@@ -71,14 +74,11 @@ function UserManagement() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
-    const id = editingUser ? editingUser.id : null;
     const newUser = {
-      id,
       username: form.username.value,
-      password: form.password.value,
-      phone: form.phone?.value || "",
-      address: form.address?.value || "",
-      fullName: form.fullName?.value || "",
+      phone: form.phone.value || "",
+      address: form.address.value || "",
+      fullName: form.fullName.value || "",
       avatar: form.avatar?.value || "",
     };
 
@@ -86,10 +86,19 @@ function UserManagement() {
       if (editingUser) {
         const response = await axios.put(
           `http://localhost:8080/api/auth/me?username=${newUser.username}`,
-          newUser
+          null,
+          { params: newUser }
         );
-        setUsers((prev) => prev.map((u) => (u.id === id ? response.data : u)));
+        setUsers((prev) =>
+          prev.map((u) => (u.id === editingUser.id ? response.data : u))
+        );
       } else {
+        const password = prompt("Vui lòng nhập mật khẩu cho người dùng mới:");
+        if (!password) {
+          alert("Mật khẩu là bắt buộc khi tạo người dùng mới!");
+          return;
+        }
+        newUser.password = password;
         const response = await axios.post(
           "http://localhost:8080/api/auth/register",
           newUser
