@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Thêm useNavigate
 import { getProductById, addToCart } from "../../services/api";
 import ReviewForm from "../review/ReviewForm";
 import styles from "./ProductDetail.module.css";
@@ -13,15 +13,10 @@ function ProductDetail() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [showLoginPopup, setShowLoginPopup] = useState(false); // State cho popup
+  const [showLoginPopup, setShowLoginPopup] = useState(false);
   const { isAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate(); // Thêm để điều hướng đến trang đăng nhập
   const API_URL = "http://localhost:8080/api";
-
-  // Giả lập hàm kiểm tra trạng thái đăng nhập (thay bằng logic thực tế của bạn)
-  const isLoggedIn = () => {
-    // Ví dụ: Kiểm tra token trong localStorage
-    return isAuthenticated; // Trả về true nếu có token, false nếu không
-  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -37,13 +32,12 @@ function ProductDetail() {
     fetchProduct();
   }, [id]);
 
-  // Tự động tắt popup sau 5 giây
   useEffect(() => {
     if (showLoginPopup) {
       const timer = setTimeout(() => {
         setShowLoginPopup(false);
-      }, 3000); // 3000ms = 5 giây
-      return () => clearTimeout(timer); // Dọn dẹp timer khi component unmount hoặc popup tắt
+      }, 3000);
+      return () => clearTimeout(timer);
     }
   }, [showLoginPopup]);
 
@@ -73,9 +67,8 @@ function ProductDetail() {
   };
 
   const handleAddToCart = async () => {
-    // Kiểm tra trạng thái đăng nhập
-    if (!isLoggedIn()) {
-      setShowLoginPopup(true); // Hiển thị popup nếu chưa đăng nhập
+    if (!isAuthenticated) {
+      setShowLoginPopup(true);
       return;
     }
 
@@ -83,8 +76,18 @@ function ProductDetail() {
       alert("Vui lòng chọn kích thước!");
       return;
     }
+
+    // Kiểm tra số lượng tồn kho cho kích thước đã chọn
+    const availableQuantity = product.quantity[selectedSize] || 0;
+    if (quantity > availableQuantity) {
+      alert(
+        `Chỉ còn ${availableQuantity} sản phẩm cho kích thước ${selectedSize}!`
+      );
+      return;
+    }
+
     try {
-      await addToCart(product.id, quantity);
+      await addToCart(product.id, quantity); // Cần gửi thêm selectedSize nếu API yêu cầu
       alert(
         `Đã thêm ${quantity} sản phẩm ${product.name} (kích thước: ${selectedSize}) vào giỏ hàng!`
       );
@@ -97,9 +100,12 @@ function ProductDetail() {
   if (loading) return <div className={styles.loadingWrapper}>Đang tải...</div>;
   if (!product) return <img className={styles.notFound} src={notFound}></img>;
 
-  const sizes = product.extraAttribute
-    ? product.extraAttribute.split(",").map((s) => s.trim())
-    : ["Hiện tại chưa update"];
+  const sizes =
+    product.sizes.length > 0 ? product.sizes : ["Hiện tại chưa update"];
+  const totalQuantity = Object.values(product.quantity).reduce(
+    (sum, qty) => sum + qty,
+    0
+  );
 
   return (
     <div className={styles.container}>
@@ -135,7 +141,7 @@ function ProductDetail() {
           <h1 className={styles.productName}>{product.name}</h1>
           <p className={styles.brand}>
             Thương hiệu: <span>ECOMMERCE®</span> | Tình trạng:{" "}
-            <span>{product.quantity > 0 ? "Còn hàng" : "Hết hàng"}</span>
+            <span>{totalQuantity > 0 ? "Còn hàng" : "Hết hàng"}</span>
           </p>
           <p className={styles.price}>
             {product.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} VNĐ
@@ -150,6 +156,7 @@ function ProductDetail() {
                     selectedSize === size ? styles.selectedSize : ""
                   }`}
                   onClick={() => handleSizeSelect(size)}
+                  disabled={product.quantity[size] === 0} // Vô hiệu hóa nếu hết hàng
                 >
                   {size}
                 </button>
@@ -183,6 +190,12 @@ function ProductDetail() {
         <div className={styles.loginPopup}>
           <p>Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!</p>
           <button
+            className={styles.loginButton}
+            onClick={() => navigate("/login")} // Điều hướng đến trang đăng nhập
+          >
+            Đăng nhập
+          </button>
+          <button
             className={styles.closeButton}
             onClick={() => setShowLoginPopup(false)}
           >
@@ -191,7 +204,6 @@ function ProductDetail() {
         </div>
       )}
 
-      {/* Đánh giá */}
       <ReviewForm productCode={product.productCode} />
     </div>
   );

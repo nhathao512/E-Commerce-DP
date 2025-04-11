@@ -138,4 +138,48 @@ public class ProductController {
         Product product = productService.getProductById(id);
         return ResponseEntity.ok(new ProductResponse(product));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseObject> updateProduct(@PathVariable String id, @RequestBody ProductRequest request) {
+        try {
+            Product existingProduct = productService.getProductById(id);
+            // Cập nhật các trường
+            existingProduct.setName(request.getName());
+            existingProduct.setPrice(request.getPrice());
+            existingProduct.setDescription(request.getDescription());
+            existingProduct.setImages(request.getImageUrl() != null ? List.of(request.getImageUrl()) : existingProduct.getImages());
+            existingProduct.setCategoryId(request.getCategoryId());
+            existingProduct.setQuantity(request.getQuantity());
+            existingProduct.setSizes(request.getSizes());
+
+            Product updatedProduct = productService.updateProduct(existingProduct);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .message("Cập nhật sản phẩm thành công")
+                    .status(HttpStatus.OK)
+                    .data(new ProductResponse(updatedProduct))
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message("Error updating product: " + e.getMessage())
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build());
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseObject> deleteProduct(@PathVariable String id) {
+        try {
+            Product product = productService.getProductById(id);
+            productService.deleteProduct(id); // Cần thêm hàm deleteProduct trong ProductService
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .message("Xóa sản phẩm thành công")
+                    .status(HttpStatus.OK)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message("Error deleting product: " + e.getMessage())
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build());
+        }
+    }
 }
