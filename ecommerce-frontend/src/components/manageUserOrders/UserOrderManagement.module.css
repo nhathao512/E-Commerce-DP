@@ -1,132 +1,248 @@
 .container {
-    padding: 2rem;
-    background: linear-gradient(145deg, #e0eaff, #f6f6ff);
-    border-radius: 16px;
-    box-shadow: 0 0 20px rgba(0, 0, 100, 0.1);
-    border: 1px solid #d3d9ff;
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Canh giữa nội dung */
-  }
-  
-  .title {
-    font-size: 2rem;
-    color: #273c75;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    text-shadow: 0 1px 3px rgba(0, 0, 100, 0.2);
-  }
-  
-  .filterContainer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    margin-top: 0.5rem;
-  }
-  
-  .filterSelect,
-  .searchInput {
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-  }
-  
-  .tableContainer {
-    overflow-x: auto;
-    background-color: #fff;
-    border-radius: 16px;
-    box-shadow: 0 0 12px rgba(0, 0, 100, 0.05);
-  }
-  
-  .orderTable {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-  }
-  
-  .orderTable th,
-  .orderTable td {
-    padding: 1rem;
-    text-align: center;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .orderTable thead tr {
-    background: linear-gradient(to right, #667eea, #8f94fb);
-  }
-  
-  .orderTable th {
-    background: transparent;
-    color: white;
-    font-weight: bold;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  }
-  
+  padding: 2rem;
+  background: linear-gradient(145deg, #e0eaff, #f6f6ff);
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 0, 100, 0.1);
+  border: 1px solid #d3d9ff;
+}
 
-  
-  .orderTable tr:hover {
-    background-color: #f4f6ff;
-    transform: scale(1.005);
-    box-shadow: 0 0 8px rgba(150, 150, 255, 0.1);
-  }
-  
-  .productImage {
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    object-fit: cover;
-    box-shadow: 0 2px 8px rgba(0, 0, 100, 0.1);
-  }
-  
-  .actionBtn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    background: linear-gradient(to right, #4e54c8, #8f94fb);
-    transition: background 0.3s, transform 0.2s;
-    cursor: pointer;
-    margin: 0 0.25rem;
-  }
-  
-  .actionBtn:hover {
-    background: linear-gradient(to right, #667eea, #764ba2);
-    transform: scale(1.05);
-  }
-  
-  .disabledBtn {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background: linear-gradient(to right, #ccc, #ddd);
-  }
-  
-  .reviewIcon {
-    margin-right: 0.5rem;
-  }
-  
-  @media (max-width: 768px) {
-    .orderTable th,
-    .orderTable td {
-      padding: 0.5rem;
-    }
-  
-    .productImage {
-      width: 40px;
-      height: 40px;
-    }
-  
-    .actionBtn {
-      padding: 0.4rem 0.8rem;
-    }
-  
-    .filterSelect,
-    .searchInput {
-      width: 100%;
-      font-size: 0.9rem;
-    }
-  }
-  
+.title {
+  text-align: center;
+  font-size: 2rem;
+  color: #273c75;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 100, 0.2);
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.title:hover {
+  color: #4e54c8;
+  transform: scale(1.02);
+  text-shadow: 0 2px 6px rgba(0, 0, 100, 0.3);
+}
+
+.filterContainer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-left: 0.5rem;
+}
+
+.filterLabel {
+  font-size: 20px;
+  font-weight: bold;
+  color: #273c75;
+  margin-right: 0.5rem;
+
+}
+
+.filterSelect,
+.searchInput {
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  min-width: 160px;
+  background-color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  transition: border 0.2s ease;
+}
+
+.filterSelect:focus,
+.searchInput:focus {
+  border-color: #4e54c8;
+  outline: none;
+}
+
+
+.orderTable {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.orderTable th,
+.orderTable td {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.gradientRow {
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  color: white;
+}
+
+.orderTable tr:hover {
+  background-color: #f4f6ff;
+}
+
+.actionBtn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+  background: linear-gradient(to right, #667eea, #764ba2);
+  transform: scale(1.05);
+}
+
+.statusBadge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: white;
+}
+
+.statusGreen {
+  background-color: #2ecc71;
+}
+
+.statusYellow {
+  background-color: #f1c40f;
+  color: #333;
+}
+
+.statusRed {
+  background-color: #e74c3c;
+}
+
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 50, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.popup {
+  background:  linear-gradient(to right, #f7f9ff, #eef2ff);;
+  border-radius: 16px;
+  padding: 2rem 3rem;
+  width: 60vw;
+  max-width: 800px;
+  text-align: center;
+  box-shadow: 0 0 25px rgba(0, 0, 226, 0.2);
+  position: relative;
+}
+.popupTitle {
+  font-size: 1.5rem;
+  color: #273c75;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 100, 0.2);
+}
+.detailTable {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+}
+
+
+.detailTable th {
+  background: #4e54c8; 
+  color: white;
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  border: none;
+}
+
+
+.detailTable td {
+  background-color: #fdfdff; 
+  padding: 12px;
+  text-align: center;
+  color: #333;
+  border: none;
+}
+
+.detailTable tr:last-child td {
+  background-color: #eef2ff;
+  font-weight: 500;
+}
+
+.popupActionBtn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 100, 0.2);
+  gap: 5px;
+}
+
+.popupActionBtn:hover {
+  background: linear-gradient(to right, #667eea, #764ba2);
+  transform: scale(1.05);
+}
+.popupButtons {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* khoảng cách giữa 2 nút */
+  margin-top: 20px;
+}
+.actionBtn {
+  padding: 0.8rem 1.6rem; /* tăng độ dày */
+  font-size: 1rem; /* tăng cỡ chữ */
+  border: none;
+  border-radius: 10px;
+  color: white;
+  background: linear-gradient(to right, #4e54c8, #8f94fb);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px; /* thêm độ rộng tối thiểu cho đều */
+}
+
+.actionBtn:hover {
+  background: linear-gradient(to right, #667eea, #764ba2);
+  transform: scale(1.05);
+}
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+
+.closeBtn {
+  margin-top: 1.5rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 2px solid #4e54c8;
+  border-radius: 8px;
+  background-color: white;
+  color: #4e54c8;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.closeBtn:hover {
+  background-color: #f0f2ff;
+  transform: scale(1.05);
+}
