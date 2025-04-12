@@ -27,7 +27,6 @@ function ProductManagement() {
           getProducts(),
           getAllCategories(),
         ]);
-        // Lọc bỏ các sản phẩm không hợp lệ
         const validProducts = productsResponse.data.filter(
           (product) =>
             product && product.name && typeof product.name === "string"
@@ -36,6 +35,7 @@ function ProductManagement() {
         setCategories(categoriesResponse.data || []);
       } catch (error) {
         console.error("Error fetching data:", error);
+        alert("Failed to load products or categories");
       }
     };
     fetchData();
@@ -47,6 +47,7 @@ function ProductManagement() {
       setProducts(products.filter((product) => product.id !== id));
     } catch (error) {
       console.error("Error deleting product:", error);
+      alert("Failed to delete product");
     }
   };
 
@@ -90,7 +91,6 @@ function ProductManagement() {
     { key: "description", label: "Mô tả" },
     { key: "price", label: "Giá" },
     { key: "images", label: "Ảnh" },
-    // { key: "categoryId", label: "Mã danh mục" },
     { key: "quantity", label: "Số lượng" },
   ];
 
@@ -124,22 +124,27 @@ function ProductManagement() {
         <ProductForm
           editingProduct={editingProduct}
           categories={categories}
-          onSave={async (newProduct) => {
+          onSave={async (formData) => {
             try {
               if (editingProduct) {
-                const response = await updateProduct(newProduct.id, newProduct);
+                const response = await updateProduct(editingProduct.id, formData);
                 setProducts(
                   products.map((p) =>
-                    p.id === newProduct.id ? response.data : p
+                    p.id === editingProduct.id ? response.data : p
                   )
                 );
               } else {
-                const response = await addProduct(newProduct);
+                const response = await addProduct(formData);
                 setProducts([...products, response.data]);
               }
               setPopupOpen(false);
             } catch (error) {
               console.error("Error saving product:", error);
+              alert(
+                `Failed to save product: ${
+                  error.response?.data?.message || error.message
+                }`
+              );
             }
           }}
           onCancel={() => setPopupOpen(false)}
@@ -150,20 +155,18 @@ function ProductManagement() {
 }
 
 function ProductForm({ editingProduct, categories, onSave, onCancel }) {
-  const [type, setType] = useState(editingProduct?.type || "Clothing");
-  const [sizes, setSizes] = useState(
-    editingProduct?.sizes || (type === "Clothing" ? ["S", "M", "L", "XL"] : [])
-  );
-  const [quantities, setQuantities] = useState(
-    editingProduct?.quantity || { S: 0, M: 0, L: 0, XL: 0 }
-  );
+  const [type, setType] = useState(editingProduct?.type?.toLowerCase() || "clothing");
+  const [sizes, setSizes] = useState(editingProduct?.sizes || []);
+  const [quantities, setQuantities] = useState(editingProduct?.quantity || {});
   const [sole, setSole] = useState(editingProduct?.sole || "");
   const [material, setMaterial] = useState(editingProduct?.material || "");
   const [files, setFiles] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddSize = () => {
-    setSizes([...sizes, `Size ${sizes.length + 1}`]);
-    setQuantities({ ...quantities, [`Size ${sizes.length + 1}`]: 0 });
+    const newSize = `Size ${sizes.length + 1}`;
+    setSizes([...sizes, newSize]);
+    setQuantities({ ...quantities, [newSize]: 0 });
   };
 
   const handleSizeChange = (index, value) => {
@@ -191,27 +194,42 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const form = e.target;
     const formData = new FormData();
 
     files.forEach((file) => formData.append("image", file));
     formData.append("name", form.name.value);
     formData.append("description", form.description.value);
-    formData.append("price", parseFloat(form.price.value));
+    formData.append("price", parseFloat(form.price.value) || 0);
     formData.append("categoryId", form.categoryId.value);
-    formData.append("type", type);
+    formData.append("type", type.toLowerCase());
 
-    if (type === "Clothing") {
+    if (type.toLowerCase() === "clothing") {
       formData.append("material", material);
-      formData.append("sizes", JSON.stringify(sizes));
-      formData.append("quantity", JSON.stringify(quantities));
-    } else {
+    } else if (type.toLowerCase() === "shoe") {
       formData.append("sole", sole);
-      formData.append("sizes", JSON.stringify(sizes));
-      formData.append("quantity", JSON.stringify(quantities));
+    }
+    formData.append("sizes", JSON.stringify(sizes));
+    formData.append("quantity", JSON.stringify(quantities));
+
+    // Log FormData for debugging
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
     }
 
-    onSave(formData);
+    try {
+      await onSave(formData);
+    } catch (error) {
+      console.error("Error saving product:", error);
+      alert(
+        `Failed to save product: ${
+          error.response?.data?.message || error.message
+        }`
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -249,17 +267,12 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
             onChange={(e) => {
               const newType = e.target.value;
               setType(newType);
-              if (newType === "Clothing") {
-                setSizes(["S", "M", "L", "XL"]);
-                setQuantities({ S: 0, M: 0, L: 0, XL: 0 });
-              } else {
-                setSizes([]);
-                setQuantities({});
-              }
+              setSizes([]);
+              setQuantities({});
             }}
           >
-            <option value="Clothing">Clothing</option>
-            <option value="Shoe">Shoe</option>
+            <option value="clothing">Clothing</option>
+            <option value="shoe">Shoe</option>
           </select>
           <select
             name="categoryId"
@@ -276,7 +289,7 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
             ))}
           </select>
 
-          {type === "Clothing" && (
+          {type === "clothing" && (
             <div>
               <input
                 type="text"
@@ -289,9 +302,10 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                 <div key={size} style={{ display: "flex", gap: "10px" }}>
                   <input
                     type="text"
+                    placeholder="Size"
                     value={size}
                     onChange={(e) => handleSizeChange(index, e.target.value)}
-                    readOnly
+                    required
                   />
                   <input
                     type="number"
@@ -302,10 +316,17 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                   />
                 </div>
               ))}
+              <button
+                type="button"
+                onClick={handleAddSize}
+                style={{ marginTop: "10px" }}
+              >
+                + Thêm size
+              </button>
             </div>
           )}
 
-          {type === "Shoe" && (
+          {type === "shoe" && (
             <div>
               <input
                 type="text"
@@ -343,8 +364,10 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
           )}
 
           <div className={styles.popupButtons}>
-            <button type="submit">Lưu</button>
-            <button type="button" onClick={onCancel}>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Đang lưu..." : "Lưu"}
+            </button>
+            <button type="button" onClick={onCancel} disabled={isSubmitting}>
               Hủy
             </button>
           </div>

@@ -1,12 +1,14 @@
 package com.ecommerce.dto;
 
 import com.ecommerce.model.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProductResponse {
     private String id;
     private String productCode;
@@ -18,6 +20,9 @@ public class ProductResponse {
     private List<String> sizes = new ArrayList<>();
     private Map<String, Integer> quantity = new HashMap<>();
     private String _class;
+    private String material;
+    private String type;
+    private String sole;
 
     public ProductResponse(Product product) {
         this.id = product.getId();
@@ -30,6 +35,14 @@ public class ProductResponse {
         this.quantity = product.getQuantity() != null ? product.getQuantity() : new HashMap<>();
         this.sizes = product.getSizes() != null ? product.getSizes() : new ArrayList<>();
         this._class = product.getClass().getName();
+
+        if (product instanceof ClothingProduct) {
+            this.type = "Clothing";
+            this.material = ((ClothingProduct) product).getMaterial();
+        } else if (product instanceof ShoeProduct) {
+            this.type = "Shoe";
+            this.sole = ((ShoeProduct) product).getSole();
+        }
     }
 
     public String getId() {
@@ -108,6 +121,24 @@ public class ProductResponse {
         this.quantity = quantity;
     }
 
+    public String getMaterial() {
+        return material;
+    }
 
+    public void setMaterial(String material) {
+        this.material = material;
+    }
+
+    public String getSole() {
+        return sole;
+    }
+
+    public void setSole(String sole) {
+        this.sole = sole;
+    }
+
+    public String getType() {return this.type;}
+
+    public void setType(String type) {this.type = type;}
 
 }
