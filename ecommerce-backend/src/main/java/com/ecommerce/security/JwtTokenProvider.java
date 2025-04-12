@@ -26,12 +26,13 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
-    public String generateToken(String subject) { // Đổi tên tham số cho rõ ràng
+    public String generateToken(String subject, String userId) { // Đổi tên tham số cho rõ ràng
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         String token = Jwts.builder()
-                .setSubject(subject) // subject có thể là username hoặc ID
+                .setSubject(subject)
+                .claim("userId", userId)// subject có thể là username hoặc ID
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)

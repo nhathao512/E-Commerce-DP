@@ -10,6 +10,7 @@ public class UserResponse {
     private String avatar;
     private String phone;
     private String address;
+    private String token;
     private String error; // Thêm trường error để chứa thông báo lỗi
 
     // Constructor nhận một User (dùng khi trả về thông tin người dùng)
@@ -124,7 +125,9 @@ public class UserResponse {
     public void setError(String error) {
         this.error = error;
     }
-
+    
+    public String getToken() {return token;}
+    public void setToken(String token) {this.token = token;}
     // Phương thức toString để hỗ trợ debug
     @Override
     public String toString() {

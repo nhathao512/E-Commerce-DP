@@ -13,7 +13,7 @@ function Cart() {
     const fetchCartItems = async () => {
       try {
         setLoading(true);
-        const response = await getCart();
+        const response = await getCart(localStorage.getItem("userID"));
         console.log("API response:", response.data);
         const cartData = response.data;
    // Thay bằng URL thực tế

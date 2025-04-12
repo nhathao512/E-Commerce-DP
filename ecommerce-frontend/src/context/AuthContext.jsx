@@ -21,12 +21,11 @@ export const AuthProvider = ({ children }) => {
           );
           const fetchedUser = response.data;
 
-          // Kiểm tra nếu có lỗi từ API
           if (fetchedUser.error) {
             throw new Error(fetchedUser.error);
           }
 
-          setUser(fetchedUser); // Lưu toàn bộ dữ liệu user từ server
+          setUser(fetchedUser);
           setIsAuthenticated(true);
         } catch (error) {
           console.error("Failed to verify auth:", error);
@@ -48,12 +47,13 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await API.post("/auth/login", { username, password });
-      const { id: token, ...userData } = response.data; // userData chứa thông tin người dùng
-      localStorage.setItem("token", token);
+      const { id, token, ...userData } = response.data; // Destructured đúng: id và token
+      localStorage.setItem("userID", id);
+      localStorage.setItem("token", token); // Lưu token thực sự
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
       setIsAuthenticated(true);
-      return true;
+      return { token, id }; // Trả về token và id
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }) => {
         address,
         fullName,
       });
-      // Giả sử backend trả về thông tin người dùng sau khi đăng ký
       const userData = response.data;
       localStorage.setItem("user", JSON.stringify(userData));
       return userData;
@@ -90,9 +89,9 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         isAuthenticated,
-        setIsAuthenticated, // Thêm để các component khác có thể cập nhật trạng thái đăng nhập
+        setIsAuthenticated,
         user,
-        setUser, // Thêm setUser để Profile.js có thể sử dụng
+        setUser,
         login,
         register,
         logout,

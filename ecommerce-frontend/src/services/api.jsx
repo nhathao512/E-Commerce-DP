@@ -13,25 +13,29 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-export default API;
-
 // Product-related APIs
 export const getProducts = () => API.get("/products");
 export const getProductById = (id) => API.get(`/products/${id}`);
-export const addProduct = (product) => API.post("/products", product); // Thêm sản phẩm
+export const addProduct = (product) => API.post("/products", product);
 export const updateProduct = (id, product) =>
-  API.put(`/products/${id}`, product); // Sửa sản phẩm
-export const deleteProduct = (id) => API.delete(`/products/${id}`); // Xóa sản phẩm
+  API.put(`/products/${id}`, product);
+export const deleteProduct = (id) => API.delete(`/products/${id}`);
 
 // Cart-related APIs
-export const getCart = () => API.get("/cart");
-export const addToCart = (product, quantity, size) =>
+export const getCart = (userId) =>
+  API.get("/cart", {
+    params: { userId },
+  });
+
+export const addToCart = (product, quantity, size, userId) =>
   API.post("/cart/add", product, {
     params: {
       quantity,
       size,
+      userId,
     },
   });
+
 
 // Payment API
 export const processPayment = (method) => API.post("/payment", { method });
@@ -48,3 +52,5 @@ export const addCategory = (name, icon) =>
 export const updateCategory = (id, name, icon) =>
   API.put(`/categories/${id}`, null, { params: { name, icon } });
 export const deleteCategory = (id) => API.delete(`/categories/${id}`);
+
+export default API;

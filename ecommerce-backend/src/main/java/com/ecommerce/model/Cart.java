@@ -3,35 +3,42 @@ package com.ecommerce.model;
 import com.ecommerce.observer.CartObserver;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Cart {
-    private static Cart instance; // Singleton Pattern
+    private static final Map<String, Cart> instances = new HashMap<>(); // Lưu trữ Cart theo userId
+    private String userId; // Liên kết với người dùng
     private List<CartItem> items;
-    private List<CartObserver> observers; // Observer Pattern
+    private List<CartObserver> observers;
 
-    private Cart() {
-        items = new ArrayList<>();
-        observers = new ArrayList<>();
+    private Cart(String userId) {
+        this.userId = userId;
+        this.items = new ArrayList<>();
+        this.observers = new ArrayList<>();
     }
 
-    // Singleton: Lấy instance duy nhất của Cart
-    public static Cart getInstance() {
-        if (instance == null) {
-            synchronized (Cart.class) {
-                if (instance == null) {
-                    instance = new Cart();
-                }
-            }
+    // Multiton: Lấy hoặc tạo instance Cart cho userId
+    public static Cart getInstance(String userId) {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("userId cannot be null or empty");
         }
-        return instance;
+        synchronized (Cart.class) {
+            return instances.computeIfAbsent(userId, k -> new Cart(userId));
+        }
+    }
+
+    // Getter cho userId nếu cần
+    public String getUserId() {
+        return userId;
     }
 
     // Thêm sản phẩm vào giỏ hàng
     public void addItem(Product product, int quantity, String size) {
         CartItem item = new CartItem(product, quantity, size);
         items.add(item);
-        notifyObservers(); // Thông báo cho các observer
+        notifyObservers();
     }
 
     // Lấy danh sách sản phẩm trong giỏ
@@ -65,6 +72,13 @@ public class Cart {
         int itemCount = items.size();
         for (CartObserver observer : observers) {
             observer.update(itemCount);
+        }
+    }
+
+    // Xóa instance Cart cho userId (nếu cần, ví dụ khi người dùng đăng xuất)
+    public static void removeInstance(String userId) {
+        synchronized (Cart.class) {
+            instances.remove(userId);
         }
     }
 }

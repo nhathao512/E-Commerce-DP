@@ -12,11 +12,11 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping("/create")
-    public ResponseEntity<Order> createOrder(
-            @RequestParam String userId,
-            @RequestParam String paymentMethod) {
-        Order order = orderService.createOrder(userId, paymentMethod);
-        return ResponseEntity.ok(order);
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<Order> createOrder(
+//            @RequestParam String userId,
+//            @RequestParam String paymentMethod) {
+//        Order order = orderService.createOrder(userId, paymentMethod);
+//        return ResponseEntity.ok(order);
+//    }
 }

@@ -77,10 +77,10 @@ public class AuthService {
             if (user == null) {
                 throw new IllegalArgumentException("Invalid username or password");
             }
-            String token = jwtTokenProvider.generateToken(user.getUsername());
+            String token = jwtTokenProvider.generateToken(user.getUsername(), user.getId());
             logger.info("Generated token for username {}: {}", user.getUsername(), token);
             UserResponse userResponse = new UserResponse(user);
-            userResponse.setId(token);
+            userResponse.setToken(token);
             return userResponse;
         } catch (AuthenticationException e) {
             logger.warn("Login failed for username {}: {}", username, e.getMessage());

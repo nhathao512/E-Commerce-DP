@@ -16,33 +16,39 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping("/add")
-    public ResponseEntity<Void> addToCart(@RequestBody Product product, @RequestParam(name = "quantity", defaultValue = "1") int quantity, @RequestParam(name = "size", defaultValue = "S") String size) {
-        String productID = product.getId();
+    public ResponseEntity<Void> addToCart(
+            @RequestBody Product product,
+            @RequestParam(name = "quantity", defaultValue = "1") int quantity,
+            @RequestParam(name = "size", defaultValue = "S") String size,
+            @RequestParam String userId) { // Hoặc lấy từ SecurityContext
+        String productId = product.getId();
 
-        if(cartService.isProductInCart(productID)){
+        if (cartService.isProductInCart(userId, productId)) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .header("Error-Message", "Product already exists in cart")
                     .build();
         }
 
-        if(product instanceof ClothingProduct){
-            cartService.addToCart((ClothingProduct) product, quantity, size);
-        } else if(product instanceof ShoeProduct){
-            cartService.addToCart((ShoeProduct) product, quantity, size);
+        if (product instanceof ClothingProduct || product instanceof ShoeProduct) {
+            cartService.addToCart(userId, product, quantity, size);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .header("Error-Message", "Invalid product type")
+                    .build();
         }
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<CartItem>> getCartItems() {
-        List<CartItem> items = cartService.getCartItems();
+    public ResponseEntity<List<CartItem>> getCartItems(@RequestParam String userId) {
+        List<CartItem> items = cartService.getCartItems(userId);
         return ResponseEntity.ok(items);
     }
 
     @DeleteMapping("/clear")
-    public ResponseEntity<Void> clearCart() {
-        cartService.clearCart();
+    public ResponseEntity<Void> clearCart(@RequestParam String userId) {
+        cartService.clearCart(userId);
         return ResponseEntity.ok().build();
     }
 }
