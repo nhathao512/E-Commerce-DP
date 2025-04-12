@@ -5,74 +5,159 @@ import {
   FaClipboardList,
   FaTags,
   FaCogs,
+  FaPlus,
+  FaFileExport,
+  FaChartLine,
+  FaArrowLeft,
+  FaArrowRight,
+  FaSignOutAlt,
 } from "react-icons/fa";
+import { Bar, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import UsersPage from "./manageuser/UserManagement";
 import ProductsPage from "./manageproduct/ProductManagement";
 import CategoriesPage from "./managecategories/CategoriesManagement";
 import OrderPage from "./manageorder/OrderManagement";
 import styles from "./AdminPage.module.css";
-import { useState, useRef } from "react";
+import { useState } from "react";
+import logo from "../../assets/logo1.png";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 function AdminPage() {
   const location = useLocation();
   const [currentPage, setCurrentPage] = useState({
-    users: 1,
-    products: 1,
-    orders: 1,
-    categories: 1,
+    topProducts: 1,
+    topUsers: 1,
   });
-
-  const usersTableRef = useRef(null);
-  const productsTableRef = useRef(null);
-  const ordersTableRef = useRef(null);
-  const categoriesTableRef = useRef(null);
-
+  const [chartType, setChartType] = useState("bar");
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const itemsPerPage = 5;
 
   const navLinkClass = (path) =>
     `${location.pathname === path ? styles.activeLink : ""}`;
 
-  // Sample data (replace with your actual data source)
-  const usersData = [
-    { id: 1, username: "viet", password: "admin123" },
-    { id: 2, username: "hao", password: "admin123" },
-    { id: 3, username: "huy", password: "admin123" },
-    { id: 4, username: "trung", password: "admin123" },
-    { id: 5, username: "user5", password: "admin123" },
-    { id: 6, username: "user6", password: "admin123" },
-    { id: 7, username: "user7", password: "admin123" },
+  // Sample data with improved structure
+  const ordersData = [
+    { id: 1, userId: 1, productId: 1, total: 100000, status: "completed" },
+    { id: 2, userId: 2, productId: 2, total: 90000, status: "completed" },
+    { id: 3, userId: 3, productId: 3, total: 80000, status: "pending" },
+    { id: 4, userId: 1, productId: 4, total: 70000, status: "completed" },
+    { id: 5, userId: 2, productId: 5, total: 60000, status: "completed" },
+    { id: 6, userId: 1, productId: 6, total: 50000, status: "completed" },
+    { id: 7, userId: 2, productId: 1, total: 100000, status: "completed" },
   ];
 
   const productsData = [
-    { id: 1, code: 1, name: "Product 1", description: "Description 1", price: "100,000", image: "URL", categoryId: 1, quantity: 10 },
-    { id: 2, code: 2, name: "Product 2", description: "Description 2", price: "90,000", image: "URL", categoryId: 2, quantity: 20 },
-    { id: 3, code: 3, name: "Product 3", description: "Description 3", price: "80,000", image: "URL", categoryId: 1, quantity: 15 },
-    { id: 4, code: 4, name: "Product 4", description: "Description 4", price: "70,000", image: "URL", categoryId: 2, quantity: 25 },
-    { id: 5, code: 5, name: "Product 5", description: "Description 5", price: "60,000", image: "URL", categoryId: 1, quantity: 30 },
-    { id: 6, code: 6, name: "Product 6", description: "Description 6", price: "50,000", image: "URL", categoryId: 2, quantity: 40 },
+    { id: 1, name: "Product 1" },
+    { id: 2, name: "Product 2" },
+    { id: 3, name: "Product 3" },
+    { id: 4, name: "Product 4" },
+    { id: 5, name: "Product 5" },
+    { id: 6, name: "Product 6" },
   ];
 
-  const ordersData = [
-    { id: 1, userId: 1, items: "Product 1", total: "100,000", paymentMethod: "Bank transfer" },
-    { id: 2, userId: 2, items: "Product 2", total: "90,000", paymentMethod: "Credit Card" },
-    { id: 3, userId: 3, items: "Product 3", total: "80,000", paymentMethod: "Cash" },
-    { id: 4, userId: 4, items: "Product 4", total: "70,000", paymentMethod: "Bank transfer" },
-    { id: 5, userId: 1, items: "Product 5", total: "60,000", paymentMethod: "Credit Card" },
-    { id: 6, userId: 2, items: "Product 6", total: "50,000", paymentMethod: "Cash" },
+  const usersData = [
+    { id: 1, username: "viet" },
+    { id: 2, username: "hao" },
+    { id: 3, username: "huy" },
   ];
 
-  const categoriesData = [
-    { id: 1, name: "Category 1", icon: "https://via.placeholder.com/24" },
-    { id: 2, name: "Category 2", icon: "https://via.placeholder.com/24" },
-    { id: 3, name: "Category 3", icon: "https://via.placeholder.com/24" },
-    { id: 4, name: "Category 4", icon: "https://via.placeholder.com/24" },
-    { id: 5, name: "Category 5", icon: "https://via.placeholder.com/24" },
-    { id: 6, name: "Category 6", icon: "https://via.placeholder.com/24" },
+  // Calculate monthly revenue (completed orders)
+  const monthlyRevenue = ordersData
+    .filter((order) => order.status === "completed")
+    .reduce((sum, order) => sum + order.total, 0)
+    .toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+
+  // Top products by purchase count
+  const productCounts = ordersData
+    .filter((order) => order.status === "completed")
+    .reduce((acc, order) => {
+      acc[order.productId] = (acc[order.productId] || 0) + 1;
+      return acc;
+    }, {});
+
+  const topProducts = Object.entries(productCounts)
+    .map(([id, count]) => ({
+      id: parseInt(id),
+      name: productsData.find((p) => p.id === parseInt(id))?.name || "Unknown",
+      count,
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  // Top users by purchase count
+  const userCounts = ordersData
+    .filter((order) => order.status === "completed")
+    .reduce((acc, order) => {
+      acc[order.userId] = (acc[order.userId] || 0) + 1;
+      return acc;
+    }, {});
+
+  const topUsers = Object.entries(userCounts)
+    .map(([id, count]) => ({
+      id: parseInt(id),
+      username: usersData.find((u) => u.id === parseInt(id))?.username || "Unknown",
+      count,
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  // Sample 12-month revenue data
+  const monthlyRevenueData = [
+    500000, 600000, 450000, 700000, 800000, 650000,
+    900000, 750000, 820000, 680000, 950000, 1000000,
   ];
 
-  // Scroll to table
-  const scrollToTable = (ref) => {
-    ref.current.scrollIntoView({ behavior: "smooth" });
+  const chartData = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    datasets: [
+      {
+        label: "Monthly Revenue (VND)",
+        data: monthlyRevenueData,
+        backgroundColor: chartType === "bar" ? "rgba(34, 197, 94, 0.6)" : "transparent",
+        borderColor: "#22c55e",
+        borderWidth: 2,
+        pointBackgroundColor: "#22c55e",
+        pointBorderColor: "#fff",
+        pointHoverRadius: 8,
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "top", labels: { font: { size: 14 } } },
+      title: { display: true, text: "Revenue by Month (2025)", font: { size: 18 } },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: (value) => new Intl.NumberFormat("vi-VN").format(value),
+        },
+      },
+    },
   };
 
   // Pagination logic
@@ -81,15 +166,12 @@ function AdminPage() {
     return data.slice(startIndex, startIndex + itemsPerPage);
   };
 
-  const getTotalPages = (data) => {
-    return Math.ceil(data.length / itemsPerPage);
-  };
+  const getTotalPages = (data) => Math.ceil(data.length / itemsPerPage);
 
   const handlePageChange = (section, page) => {
     setCurrentPage((prev) => ({ ...prev, [section]: page }));
   };
 
-  // Render pagination buttons
   const renderPagination = (section, totalPages) => {
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {
@@ -108,32 +190,57 @@ function AdminPage() {
     return <div className={styles.pagination}>{pages}</div>;
   };
 
+  // Export data (placeholder)
+  const exportToCSV = (data, filename) => {
+    const csv = ["ID,Name,Count"];
+    data.forEach((item) => csv.push(`${item.id},${item.name},${item.count}`));
+    const blob = new Blob([csv.join("\n")], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${filename}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className={styles.adminWrapper}>
+    <div className={`${styles.adminWrapper} ${isSidebarCollapsed ? styles.collapsed : ''}`}>
       <div className={styles.adminLayout}>
-        <div className={styles.sidebar}>
-          <Link to="/admin" className={styles.logo}>
-            <FaCogs style={{ marginRight: 8 }} /> Admin Panel
-          </Link>
-          <div className={styles.navLinks}>
-            <Link to="/admin/users" className={navLinkClass("/admin/users")}>
-              <FaUserCog /> Quản lý người dùng
-            </Link>
-            <Link
-              to="/admin/products"
-              className={navLinkClass("/admin/products")}
-            >
-              <FaBoxOpen /> Quản lý sản phẩm
-            </Link>
-            <Link
-              to="/admin/categories"
-              className={navLinkClass("/admin/categories")}
-            >
-              <FaTags /> Quản lý danh mục
-            </Link>
-            <Link to="/admin/orders" className={navLinkClass("/admin/orders")}>
-              <FaClipboardList /> Quản lý đơn hàng
-            </Link>
+        <div className={`${styles.sidebar} ${isSidebarCollapsed ? styles.collapsed : ''}`}>
+          <div className={styles.sidebarHeader}>
+            <div className={styles.headerContent}>
+              {!isSidebarCollapsed && (
+                <img src={logo} alt="Logo" className={styles.logo} />
+              )}
+              <button 
+                className={styles.toggleButton}
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              >
+                {isSidebarCollapsed ? <FaArrowRight /> : <FaArrowLeft />}
+              </button>
+            </div>
+            {!isSidebarCollapsed && (
+              <div className={styles.navLinks}>
+                <Link to="/admin" className={navLinkClass("/admin")}>
+                  <FaCogs style={{ marginRight: 14 }} /> Admin Panel
+                </Link>
+                <Link to="/admin/users" className={navLinkClass("/admin/users")}>
+                  <FaUserCog style={{ marginRight: 14 }} /> Quản lý người dùng
+                </Link>
+                <Link to="/admin/products" className={navLinkClass("/admin/products")}>
+                  <FaBoxOpen style={{ marginRight: 14 }} /> Quản lý sản phẩm
+                </Link>
+                <Link to="/admin/categories" className={navLinkClass("/admin/categories")}>
+                  <FaTags style={{ marginRight: 14 }} /> Quản lý danh mục
+                </Link>
+                <Link to="/admin/orders" className={navLinkClass("/admin/orders")}>
+                  <FaClipboardList style={{ marginRight: 14 }} /> Quản lý đơn hàng
+                </Link>
+                <Link to="/" className={styles.logoutLink}>
+                  <FaSignOutAlt style={{ marginRight: 14 }} /> Thoát
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
@@ -148,149 +255,129 @@ function AdminPage() {
                       Chào mừng đến với trang quản trị
                     </h2>
                   </div>
+
                   <div className={styles.cardsContainer}>
-                    <div
-                      className={`${styles.card} ${styles.cardUsers}`}
-                      onClick={() => scrollToTable(usersTableRef)}
-                    >
-                      <h4>Người dùng</h4>
-                      <p>{usersData.length} người</p>
+                    <div className={`${styles.card} ${styles.cardRevenue}`}>
+                      <FaChartLine className={styles.cardIcon} />
+                      <div>
+                        <h4>Doanh thu tháng này</h4>
+                        <p>{monthlyRevenue}</p>
+                      </div>
                     </div>
-                    <div
-                      className={`${styles.card} ${styles.cardProducts}`}
-                      onClick={() => scrollToTable(productsTableRef)}
-                    >
-                      <h4>Sản phẩm</h4>
-                      <p>{productsData.length} sản phẩm</p>
+                    <div className={`${styles.card} ${styles.cardProducts}`}>
+                      <FaBoxOpen className={styles.cardIcon} />
+                      <div>
+                        <h4>Sản phẩm</h4>
+                        <p>{productsData.length} sản phẩm</p>
+                      </div>
                     </div>
-                    <div
-                      className={`${styles.card} ${styles.cardOrders}`}
-                      onClick={() => scrollToTable(ordersTableRef)}
-                    >
-                      <h4>Đơn hàng</h4>
-                      <p>{ordersData.length} đơn</p>
+                    <div className={`${styles.card} ${styles.cardOrders}`}>
+                      <FaClipboardList className={styles.cardIcon} />
+                      <div>
+                        <h4>Đơn hàng</h4>
+                        <p>{ordersData.length} đơn</p>
+                      </div>
                     </div>
-                    <div
-                      className={`${styles.card} ${styles.cardCategories}`}
-                      onClick={() => scrollToTable(categoriesTableRef)}
-                    >
-                      <h4>Danh mục</h4>
-                      <p>{categoriesData.length} loại</p>
+                    <div className={`${styles.card} ${styles.cardUsers}`}>
+                      <FaUserCog className={styles.cardIcon} />
+                      <div>
+                        <h4>Người dùng</h4>
+                        <p>{usersData.length} người</p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className={styles.tableSection} ref={usersTableRef}>
-                    <h3>Danh sách người dùng</h3>
-                    <table className={styles.table}>
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Username</th>
-                          <th>Password</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {getPaginatedData(usersData, currentPage.users).map((user) => (
-                          <tr key={user.id}>
-                            <td>{user.id}</td>
-                            <td>{user.username}</td>
-                            <td>{user.password}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    {renderPagination("users", getTotalPages(usersData))}
+                  <div className={styles.actionsSection}>
+                    <h3>Thao tác nhanh</h3>
+                    <div className={styles.actionsContainer}>
+                      <Link to="/admin/products" className={styles.actionButton}>
+                        <FaPlus /> Thêm sản phẩm
+                      </Link>
+                      <Link to="/admin/orders" className={styles.actionButton}>
+                        <FaClipboardList /> Xem đơn hàng chờ
+                      </Link>
+                      <button
+                        className={styles.actionButton}
+                        onClick={() => exportToCSV(topProducts, "top_products")}
+                      >
+                        <FaFileExport /> Xuất dữ liệu
+                      </button>
+                    </div>
                   </div>
 
-                  <div className={styles.tableSection} ref={productsTableRef}>
-                    <h3>Danh sách sản phẩm</h3>
-                    <table className={styles.table}>
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Product Code</th>
-                          <th>Name</th>
-                          <th>Description</th>
-                          <th>Price</th>
-                          <th>Image</th>
-                          <th>Category ID</th>
-                          <th>Quantity</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {getPaginatedData(productsData, currentPage.products).map((product) => (
-                          <tr key={product.id}>
-                            <td>{product.id}</td>
-                            <td>{product.code}</td>
-                            <td>{product.name}</td>
-                            <td>{product.description}</td>
-                            <td>{product.price}</td>
-                            <td>{product.image}</td>
-                            <td>{product.categoryId}</td>
-                            <td>{product.quantity}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    {renderPagination("products", getTotalPages(productsData))}
-                  </div>
-
-                  <div className={styles.tableSection} ref={ordersTableRef}>
-                    <h3>Danh sách đơn hàng</h3>
-                    <table className={styles.table}>
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>User ID</th>
-                          <th>Items</th>
-                          <th>Total</th>
-                          <th>Payment Method</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {getPaginatedData(ordersData, currentPage.orders).map((order) => (
-                          <tr key={order.id}>
-                            <td>{order.id}</td>
-                            <td>{order.userId}</td>
-                            <td>{order.items}</td>
-                            <td>{order.total}</td>
-                            <td>{order.paymentMethod}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                    {renderPagination("orders", getTotalPages(ordersData))}
-                  </div>
-
-                  <div className={styles.tableSection} ref={categoriesTableRef}>
-                    <h3>Danh sách danh mục</h3>
-                    <div className={styles.tableContainer}>
-                      <table className={`${styles.table} ${styles.centeredTable}`}>
+                  <div className={styles.tablesContainer}>
+                    <div className={styles.cardTable}>
+                      <h3>Top sản phẩm được mua nhiều nhất</h3>
+                      <table className={styles.table}>
                         <thead>
                           <tr>
                             <th>ID</th>
-                            <th>Icon</th>
-                            <th>Name</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lần mua</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {getPaginatedData(categoriesData, currentPage.categories).map((category) => (
-                            <tr key={category.id}>
-                              <td>{category.id}</td>
-                              <td>
-                                <img
-                                  src={category.icon}
-                                  alt={`${category.name} icon`}
-                                  className={styles.categoryIcon}
-                                />
-                              </td>
-                              <td>{category.name}</td>
+                          {getPaginatedData(topProducts, currentPage.topProducts).map((product) => (
+                            <tr key={product.id}>
+                              <td>{product.id}</td>
+                              <td>{product.name}</td>
+                              <td>{product.count}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
+                      {renderPagination("topProducts", getTotalPages(topProducts))}
                     </div>
-                    {renderPagination("categories", getTotalPages(categoriesData))}
+
+                    <div className={styles.cardTable}>
+                      <h3>Top người dùng mua nhiều nhất</h3>
+                      <table className={styles.table}>
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Số đơn hàng</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {getPaginatedData(topUsers, currentPage.topUsers).map((user) => (
+                            <tr key={user.id}>
+                              <td>{user.id}</td>
+                              <td>{user.username}</td>
+                              <td>{user.count}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      {renderPagination("topUsers", getTotalPages(topUsers))}
+                    </div>
+                  </div>
+
+                  <div className={styles.chartSection}>
+                    <div className={styles.chartHeader}>
+                      <h3>Doanh thu 12 tháng</h3>
+                      <div className={styles.chartToggle}>
+                        <button
+                          className={`${styles.toggleButton} ${chartType === "bar" ? styles.activeToggle : ""}`}
+                          onClick={() => setChartType("bar")}
+                        >
+                          Bar
+                        </button>
+                        <button
+                          className={`${styles.toggleButton} ${chartType === "line" ? styles.activeToggle : ""}`}
+                          onClick={() => setChartType("line")}
+                        >
+                          Line
+                        </button>
+                      </div>
+                    </div>
+                    <div className={styles.chartContainer}>
+                      {chartType === "bar" ? (
+                        <Bar data={chartData} options={chartOptions} />
+                      ) : (
+                        <Line data={chartData} options={chartOptions} />
+                      )}
+                    </div>
                   </div>
                 </>
               }
