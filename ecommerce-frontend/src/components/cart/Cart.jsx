@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { getCart, clearCart } from "../../services/api";
 import CartItem from "./CartItem";
 import Popup from "../common/Popup";
 import styles from "./Cart.module.css";
+import { AuthContext } from "../../context/AuthContext";
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -10,13 +12,40 @@ function Cart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [popup, setPopup] = useState(null);
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
+  const navigate = useNavigate();
   const API_URL = "http://localhost:8080/api";
 
   useEffect(() => {
+    if (isLoading) {
+      return; // Chờ AuthProvider xác minh
+    }
+
+    if (!isAuthenticated) {
+      setPopup({
+        message: "Vui lòng đăng nhập để xem giỏ hàng!",
+        type: "warning",
+        onClose: () => setPopup(null),
+        showCloseButton: false,
+        confirmButton: {
+          text: "Đăng nhập",
+          onClick: () => navigate("/login"),
+        },
+        cancelButton: {
+          text: "Đóng",
+          onClick: () => setPopup(null),
+        },
+      });
+      setLoading(false);
+      return;
+    }
+
     const fetchCartItems = async () => {
       const userId = localStorage.getItem("userID");
       if (!userId) {
-        setError("Vui lòng đăng nhập để xem giỏ hàng!");
+        setError(
+          "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!"
+        );
         setLoading(false);
         return;
       }
@@ -53,12 +82,14 @@ function Cart() {
     };
 
     fetchCartItems();
-  }, []);
+  }, [isAuthenticated, isLoading, navigate]);
 
   useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    window.dispatchEvent(new Event("cartUpdated"));
-  }, [cartItems]);
+    if (isAuthenticated && !isLoading) {
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      window.dispatchEvent(new Event("cartUpdated"));
+    }
+  }, [cartItems, isAuthenticated, isLoading]);
 
   const handleClearCart = async () => {
     const userId = localStorage.getItem("userID");
@@ -67,6 +98,15 @@ function Cart() {
         message: "Vui lòng đăng nhập để xóa giỏ hàng!",
         type: "warning",
         onClose: () => setPopup(null),
+        showCloseButton: false,
+        confirmButton: {
+          text: "Đăng nhập",
+          onClick: () => navigate("/login"),
+        },
+        cancelButton: {
+          text: "Đóng",
+          onClick: () => setPopup(null),
+        },
       });
       return;
     }
@@ -136,12 +176,26 @@ function Cart() {
     console.log("Processing payment for items:", selectedItems);
   };
 
+  if (isLoading) {
+    return <div className={styles.container}>Đang xác minh đăng nhập...</div>;
+  }
+
   if (loading) {
     return <div className={styles.container}>Đang tải giỏ hàng...</div>;
   }
 
   if (error) {
-    return <div className={styles.container}>{error}</div>;
+    return (
+      <div className={styles.container}>
+        <p>{error}</p>
+        <button
+          className={styles.paymentButton}
+          onClick={() => navigate("/login")}
+        >
+          Đăng nhập
+        </button>
+      </div>
+    );
   }
 
   return (

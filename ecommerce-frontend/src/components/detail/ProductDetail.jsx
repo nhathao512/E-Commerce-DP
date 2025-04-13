@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProductById, addToCart } from "../../services/api";
+import { getProductById, addToCart, getCart } from "../../services/api";
 import ReviewForm from "../review/ReviewForm";
 import Popup from "../common/Popup";
 import styles from "./ProductDetail.module.css";
@@ -15,7 +15,7 @@ function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
-  const [popup, setPopup] = useState(null); // State cho Popup
+  const [popup, setPopup] = useState(null);
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
   const API_URL = "http://localhost:8080/api";
@@ -119,28 +119,29 @@ function ProductDetail() {
 
       await addToCart(productPayload, quantity, selectedSize, userId);
 
-      let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-      const existingItemIndex = cartItems.findIndex(
-        (item) => item.id === product.id && item.size === selectedSize
-      );
-      if (existingItemIndex >= 0) {
-        cartItems[existingItemIndex].quantity += quantity;
-      } else {
-        cartItems.push({
-          id: product.id,
-          productName: product.name,
-          imageUrl: product.images?.[0]
-            ? `${API_URL}/images/${product.images[0]}`
+      // Đồng bộ giỏ hàng từ backend
+      const cartResponse = await getCart(userId);
+      const cartData = cartResponse.data;
+      const mappedCartData = cartData.map((item) => ({
+        id: item.product.id,
+        productName: item.product.name,
+        imageUrl:
+          item.product.images && item.product.images.length > 0
+            ? `${API_URL}/images/${item.product.images[0]}`
             : null,
-          price: product.price,
-          quantity,
-          size: selectedSize,
-        });
-      }
+        price: item.product.price,
+        quantity: item.quantity,
+        size: item.size,
+      }));
 
-      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
       setPopup({
-        message: `Đã thêm sản phẩm: ${product.name} vào giỏ hàng!`,
+        message: (
+          <>
+            Đã thêm <span className="productName">{product.name}</span> (
+            {selectedSize}) x{quantity} vào giỏ hàng!
+          </>
+        ),
         type: "success",
         onClose: () => setPopup(null),
       });
@@ -148,7 +149,12 @@ function ProductDetail() {
     } catch (error) {
       if (error.response && error.response.status === 409) {
         setPopup({
-          message: "Sản phẩm đã có trong giỏ hàng!",
+          message: (
+            <>
+              <span className="productName">{product.name}</span> (
+              {selectedSize}) đã có trong giỏ hàng!
+            </>
+          ),
           type: "info",
           onClose: () => setPopup(null),
         });

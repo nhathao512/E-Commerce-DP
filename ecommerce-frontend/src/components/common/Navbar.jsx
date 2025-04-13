@@ -34,6 +34,11 @@ function Navbar() {
 
   // Update cart count
   const updateCartCount = () => {
+    if (!isAuthenticated) {
+      setCartCount(0); // Không hiển thị số lượng nếu chưa đăng nhập
+      return;
+    }
+
     const cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     setCartCount(cartItems.length);
   };
@@ -46,7 +51,7 @@ function Navbar() {
       } else {
         setIsScrolled(false);
       }
-    }, 100); // Debounce 100ms
+    }, 100);
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -57,14 +62,14 @@ function Navbar() {
     updateCartCount();
     window.addEventListener("storage", updateCartCount);
     return () => window.removeEventListener("storage", updateCartCount);
-  }, []);
+  }, [isAuthenticated]);
 
   // Listen for custom cart update event
   useEffect(() => {
     const handleCartUpdate = () => updateCartCount();
     window.addEventListener("cartUpdated", handleCartUpdate);
     return () => window.removeEventListener("cartUpdated", handleCartUpdate);
-  }, []);
+  }, [isAuthenticated]);
 
   // Handle search submission
   const handleSearch = (e) => {
@@ -82,13 +87,6 @@ function Navbar() {
     logout();
     setIsDropdownOpen(false);
     window.location.reload();
-  };
-
-  // Extract last name from full name
-  const getLastName = (fullName) => {
-    if (!fullName) return "";
-    const nameParts = fullName.trim().split(" ");
-    return nameParts[nameParts.length - 1];
   };
 
   // Toggle dropdown visibility
@@ -217,7 +215,7 @@ function Navbar() {
                 >
                   <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                   <line x1="3" y1="6" x2="21" y2="6" />
-                  <path d="M16 10a4 4 0 0 1-8 0" />
+                  <path d="M16 10a4 4 0 1 1-8 0" />
                 </svg>
                 <p>Theo dõi đơn hàng</p>
               </li>

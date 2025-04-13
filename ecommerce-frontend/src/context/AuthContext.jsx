@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import API from "../services/api";
+import { getCart } from "../services/api";
 
 export const AuthContext = createContext();
 
@@ -27,14 +28,43 @@ export const AuthProvider = ({ children }) => {
 
           setUser(fetchedUser);
           setIsAuthenticated(true);
+
+          // Đồng bộ giỏ hàng sau khi xác minh
+          const userId = localStorage.getItem("userID");
+          if (userId) {
+            try {
+              const cartResponse = await getCart(userId);
+              const cartData = cartResponse.data;
+              const mappedCartData = cartData.map((item) => ({
+                id: item.product.id,
+                productName: item.product.name,
+                imageUrl:
+                  item.product.images && item.product.images.length > 0
+                    ? `http://localhost:8080/api/images/${item.product.images[0]}`
+                    : null,
+                price: item.product.price,
+                quantity: item.quantity,
+                size: item.size,
+              }));
+              localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
+              window.dispatchEvent(new Event("cartUpdated"));
+            } catch (cartError) {
+              console.error("Failed to fetch cart after auth:", cartError);
+              localStorage.setItem("cartItems", JSON.stringify([]));
+              window.dispatchEvent(new Event("cartUpdated"));
+            }
+          }
         } catch (error) {
           console.error("Failed to verify auth:", error);
           localStorage.removeItem("token");
           localStorage.removeItem("user");
+          localStorage.removeItem("userID");
+          localStorage.removeItem("cartItems");
           setIsAuthenticated(false);
           setUser(null);
         }
       } else {
+        localStorage.removeItem("cartItems");
         setIsAuthenticated(false);
         setUser(null);
       }
@@ -47,13 +77,37 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await API.post("/auth/login", { username, password });
-      const { id, token, ...userData } = response.data; // Destructured đúng: id và token
+      const { id, token, ...userData } = response.data;
       localStorage.setItem("userID", id);
-      localStorage.setItem("token", token); // Lưu token thực sự
+      localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
       setIsAuthenticated(true);
-      return { token, id }; // Trả về token và id
+
+      // Đồng bộ giỏ hàng sau khi đăng nhập
+      try {
+        const cartResponse = await getCart(id);
+        const cartData = cartResponse.data;
+        const mappedCartData = cartData.map((item) => ({
+          id: item.product.id,
+          productName: item.product.name,
+          imageUrl:
+            item.product.images && item.product.images.length > 0
+              ? `http://localhost:8080/api/images/${item.product.images[0]}`
+              : null,
+          price: item.product.price,
+          quantity: item.quantity,
+          size: item.size,
+        }));
+        localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
+        window.dispatchEvent(new Event("cartUpdated"));
+      } catch (cartError) {
+        console.error("Failed to fetch cart after login:", cartError);
+        localStorage.setItem("cartItems", JSON.stringify([]));
+        window.dispatchEvent(new Event("cartUpdated"));
+      }
+
+      return { token, id };
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -81,8 +135,11 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("userID");
+    localStorage.removeItem("cartItems");
     setIsAuthenticated(false);
     setUser(null);
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
   return (
