@@ -50,9 +50,9 @@ const Profile = () => {
           address: fetchedUser.address || "",
         });
 
-        const backendBaseUrl = "http://localhost:8080";
+        const backendBaseUrl = "http://localhost:8080/api/images";
         const imageUrl = fetchedUser.avatar
-          ? `${backendBaseUrl}${fetchedUser.avatar}?t=${Date.now()}`
+          ? `${backendBaseUrl}/${fetchedUser.avatar}?t=${Date.now()}`
           : DEFAULT_AVATAR;
 
         setPreviewImage(imageUrl);
@@ -90,7 +90,7 @@ const Profile = () => {
         }
 
         setUserProfile(updatedUser);
-        const backendBaseUrl = "http://localhost:8080";
+        const backendBaseUrl = "http://localhost:8080/api/images";
         const imageUrl = updatedUser.avatar
           ? `${backendBaseUrl}${updatedUser.avatar}?t=${Date.now()}`
           : DEFAULT_AVATAR;

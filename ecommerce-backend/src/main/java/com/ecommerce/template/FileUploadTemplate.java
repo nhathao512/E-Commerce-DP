@@ -45,6 +45,7 @@ public abstract class FileUploadTemplate {
             File oldFile = new File(oldFilePath);
             if (oldFile.exists()) {
                 oldFile.delete();
+                System.out.println("Đã xóa file cũ: " + oldFilePath);
             }
         }
 
@@ -52,6 +53,11 @@ public abstract class FileUploadTemplate {
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
         File destinationFile = new File(fullDir + fileName);
         file.transferTo(destinationFile);
+
+        // Log đường dẫn đầy đủ của file vừa lưu
+        System.out.println("Đường dẫn đầy đủ của file vừa lưu: " + destinationFile.getAbsolutePath());
+        System.out.println("URL trả về: " + subDir + "/" + fileName);
+
         return subDir + "/" + fileName;
     }
 

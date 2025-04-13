@@ -27,10 +27,13 @@ function Navbar() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  const backendBaseUrl = "http://localhost:8080";
+  const backendBaseUrl = "http://localhost:8080/api/images"; // Sửa backendBaseUrl
   const avatarUrl = user?.avatar
-    ? `${backendBaseUrl}${user.avatar}?t=${Date.now()}`
+    ? `${backendBaseUrl}/${user.avatar}?t=${Date.now()}`
     : null;
+
+  console.log("User trong Navbar:", user);
+  console.log("Avatar URL trong Navbar:", avatarUrl);
 
   // Update cart count
   const updateCartCount = () => {
@@ -168,7 +171,7 @@ function Navbar() {
                   className={styles.userAvatar}
                   onError={(e) => {
                     console.log("Avatar load error:", e);
-                    e.target.style.display = "none";
+                    e.target.src = defaultAvatar;
                   }}
                 />
               ) : (
@@ -176,10 +179,6 @@ function Navbar() {
                   src={defaultAvatar}
                   alt="Avatar"
                   className={styles.userAvatar}
-                  onError={(e) => {
-                    console.log("Avatar load error:", e);
-                    e.target.style.display = "none";
-                  }}
                 />
               )}
               <span>{user.fullName}</span>
