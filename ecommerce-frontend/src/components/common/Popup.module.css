@@ -1,4 +1,3 @@
-/* Popup Overlay */
 .popupOverlay {
   position: fixed;
   top: 0;
@@ -13,7 +12,6 @@
   animation: fadeIn 0.25s ease-out;
 }
 
-/* Popup Container */
 .popup {
   position: relative;
   width: 420px;
@@ -21,7 +19,8 @@
   padding: 30px 25px;
   border-radius: 20px;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), inset 0 -1px 10px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15),
+    inset 0 -1px 10px rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,9 +30,8 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Success Styling */
 .success {
-  color: #059669; /* Xanh ngọc */
+  color: #059669;
 }
 
 .success .icon {
@@ -44,9 +42,8 @@
   background: linear-gradient(90deg, #059669, #34d399);
 }
 
-/* Error Styling */
 .error {
-  color: #dc2626; /* Đỏ đậm */
+  color: #dc2626;
 }
 
 .error .icon {
@@ -57,9 +54,8 @@
   background: linear-gradient(90deg, #dc2626, #f87171);
 }
 
-/* Warning Styling */
 .warning {
-  color: #d97706; /* Cam đậm */
+  color: #d97706;
 }
 
 .warning .icon {
@@ -70,9 +66,8 @@
   background: linear-gradient(90deg, #d97706, #fbbf24);
 }
 
-/* Info Styling */
 .info {
-  color: #3b82f6; /* Xanh dương */
+  color: #3b82f6;
 }
 
 .info .icon {
@@ -83,21 +78,19 @@
   background: linear-gradient(90deg, #3b82f6, #06b6d4);
 }
 
-/* Loading Styling */
 .loading {
-  color: #8b5cf6; /* Tím */
+  color: #8b5cf6;
 }
 
 .loading .icon {
   color: #8b5cf6;
-  animation: spin 1.5s linear infinite; /* Icon xoay cho loading */
+  animation: spin 1.5s linear infinite;
 }
 
 .loading .progressBar {
   background: linear-gradient(90deg, #8b5cf6, #c084fc);
 }
 
-/* Icon */
 .icon {
   margin-bottom: 20px;
   filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.1));
@@ -108,7 +101,6 @@
   transform: scale(1.1);
 }
 
-/* Message */
 .message {
   font-size: 1.25rem;
   font-weight: 600;
@@ -119,7 +111,6 @@
   word-wrap: break-word;
 }
 
-/* Close Button */
 .closeButton {
   background: linear-gradient(90deg, #3b82f6, #06b6d4);
   border: none;
@@ -159,7 +150,6 @@
   transform: translateY(-2px);
 }
 
-/* Progress Bar */
 .progressBar {
   position: absolute;
   bottom: 0;
@@ -168,6 +158,92 @@
   height: 6px;
   transform-origin: left;
   animation: progress linear forwards;
+}
+
+/* Thêm style cho confirmButton và cancelButton */
+.buttonContainer {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+}
+
+.confirmButton {
+  background: linear-gradient(90deg, #2ecc71, #27ae60); /* Xanh lá */
+  border: none;
+  padding: 10px 30px;
+  border-radius: 30px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.confirmButton:hover {
+  background: linear-gradient(90deg, #27ae60, #219653);
+  box-shadow: 0 8px 25px rgba(46, 204, 113, 0.5);
+  transform: translateY(-2px);
+}
+
+.confirmButton::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s ease;
+}
+
+.confirmButton:hover::before {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.cancelButton {
+  background: linear-gradient(90deg, #e74c3c, #c0392b); /* Đỏ */
+  border: none;
+  padding: 10px 30px;
+  border-radius: 30px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.cancelButton:hover {
+  background: linear-gradient(90deg, #c0392b, #a93226);
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+  transform: translateY(-2px);
+}
+
+.cancelButton::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s ease;
+}
+
+.cancelButton:hover::before {
+  transform: translate(-50%, -50%) scale(1);
 }
 
 /* Animations */
@@ -220,7 +296,9 @@
     font-size: 1.15rem;
   }
 
-  .closeButton {
+  .closeButton,
+  .confirmButton,
+  .cancelButton {
     padding: 8px 25px;
   }
 

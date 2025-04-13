@@ -20,20 +20,31 @@ public class CartController {
             @RequestBody Product product,
             @RequestParam(name = "quantity", defaultValue = "1") int quantity,
             @RequestParam(name = "size", defaultValue = "S") String size,
-            @RequestParam String userId) { // Hoặc lấy từ SecurityContext
-        String productId = product.getId();
-
-        if (cartService.isProductInCart(userId, productId)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .header("Error-Message", "Product already exists in cart")
+            @RequestParam String userId) {
+        if (product == null || product.getId() == null || product.getName() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .header("Error-Message", "Product is missing required fields (id, name)")
+                    .build();
+        }
+        if (userId == null || userId.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .header("Error-Message", "userId is required")
                     .build();
         }
 
-        if (product instanceof ClothingProduct || product instanceof ShoeProduct) {
+        String productId = product.getId();
+
+        if (cartService.isProductInCart(userId, productId, size)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .header("Error-Message", "Product already exists in cart with this size")
+                    .build();
+        }
+
+        try {
             cartService.addToCart(userId, product, quantity, size);
-        } else {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .header("Error-Message", "Invalid product type")
+                    .header("Error-Message", "Failed to add product to cart: " + e.getMessage())
                     .build();
         }
 
@@ -50,5 +61,20 @@ public class CartController {
     public ResponseEntity<Void> clearCart(@RequestParam String userId) {
         cartService.clearCart(userId);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/remove")
+    public ResponseEntity<Void> removeFromCart(
+            @RequestParam String userId,
+            @RequestParam String productId,
+            @RequestParam String size) {
+        boolean removed = cartService.removeFromCart(userId, productId, size);
+        if (removed) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .header("Error-Message", "Product not found in cart")
+                    .build();
+        }
     }
 }

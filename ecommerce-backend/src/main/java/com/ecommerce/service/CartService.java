@@ -2,7 +2,6 @@ package com.ecommerce.service;
 
 import com.ecommerce.model.Cart;
 import com.ecommerce.model.CartItem;
-import com.ecommerce.model.ClothingProduct;
 import com.ecommerce.model.Product;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +15,10 @@ public class CartService {
         cart.addItem(product, quantity, size);
     }
 
-    public boolean isProductInCart(String userId, String productId) {
+    public boolean isProductInCart(String userId, String productId, String size) {
         Cart cart = Cart.getInstance(userId);
         for (CartItem item : cart.getItems()) {
-            if (item.getProduct().getId().equals(productId)) {
+            if (item.getProduct().getId().equals(productId) && item.getSize().equals(size)) {
                 return true;
             }
         }
@@ -34,11 +33,15 @@ public class CartService {
     public void clearCart(String userId) {
         Cart cart = Cart.getInstance(userId);
         cart.clear();
-        // Tùy chọn: Cart.removeInstance(userId); // Xóa hoàn toàn instance nếu muốn
     }
 
     public double getTotal(String userId) {
         Cart cart = Cart.getInstance(userId);
         return cart.getTotal();
+    }
+
+    public boolean removeFromCart(String userId, String productId, String size) {
+        Cart cart = Cart.getInstance(userId);
+        return cart.removeItem(productId, size);
     }
 }

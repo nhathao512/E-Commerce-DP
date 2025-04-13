@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Thêm useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import { getProductById, addToCart } from "../../services/api";
 import ReviewForm from "../review/ReviewForm";
+import Popup from "../common/Popup";
 import styles from "./ProductDetail.module.css";
 import notFound from "../../assets/productnotfound.png";
 import { AuthContext } from "../../context/AuthContext";
@@ -14,8 +15,9 @@ function ProductDetail() {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
+  const [popup, setPopup] = useState(null); // State cho Popup
   const { isAuthenticated } = useContext(AuthContext);
-  const navigate = useNavigate(); // Thêm để điều hướng đến trang đăng nhập
+  const navigate = useNavigate();
   const API_URL = "http://localhost:8080/api";
 
   useEffect(() => {
@@ -71,26 +73,52 @@ function ProductDetail() {
       setShowLoginPopup(true);
       return;
     }
-  
+
     if (!selectedSize) {
-      alert("Vui lòng chọn kích thước!");
+      setPopup({
+        message: "Vui lòng chọn kích thước!",
+        type: "warning",
+        onClose: () => setPopup(null),
+      });
       return;
     }
-  
+
     const availableQuantity = product.quantity?.[selectedSize] ?? 0;
     if (quantity > availableQuantity) {
-      alert(`Chỉ còn ${availableQuantity} sản phẩm cho kích thước ${selectedSize}!`);
+      setPopup({
+        message: `Chỉ còn ${availableQuantity} sản phẩm cho kích thước ${selectedSize}!`,
+        type: "warning",
+        onClose: () => setPopup(null),
+      });
       return;
     }
-  
+
     try {
-      // Use full product object like ProductItem for consistency
-      await addToCart(product, quantity, selectedSize);
-      alert(
-        `Đã thêm sản phẩm: ${product.name} vào giỏ hàng!`
-      );
-  
-      // Update localStorage
+      const userId = localStorage.getItem("userID");
+      if (!userId) {
+        throw new Error("User ID not found. Please log in again.");
+      }
+
+      const productPayload = {
+        id: product.id,
+        productCode: product.productCode,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        images: product.images || [],
+        categoryId: product.categoryId,
+        sizes: product.sizes || [],
+        quantity: product.quantity || {},
+        _class:
+          product.type === "Clothing"
+            ? "com.ecommerce.model.ClothingProduct"
+            : "com.ecommerce.model.ShoeProduct",
+        material: product.material || null,
+        sole: product.sole || null,
+      };
+
+      await addToCart(productPayload, quantity, selectedSize, userId);
+
       let cartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
       const existingItemIndex = cartItems.findIndex(
         (item) => item.id === product.id && item.size === selectedSize
@@ -109,28 +137,49 @@ function ProductDetail() {
           size: selectedSize,
         });
       }
-  
+
       localStorage.setItem("cartItems", JSON.stringify(cartItems));
+      setPopup({
+        message: `Đã thêm sản phẩm: ${product.name} vào giỏ hàng!`,
+        type: "success",
+        onClose: () => setPopup(null),
+      });
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
-      console.error("Error adding to cart:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
-      alert("Thêm vào giỏ hàng thất bại! Vui lòng thử lại.");
+      if (error.response && error.response.status === 409) {
+        setPopup({
+          message: "Sản phẩm đã có trong giỏ hàng!",
+          type: "info",
+          onClose: () => setPopup(null),
+        });
+      } else {
+        console.error("Error adding to cart:", {
+          message: error.message,
+          response: error.response?.data,
+          status: error.response?.status,
+        });
+        setPopup({
+          message: "Thêm vào giỏ hàng thất bại! Vui lòng thử lại.",
+          type: "error",
+          onClose: () => setPopup(null),
+        });
+      }
     }
   };
 
   if (loading) return <div className={styles.loadingWrapper}>Đang tải...</div>;
-  if (!product) return <img className={styles.notFound} src={notFound}></img>;
+  if (!product)
+    return (
+      <img className={styles.notFound} src={notFound} alt="Product not found" />
+    );
 
   const sizes =
-    product.sizes.length > 0 ? product.sizes : ["Hiện tại chưa update"];
-  const totalQuantity = Object.values(product.quantity).reduce(
-    (sum, qty) => sum + qty,
-    0
-  );
+    product.sizes && product.sizes.length > 0
+      ? product.sizes
+      : ["Hiện tại chưa update"];
+  const totalQuantity = product.quantity
+    ? Object.values(product.quantity).reduce((sum, qty) => sum + qty, 0)
+    : 0;
 
   return (
     <div className={styles.container}>
@@ -181,7 +230,7 @@ function ProductDetail() {
                     selectedSize === size ? styles.selectedSize : ""
                   }`}
                   onClick={() => handleSizeSelect(size)}
-                  disabled={product.quantity[size] === 0} // Vô hiệu hóa nếu hết hàng
+                  disabled={product.quantity && product.quantity[size] === 0}
                 >
                   {size}
                 </button>
@@ -205,9 +254,10 @@ function ProductDetail() {
       <div className={styles.descriptionSection}>
         <h2 className={styles.descriptionTitle}>Mô tả sản phẩm</h2>
         <div className={styles.descriptionContent}>
-          {product.description.split("\n").map((line, index) => (
-            <p key={index}>{line.trim()}</p>
-          ))}
+          {product.description &&
+            product.description
+              .split("\n")
+              .map((line, index) => <p key={index}>{line.trim()}</p>)}
         </div>
       </div>
 
@@ -216,7 +266,7 @@ function ProductDetail() {
           <p>Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!</p>
           <button
             className={styles.loginButton}
-            onClick={() => navigate("/login")} // Điều hướng đến trang đăng nhập
+            onClick={() => navigate("/login")}
           >
             Đăng nhập
           </button>
@@ -229,7 +279,7 @@ function ProductDetail() {
         </div>
       )}
 
-      <ReviewForm productCode={product.productCode} />
+      {popup && <Popup {...popup} />}
     </div>
   );
 }

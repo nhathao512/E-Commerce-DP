@@ -1,19 +1,33 @@
 import React, { useEffect } from "react";
-import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaInfoCircle, FaSpinner } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaTimesCircle,
+  FaExclamationTriangle,
+  FaInfoCircle,
+  FaSpinner,
+} from "react-icons/fa";
 import styles from "./Popup.module.css";
 
-function Popup({ message, type = "info", onClose, duration = 2000, showCloseButton = true }) {
-  const progressDuration = duration; // Thanh tiến trình chạy cùng tốc độ với duration
+function Popup({
+  message,
+  type = "info",
+  onClose,
+  duration = 2000,
+  showCloseButton = true,
+  confirmButton,
+  cancelButton,
+}) {
+  const progressDuration = duration;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      onClose();
-    }, duration);
+    if (!confirmButton && !cancelButton) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, duration);
+      return () => clearTimeout(timer);
+    }
+  }, [onClose, duration, confirmButton, cancelButton]);
 
-    return () => clearTimeout(timer);
-  }, [onClose, duration]);
-
-  // Chọn icon dựa trên type
   const renderIcon = () => {
     switch (type) {
       case "success":
@@ -39,15 +53,35 @@ function Popup({ message, type = "info", onClose, duration = 2000, showCloseButt
       >
         <div className={styles.icon}>{renderIcon()}</div>
         <p className={styles.message}>{message}</p>
-        {showCloseButton && (
-          <button className={styles.closeButton} onClick={onClose}>
-            Đóng
-          </button>
+        <div className={styles.buttonContainer}>
+          {confirmButton && (
+            <button
+              className={styles.confirmButton}
+              onClick={confirmButton.onClick}
+            >
+              {confirmButton.text}
+            </button>
+          )}
+          {cancelButton && (
+            <button
+              className={styles.cancelButton}
+              onClick={cancelButton.onClick}
+            >
+              {cancelButton.text}
+            </button>
+          )}
+          {showCloseButton && !confirmButton && !cancelButton && (
+            <button className={styles.closeButton} onClick={onClose}>
+              Đóng
+            </button>
+          )}
+        </div>
+        {!confirmButton && !cancelButton && (
+          <div
+            className={styles.progressBar}
+            style={{ animationDuration: `${progressDuration}ms` }}
+          />
         )}
-        <div
-          className={styles.progressBar}
-          style={{ animationDuration: `${progressDuration}ms` }}
-        />
       </div>
     </div>
   );

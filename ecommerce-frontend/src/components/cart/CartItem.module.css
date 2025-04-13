@@ -1,0 +1,142 @@
+/* CartItem.module.css */
+
+.cartItem {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 15px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  transition: all 0.3s ease-in-out;
+  animation: slideUp 0.5s ease-in-out forwards;
+  opacity: 0;
+}
+
+.cartItem:nth-child(1) {
+  animation-delay: 0.2s;
+}
+
+.cartItem:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.cartItem:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.cartItem:nth-child(n + 4) {
+  animation-delay: 0.5s;
+}
+
+.cartItem:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.checkbox {
+  margin-right: 15px;
+  transform: scale(1.2);
+  accent-color: #3498db;
+}
+
+.productImage {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  margin-right: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  transition: transform 0.3s ease;
+}
+
+.productImage:hover {
+  transform: scale(1.1);
+}
+
+.productInfo {
+  flex-grow: 1;
+}
+
+.productName {
+  font-size: 18px;
+  color: #2c3e50;
+  margin: 0;
+  font-weight: 500;
+}
+
+.quantity {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin: 5px 0 0 0;
+}
+
+.price {
+  font-size: 16px;
+  color: #27ae60;
+  margin: 5px 0 0 0;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.buttonAdd {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.buttonAdd:hover {
+  background-color: #27ae60;
+  transform: scale(1.05);
+}
+
+.buttonRemove {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.buttonRemove:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+}
+
+.buttonAdjust {
+  background-color: #3498db;
+  color: white;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.buttonAdjust:hover {
+  background-color: #2980b9;
+  transform: scale(1.1);
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
