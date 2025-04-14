@@ -40,17 +40,17 @@
 
 .mainImage {
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Đảm bảo nội dung thừa bị cắt */
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%; /* Đảm bảo mainImage không vượt quá container */
 }
 
 .mainImage img {
-  width: auto;
-  height: 500px;
-
-  object-fit: cover;
+  max-width: 100%; /* Giới hạn chiều rộng tối đa của ảnh */
+  height: 500px; /* Giữ nguyên chiều cao cố định */
+  object-fit: cover; /* Ảnh sẽ được cắt để vừa khung mà không bị méo */
   transition: transform 0.3s ease;
 }
 

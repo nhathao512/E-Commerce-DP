@@ -12,13 +12,32 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
   const [newImages, setNewImages] = useState([]);
   const [deletedImages, setDeletedImages] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  // Cấu hình giới hạn
+  const MAX_FILES = 5; // Tối đa 5 ảnh
+  const MAX_SIZE = 5 * 1024 * 1024; // 5MB mỗi ảnh
 
   // Xử lý khi chọn file ảnh
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files).filter((file) =>
-      ["image/png", "image/jpeg", "image/jpg"].includes(file.type)
-    );
-    setNewImages(selectedFiles);
+    const selectedFiles = Array.from(e.target.files).filter((file) => {
+      if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+        alert(`File ${file.name} không phải định dạng ảnh hợp lệ!`);
+        return false;
+      }
+      if (file.size > MAX_SIZE) {
+        alert(`File ${file.name} quá lớn! Kích thước tối đa là 5MB.`);
+        return false;
+      }
+      return true;
+    });
+
+    if (selectedFiles.length + images.length + newImages.length > MAX_FILES) {
+      alert(`Bạn chỉ có thể upload tối đa ${MAX_FILES} ảnh!`);
+      setNewImages([...newImages, ...selectedFiles.slice(0, MAX_FILES - images.length - newImages.length)]);
+    } else {
+      setNewImages([...newImages, ...selectedFiles]);
+    }
   };
 
   // Xóa ảnh hiện có
@@ -35,7 +54,13 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
 
   // Gửi yêu cầu cập nhật ảnh
   const handleSave = async () => {
+    if (newImages.length === 0 && deletedImages.length === 0) {
+      alert("Không có thay đổi để lưu!");
+      return;
+    }
+
     setIsSubmitting(true);
+    setUploadProgress(0);
     const formData = new FormData();
     formData.append("productCode", product.productCode);
     newImages.forEach((file) => formData.append("image", file));
@@ -46,9 +71,12 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
         headers: {
           "Content-Type": "multipart/form-data",
         },
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        },
       });
 
-      // Cập nhật danh sách ảnh với các URL mới từ server
       const updatedProduct = response.data.data;
       onUpdateImages(product.id, updatedProduct);
       setNewImages([]);
@@ -56,14 +84,12 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
       alert("Cập nhật ảnh thành công!");
       onClose();
     } catch (error) {
-      console.error("Lỗi khi cập nhật ảnh:", error);
-      alert(
-        `Không thể cập nhật ảnh: ${
-          error.response?.data?.message || error.message
-        }`
-      );
+      const message =
+        error.response?.data?.message || error.message || "Đã xảy ra lỗi khi upload ảnh";
+      alert(`Không thể cập nhật ảnh: ${message}`);
     } finally {
       setIsSubmitting(false);
+      setUploadProgress(0);
     }
   };
 
@@ -79,11 +105,27 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
             onChange={handleFileChange}
             disabled={isSubmitting}
           />
+          <p className={styles.uploadNote}>
+            Tối đa {MAX_FILES} ảnh, mỗi ảnh không quá 5MB (PNG, JPG, JPEG).
+          </p>
         </div>
+
+        {/* Hiển thị tiến trình upload */}
+        {isSubmitting && (
+          <div className={styles.progressBar}>
+            <div
+              className={styles.progressFill}
+              style={{ width: `${uploadProgress}%` }}
+            >
+              {uploadProgress}%
+            </div>
+          </div>
+        )}
+
         <div className={styles.imagePreview}>
           {/* Hiển thị ảnh hiện có */}
           {images.map((img, index) => (
-            <div key={`existing-${index}`} className={styles.imageWrapper}>
+            <div key={`existing-${index}`} className={`${styles.imageWrapper} ${styles.existingImage}`}>
               <img src={img.url} alt={`Product ${index}`} />
               <button
                 type="button"
@@ -98,12 +140,8 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
           ))}
           {/* Hiển thị preview ảnh mới được chọn */}
           {newImages.map((file, index) => (
-            <div key={`new-${index}`} className={styles.imageWrapper}>
-              <img
-                src={URL.createObjectURL(file)}
-                alt={`New ${index}`}
-                style={{ maxWidth: "100px", maxHeight: "100px" }}
-              />
+            <div key={`new-${index}`} className={`${styles.imageWrapper} ${styles.newImage}`}>
+              <img src={URL.createObjectURL(file)} alt={`New ${index}`} />
               <button
                 type="button"
                 onClick={() => handleDeleteNewImage(index)}
@@ -120,11 +158,7 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
           <button onClick={handleSave} disabled={isSubmitting}>
             {isSubmitting ? "Đang lưu..." : "Lưu"}
           </button>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
+          <button type="button" onClick={onClose} disabled={isSubmitting}>
             Đóng
           </button>
         </div>
