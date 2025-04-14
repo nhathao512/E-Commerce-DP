@@ -2,12 +2,11 @@
   padding: 20px;
 }
 
-/* Title cải tiến */
- h1 {
+/* Title */
+h1 {
   font-size: 28px;
   color: #1e293b;
   font-weight: 900;
-  font-size: 40px;
   text-align: center;
   flex: 1;
   display: flex;
@@ -58,83 +57,322 @@ h1 svg {
   background-color: #2563eb;
   transform: translateY(-1px);
 }
-/* Overlay mờ toàn màn hình */
+
+/* Popup overlay */
 .popup {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* nền mờ */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-/* Nội dung popup */
+/* Popup content */
 .popupContent {
-  background-color: #fff;
-  padding: 24px 32px;
-  border-radius: 12px;
-  width: 400px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.2s ease-in-out;
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #f1f5f9;
 }
 
-/* Các input */
-.popupContent input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.popupContent::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* Tiêu đề form */
+.popupContent::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.popupContent::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+
+.popupContent::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Popup title */
 .popupContent h2 {
-  margin-top: 0;
+  margin: 0 0 16px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
   text-align: center;
 }
 
-/* Nút Save và Cancel */
-.popupButtons {
+/* Form and inputs */
+.popupContent form {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.popupContent input,
+.popupContent select {
+  padding: 12px;
+  font-size: 15px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+ серйоз: #f9fafb;
+  transition: all 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+  height: 40px;
+}
+
+.popupContent input:focus,
+.popupContent select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.popupContent input[type="file"] {
+  padding: 8px;
+  background-color: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  height: auto;
+}
+
+/* Size row */
+.sizeRow {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+.sizeRow input {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+/* Delete size button */
+.deleteSizeButton {
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  background-color: #ef4444;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.deleteSizeButton:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+.deleteSizeButton:disabled {
+  background-color: #fca5a5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Add size button */
+.addSizeButton {
+  padding: 8px 16px;
+  font-size: 14px;
+  background-color: #10b981;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-self: flex-start;
   margin-top: 10px;
 }
 
-.popupButtons button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
+.addSizeButton:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
 }
 
-.popupButtons button[type="submit"] {
-  background-color: #28a745;
+/* Image upload */
+.imageUpload {
+  margin-bottom: 16px;
+}
+
+/* Image preview */
+.imagePreview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* Image wrapper */
+.imageWrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Image delete button */
+.imageDeleteButton {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.imageDeleteButton:hover {
+  background-color: #dc2626;
+}
+
+/* Popup buttons */
+.popupButtons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.popupButtons button {
+  padding: 10px 20px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.popupButtons button[type="submit"], .popupButtons button:first-child {
+  background-color: #3b82f6;
   color: white;
 }
 
-.popupButtons button[type="submit"]:hover {
-  background-color: #218838;
+.popupButtons button[type="submit"]:hover, .popupButtons button:first-child:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.popupButtons button[type="submit"]:disabled, .popupButtons button:first-child:disabled {
+  background-color: #93c5fd;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .popupButtons button[type="button"] {
-  background-color: #dc3545;
+  background-color: #ef4444;
   color: white;
 }
 
 .popupButtons button[type="button"]:hover {
-  background-color: #c82333;
+  background-color: #dc2626;
+  transform: translateY(-1px);
 }
 
-/* Hiệu ứng vào */
+.popupButtons button[type="button"]:disabled {
+  background-color: #fca5a5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Dashboard actions */
+.dashboardActions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.dashboardActions button {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dashboardActions button:first-child {
+  background-color: #3b82f6; /* Edit */
+  color: white;
+}
+
+.dashboardActions button:first-child:hover {
+  background-color: #2563eb;
+}
+
+.dashboardActions button:nth-child(2) {
+  background-color: #10b981; /* Images */
+  color: white;
+}
+
+.dashboardActions button:nth-child(2):hover {
+  background-color: #059669;
+}
+
+.dashboardActions button:last-child {
+  background-color: #ef4444; /* Delete */
+  color: white;
+}
+
+.dashboardActions button:last-child:hover {
+  background-color: #dc2626;
+}
+
+
+
+/* Animation */
 @keyframes fadeIn {
   from {
-    transform: scale(0.95);
+    transform: scale(0.9);
     opacity: 0;
   }
   to {

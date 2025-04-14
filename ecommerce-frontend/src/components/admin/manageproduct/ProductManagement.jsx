@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Dashboard from "../Dashboard/Dashboard";
 import styles from "./ProductManagement.module.css";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, X } from "lucide-react";
 import {
   getProducts,
   addProduct,
@@ -9,6 +9,7 @@ import {
   deleteProduct,
   getAllCategories,
 } from "../../../services/api";
+import ImageManagement from "./ImageManagement";
 
 function ProductManagement() {
   const [products, setProducts] = useState([]);
@@ -16,10 +17,11 @@ function ProductManagement() {
   const [search, setSearch] = useState("");
   const [sortAsc, setSortAsc] = useState(true);
   const [popupOpen, setPopupOpen] = useState(false);
+  const [imagePopupOpen, setImagePopupOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const API_URL = "http://localhost:8080/api";
 
-  // Lấy danh sách sản phẩm và danh mục
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -27,10 +29,17 @@ function ProductManagement() {
           getProducts(),
           getAllCategories(),
         ]);
-        const validProducts = productsResponse.data.filter(
-          (product) =>
-            product && product.name && typeof product.name === "string"
-        );
+        const validProducts = productsResponse.data
+          .filter(
+            (product) =>
+              product &&
+              product.name &&
+              typeof product.name === "string"
+          )
+          .map((product) => ({
+            ...product,
+            images: Array.isArray(product.images) ? product.images : [],
+          }));
         setProducts(validProducts);
         setCategories(categoriesResponse.data || []);
       } catch (error) {
@@ -52,13 +61,28 @@ function ProductManagement() {
   };
 
   const handleEdit = (product) => {
+    console.log("Product to edit:", product);
     setEditingProduct(product);
     setPopupOpen(true);
+  };
+
+  const handleImages = (product) => {
+    setSelectedProduct(product);
+    setImagePopupOpen(true);
   };
 
   const handleCreate = () => {
     setEditingProduct(null);
     setPopupOpen(true);
+  };
+
+  // Callback để cập nhật sản phẩm sau khi upload ảnh
+  const handleUpdateImages = (productId, updatedProduct) => {
+    setProducts(
+      products.map((p) =>
+        p.id === productId ? { ...p, ...updatedProduct } : p
+      )
+    );
   };
 
   const filteredData = [...products]
@@ -74,14 +98,15 @@ function ProductManagement() {
     )
     .map((product) => ({
       ...product,
-      quantity: product.quantity
-        ? Object.entries(product.quantity)
-            .map(([size, qty]) => `${size}: ${qty}`)
-            .join(", ")
-        : "",
-      images: Array.isArray(product.images)
-        ? product.images.map((img) => `${API_URL}/images/${img}`)
-        : product.images || [],
+      quantityDisplay: product.quantity ? (
+        <div>
+          {Object.entries(product.quantity).map(([size, qty]) => (
+            <div key={size}>{`${size}: ${qty}`}</div>
+          ))}
+        </div>
+      ) : (
+        ""
+      ),
     }));
 
   const columns = [
@@ -90,8 +115,7 @@ function ProductManagement() {
     { key: "name", label: "Tên" },
     { key: "description", label: "Mô tả" },
     { key: "price", label: "Giá" },
-    { key: "images", label: "Ảnh" },
-    { key: "quantity", label: "Số lượng" },
+    { key: "quantityDisplay", label: "Số lượng" },
   ];
 
   return (
@@ -118,6 +142,7 @@ function ProductManagement() {
         data={filteredData}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        onImages={handleImages}
       />
 
       {popupOpen && (
@@ -130,7 +155,7 @@ function ProductManagement() {
                 const response = await updateProduct(editingProduct.id, formData);
                 setProducts(
                   products.map((p) =>
-                    p.id === editingProduct.id ? response.data : p
+                    p.id === editingProduct.id ? { ...p, ...response.data } : p
                   )
                 );
               } else {
@@ -150,18 +175,50 @@ function ProductManagement() {
           onCancel={() => setPopupOpen(false)}
         />
       )}
+
+      {imagePopupOpen && (
+        <ImageManagement
+          product={selectedProduct}
+          onClose={() => setImagePopupOpen(false)}
+          apiUrl={API_URL}
+          onUpdateImages={handleUpdateImages}
+        />
+      )}
     </div>
   );
 }
 
+// Giữ nguyên ProductForm như mã gốc
 function ProductForm({ editingProduct, categories, onSave, onCancel }) {
   const [type, setType] = useState(editingProduct?.type?.toLowerCase() || "clothing");
   const [sizes, setSizes] = useState(editingProduct?.sizes || []);
-  const [quantities, setQuantities] = useState(editingProduct?.quantity || {});
+  const [quantities, setQuantities] = useState(() => {
+    if (editingProduct?.quantity) {
+      if (typeof editingProduct.quantity === "string") {
+        try {
+          return editingProduct.quantity.split(", ").reduce((acc, item) => {
+            const [size, qty] = item.split(": ");
+            acc[size] = parseInt(qty) || 0;
+            return acc;
+          }, {});
+        } catch (error) {
+          console.error("Error parsing quantity string:", error);
+          return {};
+        }
+      }
+      return editingProduct.quantity;
+    }
+    return {};
+  });
   const [sole, setSole] = useState(editingProduct?.sole || "");
   const [material, setMaterial] = useState(editingProduct?.material || "");
-  const [files, setFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    console.log("editingProduct:", editingProduct);
+    console.log("sizes:", sizes);
+    console.log("quantities:", quantities);
+  }, [editingProduct, sizes, quantities]);
 
   const handleAddSize = () => {
     const newSize = `Size ${sizes.length + 1}`;
@@ -171,13 +228,15 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
 
   const handleSizeChange = (index, value) => {
     const newSizes = [...sizes];
+    const oldSize = newSizes[index];
     newSizes[index] = value;
     setSizes(newSizes);
 
     const newQuantities = { ...quantities };
-    const oldSize = sizes[index];
-    newQuantities[value] = newQuantities[oldSize] || 0;
-    delete newQuantities[oldSize];
+    if (oldSize !== value) {
+      newQuantities[value] = newQuantities[oldSize] || 0;
+      delete newQuantities[oldSize];
+    }
     setQuantities(newQuantities);
   };
 
@@ -185,11 +244,13 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
     setQuantities({ ...quantities, [size]: parseInt(value) || 0 });
   };
 
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files).filter((file) =>
-      ["image/png", "image/jpeg", "image/jpg"].includes(file.type)
-    );
-    setFiles(selectedFiles);
+  const handleDeleteSize = (index) => {
+    const sizeToDelete = sizes[index];
+    const newSizes = sizes.filter((_, i) => i !== index);
+    const newQuantities = { ...quantities };
+    delete newQuantities[sizeToDelete];
+    setSizes(newSizes);
+    setQuantities(newQuantities);
   };
 
   const handleSubmit = async (e) => {
@@ -198,7 +259,6 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
     const form = e.target;
     const formData = new FormData();
 
-    files.forEach((file) => formData.append("image", file));
     formData.append("name", form.name.value);
     formData.append("description", form.description.value);
     formData.append("price", parseFloat(form.price.value) || 0);
@@ -212,11 +272,6 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
     }
     formData.append("sizes", JSON.stringify(sizes));
     formData.append("quantity", JSON.stringify(quantities));
-
-    // Log FormData for debugging
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
 
     try {
       await onSave(formData);
@@ -255,13 +310,6 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
             defaultValue={editingProduct?.price || ""}
             required
           />
-          <input
-            type="file"
-            name="images"
-            multiple
-            accept=".png,.jpg,.jpeg"
-            onChange={handleFileChange}
-          />
           <select
             value={type}
             onChange={(e) => {
@@ -299,7 +347,7 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                 required
               />
               {sizes.map((size, index) => (
-                <div key={size} style={{ display: "flex", gap: "10px" }}>
+                <div key={size} className={styles.sizeRow}>
                   <input
                     type="text"
                     placeholder="Size"
@@ -310,16 +358,25 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                   <input
                     type="number"
                     placeholder={`Số lượng ${size}`}
-                    value={quantities[size] || 0}
+                    value={quantities[size] !== undefined ? quantities[size] : 0}
                     onChange={(e) => handleQuantityChange(size, e.target.value)}
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteSize(index)}
+                    className={styles.deleteSizeButton}
+                    disabled={sizes.length === 1}
+                    title="Xóa size"
+                  >
+                    <X size={18} />
+                  </button>
                 </div>
               ))}
               <button
                 type="button"
                 onClick={handleAddSize}
-                style={{ marginTop: "10px" }}
+                className={styles.addSizeButton}
               >
                 + Thêm size
               </button>
@@ -336,7 +393,7 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                 required
               />
               {sizes.map((size, index) => (
-                <div key={size} style={{ display: "flex", gap: "10px" }}>
+                <div key={size} className={styles.sizeRow}>
                   <input
                     type="text"
                     placeholder="Size"
@@ -347,16 +404,25 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                   <input
                     type="number"
                     placeholder={`Số lượng ${size}`}
-                    value={quantities[size] || 0}
+                    value={quantities[size] !== undefined ? quantities[size] : 0}
                     onChange={(e) => handleQuantityChange(size, e.target.value)}
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteSize(index)}
+                    className={styles.deleteSizeButton}
+                    disabled={sizes.length === 1}
+                    title="Xóa size"
+                  >
+                    <X size={18} />
+                  </button>
                 </div>
               ))}
               <button
                 type="button"
                 onClick={handleAddSize}
-                style={{ marginTop: "10px" }}
+                className={styles.addSizeButton}
               >
                 + Thêm size
               </button>

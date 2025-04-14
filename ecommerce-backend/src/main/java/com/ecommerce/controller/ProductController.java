@@ -94,36 +94,43 @@ public class ProductController {
     @PostMapping(value = "/uploads", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ResponseObject> uploadImages(
             @RequestParam("productCode") String productCode,
-            @RequestParam("image") List<MultipartFile> files) {
+            @RequestParam(value = "image", required = false) List<MultipartFile> files,
+            @RequestParam(value = "deletedImages", required = false) String deletedImagesJson) {
         try {
             Product existingProduct = productService.getProductByProductCode(productCode);
             files = files == null ? List.of() : files;
 
             final int MAXIMUM_IMAGES_PER_PRODUCT = 5;
-            if (files.size() > MAXIMUM_IMAGES_PER_PRODUCT) {
-                return ResponseEntity.badRequest().body(ResponseObject.builder()
-                        .message("Tối đa " + MAXIMUM_IMAGES_PER_PRODUCT + " hình ảnh được phép cho mỗi sản phẩm")
-                        .status(HttpStatus.BAD_REQUEST)
-                        .build());
+            ObjectMapper mapper = new ObjectMapper();
+            List<String> deletedImages = deletedImagesJson != null
+                    ? mapper.readValue(deletedImagesJson, new TypeReference<List<String>>(){})
+                    : List.of();
+
+            // Xóa các ảnh được chỉ định
+            for (String imageName : deletedImages) {
+                productService.deleteImage(existingProduct, imageName);
             }
 
-            if (existingProduct.getImages().size() + files.size() > MAXIMUM_IMAGES_PER_PRODUCT) {
+            // Kiểm tra số lượng ảnh
+            int remainingImages = existingProduct.getImages().size();
+            if (remainingImages + files.size() > MAXIMUM_IMAGES_PER_PRODUCT) {
                 return ResponseEntity.badRequest().body(ResponseObject.builder()
                         .message("Tổng số hình ảnh vượt quá tối đa " + MAXIMUM_IMAGES_PER_PRODUCT)
                         .status(HttpStatus.BAD_REQUEST)
                         .build());
             }
 
-            // Sử dụng ProductImageUploader để upload ảnh
-            List<String> imageUrls = productImageUploader.uploadMultipleImages(files);
-            for (String imageUrl : imageUrls) {
-                existingProduct.addImage(imageUrl);
+            // Upload ảnh mới nếu có
+            if (!files.isEmpty()) {
+                List<String> imageUrls = productImageUploader.uploadMultipleImages(files);
+                for (String imageUrl : imageUrls) {
+                    existingProduct.addImage(imageUrl);
+                }
+                productService.updateProduct(existingProduct);
             }
 
-            productService.updateProduct(existingProduct);
-
             return ResponseEntity.ok(ResponseObject.builder()
-                    .message("Tải hình ảnh lên thành công")
+                    .message("Cập nhật hình ảnh thành công")
                     .status(HttpStatus.OK)
                     .data(new ProductResponse(existingProduct))
                     .build());
@@ -134,7 +141,7 @@ public class ProductController {
                     .build());
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
-                    .message("Lỗi khi tải hình ảnh lên: " + e.getMessage())
+                    .message("Lỗi khi cập nhật hình ảnh: " + e.getMessage())
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build());
         }
@@ -240,7 +247,7 @@ public class ProductController {
     public ResponseEntity<ResponseObject> deleteProduct(@PathVariable String id) {
         try {
             Product product = productService.getProductById(id);
-            productService.deleteProduct(id); // Cần thêm hàm deleteProduct trong ProductService
+            productService.deleteProduct(id);
             return ResponseEntity.ok(ResponseObject.builder()
                     .message("Xóa sản phẩm thành công")
                     .status(HttpStatus.OK)
@@ -249,6 +256,34 @@ public class ProductController {
             return ResponseEntity.badRequest().body(ResponseObject.builder()
                     .message("Error deleting product: " + e.getMessage())
                     .status(HttpStatus.BAD_REQUEST)
+                    .build());
+        }
+    }
+
+    @DeleteMapping("/{productId}/images/{imageName}")
+    public ResponseEntity<ResponseObject> deleteImage(
+            @PathVariable String productId,
+            @PathVariable String imageName) {
+        try {
+            Product product = productService.getProductById(productId);
+
+            // Xóa hình ảnh
+            productService.deleteImage(product, imageName);
+
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .message("Xóa hình ảnh thành công")
+                    .status(HttpStatus.OK)
+                    .data(new ProductResponse(product))
+                    .build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message(e.getMessage())
+                    .status(HttpStatus.BAD_REQUEST)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ResponseObject.builder()
+                    .message("Lỗi khi xóa hình ảnh: " + e.getMessage())
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .build());
         }
     }

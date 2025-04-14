@@ -66,3 +66,19 @@ h2 {
 .deleteBtn:hover {
   background-color: #b02a37;
 }
+
+.imagesBtn {
+  padding: 6px 12px;
+  margin-right: 6px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  background-color: #a29e21;
+  color: white;
+}
+
+.imagesBtn:hover {
+  background-color: #a29e21;
+}

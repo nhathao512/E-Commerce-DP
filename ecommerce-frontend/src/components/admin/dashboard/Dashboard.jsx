@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./Dashboard.module.css";
 
-function Dashboard({ title, columns, data, onEdit, onDelete }) {
+function Dashboard({ title, columns, data, onEdit, onDelete, onImages }) {
   return (
     <div className={styles.container}>
       <h2>{title}</h2>
@@ -20,34 +20,24 @@ function Dashboard({ title, columns, data, onEdit, onDelete }) {
               <tr key={item.id || `row-${index}`}>
                 {columns.map((col) => (
                   <td key={`${item.id || index}-${col.key}`}>
-                    {col.key === "images"
-                      ? item[col.key] && item[col.key].length > 0
-                        ? item[col.key].map((img, imgIndex) => (
-                            <img
-                              key={imgIndex}
-                              src={img}
-                              alt={`Product Image ${imgIndex + 1}`}
-                              style={{
-                                width: "30px",
-                                height: "30px",
-                                marginRight: "5px",
-                              }}
-                              onError={(e) => {
-                                e.target.src = "https://via.placeholder.com/30";
-                              }}
-                            />
-                          ))
-                        : "Không có ảnh"
-                      : item[col.key]}
+                    {item[col.key]}
                   </td>
                 ))}
-                <td key={`${item.id || index}-actions`}>
+                <td key={`${item.id || index}-actions`} className={styles.actions}>
                   {onEdit && (
                     <button
                       className={styles.editBtn}
                       onClick={() => onEdit(item)}
                     >
                       ✏ Sửa
+                    </button>
+                  )}
+                  {onImages && (
+                    <button
+                      className={styles.imagesBtn}
+                      onClick={() => onImages(item)}
+                    >
+                      🖼 Ảnh
                     </button>
                   )}
                   {onDelete && (

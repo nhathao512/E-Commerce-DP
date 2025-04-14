@@ -267,6 +267,8 @@ function ProductDetail() {
         </div>
       </div>
 
+      <ReviewForm productCode={product.productCode} />
+
       {showLoginPopup && (
         <div className={styles.loginPopup}>
           <p>Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!</p>

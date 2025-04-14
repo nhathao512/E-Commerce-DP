@@ -9,6 +9,8 @@ import com.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Service
@@ -33,8 +35,6 @@ public class ProductService {
         switch (request.getType().toLowerCase()){
             case "clothing":
                 ClothingProduct clothingProduct = new ClothingProduct();
-
-                // Sao chép các thuộc tính từ tempProduct sang clothingProduct
                 clothingProduct.setName(tempProduct.getName());
                 clothingProduct.setPrice(tempProduct.getPrice());
                 clothingProduct.setCategoryId(tempProduct.getCategoryId());
@@ -44,11 +44,9 @@ public class ProductService {
                 clothingProduct.setQuantity(tempProduct.getQuantity());
                 clothingProduct.setProductCode(tempProduct.getProductCode());
                 clothingProduct.setMaterial(request.getMaterial());
-                // Lưu ClothingProduct
                 return productRepository.save(clothingProduct);
             case "shoe":
                 ShoeProduct shoeProduct = new ShoeProduct();
-
                 shoeProduct.setName(tempProduct.getName());
                 shoeProduct.setPrice(tempProduct.getPrice());
                 shoeProduct.setCategoryId(tempProduct.getCategoryId());
@@ -58,13 +56,10 @@ public class ProductService {
                 shoeProduct.setQuantity(tempProduct.getQuantity());
                 shoeProduct.setProductCode(tempProduct.getProductCode());
                 shoeProduct.setSole(request.getSole());
-                // Lưu ShoeProduct
                 return productRepository.save(shoeProduct);
             default:
                 return productRepository.save(tempProduct);
         }
-
-
     }
 
     public Product getProductById(String id) {
@@ -93,5 +88,28 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
         productRepository.delete(product);
+    }
+
+    public void deleteImage(Product product, String imageName) {
+        // Kiểm tra xem hình ảnh có tồn tại trong danh sách không
+        List<String> images = product.getImages();
+        if (!images.contains(imageName)) {
+            throw new IllegalArgumentException("Hình ảnh không tồn tại trong sản phẩm");
+        }
+
+        // Xóa hình ảnh khỏi danh sách
+        images.remove(imageName);
+        product.setImages(images);
+
+        // Cập nhật sản phẩm
+        productRepository.save(product);
+
+        try {
+            // Xóa file vật lý nếu cần
+            java.nio.file.Path imagePath = Paths.get(System.getProperty("user.dir") + "/uploads/products/" + imageName);
+            java.nio.file.Files.deleteIfExists(imagePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Lỗi khi xóa file hình ảnh: " + e.getMessage());
+        }
     }
 }

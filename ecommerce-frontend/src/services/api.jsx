@@ -1,3 +1,4 @@
+// api.js
 import axios from "axios";
 
 const API = axios.create({
@@ -14,9 +15,18 @@ API.interceptors.request.use((config) => {
 
 export const getProducts = () => API.get("/products");
 export const getProductById = (id) => API.get(`/products/${id}`);
-export const addProduct = (product) => API.post("/products", product);
+export const addProduct = (product) =>
+  API.post("/products", product, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 export const updateProduct = (id, product) =>
-  API.put(`/products/${id}`, product);
+  API.put(`/products/${id}`, product, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 export const deleteProduct = (id) => API.delete(`/products/${id}`);
 
 export const getCart = (userId) =>
