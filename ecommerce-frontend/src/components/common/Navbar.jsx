@@ -5,7 +5,6 @@ import logo from "../../assets/logo.png";
 import defaultAvatar from "../../assets/defaultAvatar.jpg";
 import { AuthContext } from "../../context/AuthContext";
 
-// Hàm debounce để giới hạn tần suất gọi hàm
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {

@@ -15,7 +15,7 @@ public class Cart {
     @Id
     private String userId;
     private List<CartItem> items;
-    private transient List<CartObserver> observers; // transient để không lưu vào MongoDB
+    private transient List<CartObserver> observers;
 
     private Cart(String userId) {
         this.userId = userId;
@@ -25,25 +25,16 @@ public class Cart {
 
     public static Cart getInstance(String userId) {
         if (userId == null || userId.isEmpty()) {
-            throw new IllegalArgumentException("userId cannot be null or empty");
+            throw new IllegalArgumentException("ID người dùng không được trống!");
         }
         synchronized (Cart.class) {
             return instances.computeIfAbsent(userId, k -> new Cart(userId));
         }
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public List<CartItem> getItems() {
-        return items;
-    }
-
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+    public List<CartItem> getItems() { return items; }
     public void setItems(List<CartItem> items) {
         this.items = items;
         notifyObservers();
@@ -52,7 +43,7 @@ public class Cart {
     public void addItem(Product product, int quantity, String size) {
         for (CartItem item : items) {
             if (item.getProduct().getId().equals(product.getId()) && item.getSize().equals(size)) {
-                item.setQuantity(item.getQuantity() + quantity); // Cộng dồn số lượng
+                item.setQuantity(item.getQuantity() + quantity);
                 notifyObservers();
                 return;
             }

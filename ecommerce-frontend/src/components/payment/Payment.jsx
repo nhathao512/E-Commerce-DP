@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
 import { processPayment, getProvinces } from "../../services/api";
 import styles from "./Payment.module.css";
 import logo from "../../assets/banking.png";
@@ -29,7 +30,19 @@ function Payment() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const location = useLocation();
+  const navigate = useNavigate();
   const { selectedCartItems = [], totalPrice = 0 } = location.state || {};
+
+  // Lấy thông tin từ AuthContext
+  const { isAuthenticated, isLoading } = useContext(AuthContext);
+
+  // Kiểm tra trạng thái đăng nhập
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      alert("Vui lòng đăng nhập để tiếp tục thanh toán!");
+      navigate("/login");
+    }
+  }, [isAuthenticated, isLoading, navigate]);
 
   // Lấy danh sách tỉnh/thành phố
   useEffect(() => {
@@ -38,8 +51,6 @@ function Payment() {
         setLoadingProvinces(true);
         setErrorMessage("");
         const response = await getProvinces();
-        console.log("API Response:", response);
-        console.log("API Data:", response.data);
         setProvinces(Array.isArray(response.data) ? response.data : []);
         if (!Array.isArray(response.data) || response.data.length === 0) {
           setErrorMessage(
@@ -59,64 +70,38 @@ function Payment() {
     fetchProvinces();
   }, []);
 
-  // Lấy danh sách quận/huyện khi chọn tỉnh/thành phố
+  // Lấy danh sách quận/huyện
   useEffect(() => {
-    const fetchDistricts = async () => {
-      if (formData.province) {
-        try {
-          setLoadingDistricts(true);
-          setFormData((prev) => ({ ...prev, district: "", ward: "" }));
-          setDistricts([]);
-          setWards([]);
-          const selectedProvince = provinces.find(
-            (p) => p.name === formData.province
-          );
-          if (selectedProvince) {
-            setDistricts(
-              Array.isArray(selectedProvince.district)
-                ? selectedProvince.district
-                : []
-            );
-          }
-        } catch (error) {
-          console.error("Failed to fetch districts:", error);
-          setDistricts([]);
-        } finally {
-          setLoadingDistricts(false);
-        }
-      }
-    };
-    fetchDistricts();
+    if (formData.province) {
+      const selectedProvince = provinces.find(
+        (p) => p.name === formData.province
+      );
+      setDistricts(
+        Array.isArray(selectedProvince?.district)
+          ? selectedProvince.district
+          : []
+      );
+      setFormData((prev) => ({ ...prev, district: "", ward: "" }));
+      setWards([]);
+      setLoadingDistricts(false);
+    }
   }, [formData.province, provinces]);
 
-  // Lấy danh sách phường/xã khi chọn quận/huyện
+  // Lấy danh sách phường/xã
   useEffect(() => {
-    const fetchWards = async () => {
-      if (formData.district) {
-        try {
-          setLoadingWards(true);
-          setFormData((prev) => ({ ...prev, ward: "" }));
-          setWards([]);
-          const selectedDistrict = districts.find(
-            (d) => d.name === formData.district
-          );
-          if (selectedDistrict) {
-            setWards(
-              Array.isArray(selectedDistrict.ward) ? selectedDistrict.ward : []
-            );
-          }
-        } catch (error) {
-          console.error("Failed to fetch wards:", error);
-          setWards([]);
-        } finally {
-          setLoadingWards(false);
-        }
-      }
-    };
-    fetchWards();
+    if (formData.district) {
+      const selectedDistrict = districts.find(
+        (d) => d.name === formData.district
+      );
+      setWards(
+        Array.isArray(selectedDistrict?.ward) ? selectedDistrict.ward : []
+      );
+      setFormData((prev) => ({ ...prev, ward: "" }));
+      setLoadingWards(false);
+    }
   }, [formData.district, districts]);
 
-  // Generate random transfer code when bank method is selected
+  // Tạo mã chuyển khoản ngẫu nhiên
   useEffect(() => {
     if (method === "bank") {
       const randomCode = Math.random()
@@ -124,11 +109,11 @@ function Payment() {
         .substring(2, 8)
         .toUpperCase();
       setTransferCode(randomCode);
-      setTimeLeft(300); // Reset timer to 5 minutes
+      setTimeLeft(300);
     }
   }, [method]);
 
-  // Countdown timer effect
+  // Đếm ngược thời gian
   useEffect(() => {
     if (method === "bank" && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -155,9 +140,19 @@ function Payment() {
   };
 
   const handlePayment = async () => {
+    if (!isAuthenticated) {
+      alert("Vui lòng đăng nhập để tiếp tục!");
+      navigate("/login");
+      return;
+    }
+
+    // Lấy userId từ localStorage (đã được đồng bộ trong AuthProvider)
+    const userId = localStorage.getItem("userId");
+
     try {
       const fullAddress = `${formData.detailedAddress}, ${formData.ward}, ${formData.district}, ${formData.province}`;
       const paymentData = {
+        userId: userId,
         method,
         transferCode: method === "bank" ? transferCode : undefined,
         items: selectedCartItems,
@@ -166,30 +161,37 @@ function Payment() {
         phone: formData.phone,
         address: fullAddress,
         voucher: formData.voucher,
-        cardNumber: formData.cardNumber,
-        cardExpiry: formData.cardExpiry,
-        cardCVC: formData.cardCVC,
+        cardNumber: method === "credit" ? formData.cardNumber : undefined,
+        cardExpiry: method === "credit" ? formData.cardExpiry : undefined,
+        cardCVC: method === "credit" ? formData.cardCVC : undefined,
       };
       await processPayment(paymentData);
       alert("Thanh toán thành công!");
+      navigate("/"); // Chuyển hướng về trang chủ
     } catch (error) {
-      console.error("Payment failed:", error);
-      alert("Thanh toán thất bại!");
+      console.error("Thanh toán thất bại:", error);
+      alert("Thanh toán thất bại! Vui lòng thử lại.");
     }
   };
 
   const handleVoucherAccept = () => {
     if (formData.voucher) {
       alert(`Đã áp dụng voucher: ${formData.voucher}`);
+    } else {
+      alert("Vui lòng nhập mã voucher!");
     }
   };
 
-  // Calculate payment details dynamically based on cart items
   const paymentDetails = {
     subtotal: totalPrice,
     shipping: 30000,
     total: totalPrice + 30000,
   };
+
+  // Nếu đang tải trạng thái xác thực, hiển thị loading
+  if (isLoading) {
+    return <div>Đang tải...</div>;
+  }
 
   return (
     <div className={styles.paymentContainer}>
@@ -230,20 +232,14 @@ function Payment() {
                   required
                 >
                   <option value="">Chọn tỉnh/thành phố</option>
-                  {Array.isArray(provinces) && provinces.length > 0 ? (
-                    provinces.map((province) => (
-                      <option
-                        key={province.code || province.id}
-                        value={province.name || ""}
-                      >
-                        {province.name || "Không có tên"}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="" disabled>
-                      Không có dữ liệu tỉnh/thành phố
+                  {provinces.map((province) => (
+                    <option
+                      key={province.code || province.id}
+                      value={province.name}
+                    >
+                      {province.name}
                     </option>
-                  )}
+                  ))}
                 </select>
               </>
             )}
@@ -260,20 +256,14 @@ function Payment() {
                 disabled={!formData.province}
               >
                 <option value="">Chọn quận/huyện</option>
-                {Array.isArray(districts) && districts.length > 0 ? (
-                  districts.map((district) => (
-                    <option
-                      key={district.code || district.id}
-                      value={district.name || ""}
-                    >
-                      {district.name || "Không có tên"}
-                    </option>
-                  ))
-                ) : (
-                  <option value="" disabled>
-                    Không có dữ liệu quận/huyện
+                {districts.map((district) => (
+                  <option
+                    key={district.code || district.id}
+                    value={district.name}
+                  >
+                    {district.name}
                   </option>
-                )}
+                ))}
               </select>
             )}
             <label>Phường/Xã</label>
@@ -289,17 +279,11 @@ function Payment() {
                 disabled={!formData.district}
               >
                 <option value="">Chọn phường/xã</option>
-                {Array.isArray(wards) && wards.length > 0 ? (
-                  wards.map((ward) => (
-                    <option key={ward.code || ward.id} value={ward.name || ""}>
-                      {ward.name || "Không có tên"}
-                    </option>
-                  ))
-                ) : (
-                  <option value="" disabled>
-                    Không có dữ liệu phường/xã
+                {wards.map((ward) => (
+                  <option key={ward.code || ward.id} value={ward.name}>
+                    {ward.name}
                   </option>
-                )}
+                ))}
               </select>
             )}
             <input

@@ -20,10 +20,18 @@ function Dashboard({ title, columns, data, onEdit, onDelete, onImages }) {
               <tr key={item.id || `row-${index}`}>
                 {columns.map((col) => (
                   <td key={`${item.id || index}-${col.key}`}>
-                    {item[col.key]}
+                    {col.render
+                      ? col.render(item)
+                      : typeof item[col.key] === "object" &&
+                        item[col.key] !== null
+                      ? JSON.stringify(item[col.key]) // Hoặc xử lý tùy chỉnh
+                      : item[col.key]}
                   </td>
                 ))}
-                <td key={`${item.id || index}-actions`} className={styles.actions}>
+                <td
+                  key={`${item.id || index}-actions`}
+                  className={styles.actions}
+                >
                   {onEdit && (
                     <button
                       className={styles.editBtn}

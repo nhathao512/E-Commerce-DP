@@ -1,33 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Dashboard from "../Dashboard/Dashboard";
 import styles from "./OrderManagement.module.css";
 import { ShoppingCart } from "lucide-react";
+import { getAllOrders, updateOrder, deleteOrder } from "../../../services/api";
 
 function OrderManagement() {
-  const [orders, setOrders] = useState([
-    {
-      id: "O001",
-      userId: "U123",
-      items: "P001 x1, P002 x2",
-      total: 300,
-      paymentMethod: "Credit Card",
-    },
-    {
-      id: "O002",
-      userId: "U456",
-      items: "P003 x1",
-      total: 150,
-      paymentMethod: "PayPal",
-    },
-  ]);
-
+  const [orders, setOrders] = useState([]);
   const [search, setSearch] = useState("");
   const [sortAsc, setSortAsc] = useState(true);
   const [popupOpen, setPopupOpen] = useState(false);
   const [editingOrder, setEditingOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const handleDelete = (id) => {
-    setOrders(orders.filter((order) => order.id !== id));
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await getAllOrders();
+        console.log("Orders fetched:", response.data);
+        setOrders(response.data);
+      } catch (err) {
+        console.error("Failed to fetch orders:", err);
+        setError("Không thể tải danh sách đơn hàng. Vui lòng thử lại sau!");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteOrder(id);
+      setOrders(orders.filter((order) => order.id !== id));
+    } catch (err) {
+      console.error("Failed to delete order:", err);
+      alert("Không thể xóa đơn hàng. Vui lòng thử lại sau!");
+    }
   };
 
   const handleEdit = (order) => {
@@ -40,13 +50,24 @@ function OrderManagement() {
     setPopupOpen(true);
   };
 
-  const handleSave = (newOrder) => {
-    if (editingOrder) {
-      setOrders(orders.map((o) => (o.id === newOrder.id ? newOrder : o)));
-    } else {
-      setOrders([...orders, { ...newOrder, id: `O${Date.now()}` }]);
+  const handleSave = async (newOrder) => {
+    try {
+      if (editingOrder) {
+        const updatedOrder = await updateOrder(newOrder.id, newOrder);
+        setOrders(
+          orders.map((o) => (o.id === newOrder.id ? updatedOrder.data : o))
+        );
+      } else {
+        alert(
+          "Tạo mới đơn hàng không được hỗ trợ trực tiếp. Vui lòng sử dụng trang Thanh toán!"
+        );
+        return;
+      }
+      setPopupOpen(false);
+    } catch (err) {
+      console.error("Failed to save order:", err);
+      alert("Không thể lưu đơn hàng. Vui lòng thử lại sau!");
     }
-    setPopupOpen(false);
   };
 
   const filteredData = [...orders]
@@ -62,10 +83,30 @@ function OrderManagement() {
   const columns = [
     { key: "id", label: "ID đơn hàng" },
     { key: "userId", label: "ID người dùng" },
-    { key: "items", label: "Mặt hàng" },
+    {
+      key: "items",
+      label: "Mặt hàng",
+      render: (order) =>
+        order.items
+          ?.map((item) => `${item.productName} x${item.quantity}`)
+          .join(", ") || "Không có sản phẩm",
+    },
     { key: "total", label: "Tổng tiền" },
     { key: "paymentMethod", label: "Phương thức thanh toán" },
+    {
+      key: "status",
+      label: "Trạng thái",
+      render: (order) => order.status || "Xác nhận",
+    },
   ];
+
+  if (loading) {
+    return <div>Đang tải...</div>;
+  }
+
+  if (error) {
+    return <div className={styles.error}>{error}</div>;
+  }
 
   return (
     <div className={styles.container}>
@@ -85,7 +126,6 @@ function OrderManagement() {
           />
           <button onClick={handleCreate}>Tạo mới</button>
           <button onClick={() => setSortAsc(!sortAsc)}>
-           
             {sortAsc ? "⬇ DESC" : "⬆ ASC"}
           </button>
         </div>
@@ -109,9 +149,10 @@ function OrderManagement() {
                 const newOrder = {
                   id: editingOrder?.id || null,
                   userId: form.userId.value,
-                  items: form.items.value,
+                  items: editingOrder?.items || [],
                   total: parseFloat(form.total.value) || 0,
                   paymentMethod: form.paymentMethod.value,
+                  status: form.status.value,
                 };
                 handleSave(newOrder);
               }}
@@ -122,14 +163,6 @@ function OrderManagement() {
                 <input
                   name="userId"
                   defaultValue={editingOrder?.userId || ""}
-                  required
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Mặt hàng:</label>
-                <input
-                  name="items"
-                  defaultValue={editingOrder?.items || ""}
                   required
                 />
               </div>
@@ -149,6 +182,19 @@ function OrderManagement() {
                   defaultValue={editingOrder?.paymentMethod || ""}
                   required
                 />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Trạng thái:</label>
+                <select
+                  name="status"
+                  defaultValue={editingOrder?.status || "Xác nhận"}
+                  required
+                >
+                  <option value="Xác nhận">Xác nhận</option>
+                  <option value="Giao hàng">Giao hàng</option>
+                  <option value="Hoàn thành">Hoàn thành</option>
+                  <option value="Hủy">Hủy</option>
+                </select>
               </div>
               <div className={styles.buttonGroup}>
                 <button type="submit">Lưu</button>

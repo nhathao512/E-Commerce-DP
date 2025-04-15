@@ -39,15 +39,14 @@ public class CartService {
             cart.setItems(optionalCart.get().getItems());
         }
 
-        // Thêm sản phẩm (logic cộng dồn số lượng đã được xử lý trong Cart.addItem)
+        // Thêm sản phẩm
         cart.addItem(product, quantity, size);
 
-        // Lưu giỏ hàng vào MongoDB
+        // Lưu giỏ hàng
         cartRepository.save(cart);
     }
 
     public void updateCartItemQuantity(String userId, String productId, String size, int quantity) {
-        // Kiểm tra sản phẩm và tồn kho
         Optional<Product> optionalProduct = productRepository.findById(productId);
         if (!optionalProduct.isPresent()) {
             throw new IllegalArgumentException("Sản phẩm không tồn tại!");
@@ -60,7 +59,6 @@ public class CartService {
             );
         }
 
-        // Cập nhật giỏ hàng
         Cart cart = Cart.getInstance(userId);
         cart.updateItemQuantity(productId, size, quantity);
         cartRepository.save(cart);

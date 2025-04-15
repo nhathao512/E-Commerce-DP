@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
           setIsAuthenticated(true);
 
           // Đồng bộ giỏ hàng sau khi xác minh
-          const userId = localStorage.getItem("userID");
+          const userId = localStorage.getItem("userId"); // Đổi "userID" thành "userId"
           if (userId) {
             try {
               const cartResponse = await getCart(userId);
@@ -47,7 +47,6 @@ export const AuthProvider = ({ children }) => {
                 size: item.size,
               }));
               localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
-              // Dispatch sự kiện cartUpdated để thông báo cho các component khác
               window.dispatchEvent(new Event("cartUpdated"));
             } catch (cartError) {
               console.error("Failed to fetch cart after auth:", cartError);
@@ -59,7 +58,7 @@ export const AuthProvider = ({ children }) => {
           console.error("Failed to verify auth:", error);
           localStorage.removeItem("token");
           localStorage.removeItem("user");
-          localStorage.removeItem("userID");
+          localStorage.removeItem("userId"); // Đổi "userID" thành "userId"
           localStorage.removeItem("cartItems");
           setIsAuthenticated(false);
           setUser(null);
@@ -79,7 +78,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await API.post("/auth/login", { username, password });
       const { id, token, ...userData } = response.data;
-      localStorage.setItem("userID", id);
+      localStorage.setItem("userId", id); // Đổi "userID" thành "userId"
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
@@ -101,7 +100,6 @@ export const AuthProvider = ({ children }) => {
           size: item.size,
         }));
         localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
-        // Dispatch sự kiện cartUpdated để thông báo cho các component khác
         window.dispatchEvent(new Event("cartUpdated"));
       } catch (cartError) {
         console.error("Failed to fetch cart after login:", cartError);
@@ -135,18 +133,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    // Không xóa giỏ hàng trên server khi đăng xuất
-    // Xóa localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    localStorage.removeItem("userID");
+    localStorage.removeItem("userId"); // Đổi "userID" thành "userId"
     localStorage.removeItem("cartItems");
 
-    // Cập nhật state
     setIsAuthenticated(false);
     setUser(null);
 
-    // Dispatch sự kiện cartUpdated để đồng bộ giỏ hàng trên giao diện
     window.dispatchEvent(new Event("cartUpdated"));
   };
 

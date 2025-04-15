@@ -2,16 +2,16 @@ package com.ecommerce.service;
 
 import com.ecommerce.model.CartItem;
 import com.ecommerce.model.Order;
-import com.ecommerce.model.Product;
 import com.ecommerce.repository.OrderRepository;
-import com.ecommerce.strategy.PaymentContext;
 import com.ecommerce.strategy.BankTransferPayment;
-import com.ecommerce.strategy.WalletPayment;
 import com.ecommerce.strategy.CreditCardPayment;
+import com.ecommerce.strategy.PaymentContext;
+import com.ecommerce.strategy.WalletPayment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -21,37 +21,81 @@ public class OrderService {
     @Autowired
     private CartService cartService;
 
-//    public Order createOrder(String userId, String paymentMethod) {
-//        List<CartItem> items = cartService.getCartItems();
-//        if (items.isEmpty()) {
-//            throw new IllegalStateException("Cart is empty");
-//        }
-//
-//        double total = cartService.getTotal();
-//        Order order = new Order();
-//        order.setUserId(userId);
-//        order.setItems(items);
-//        order.setTotal(total);
-//        order.setPaymentMethod(paymentMethod);
-//
-//        // Xử lý thanh toán với Strategy Pattern
-//        PaymentContext paymentContext = new PaymentContext();
-//        switch (paymentMethod.toLowerCase()) {
-//            case "bank_transfer":
-//                paymentContext.setPaymentStrategy(new BankTransferPayment());
-//                break;
-//            case "wallet":
-//                paymentContext.setPaymentStrategy(new WalletPayment());
-//                break;
-//            case "credit_card":
-//                paymentContext.setPaymentStrategy(new CreditCardPayment());
-//                break;
-//            default:
-//                throw new IllegalArgumentException("Phương thức thanh toán không hợp lệ");
-//        }
-//        paymentContext.executePayment(total);
-//
-//        cartService.clearCart();
-//        return orderRepository.save(order);
-//    }
+    public Order createOrder(String userId, List<CartItem> items, String paymentMethod, double total,
+                             String name, String phone, String address, String voucher,
+                             String transferCode, String cardNumber, String cardExpiry, String cardCVC) {
+        if (items == null || items.isEmpty()) {
+            throw new IllegalArgumentException("Danh sách sản phẩm không được trống!");
+        }
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("ID người dùng không được trống!");
+        }
+
+        Order order = new Order();
+        order.setUserId(userId);
+        order.setItems(items);
+        order.setTotal(total);
+        order.setPaymentMethod(paymentMethod);
+        order.setName(name);
+        order.setPhone(phone);
+        order.setAddress(address);
+        order.setVoucher(voucher);
+        order.setTransferCode(transferCode);
+        order.setCardNumber(cardNumber);
+        order.setCardExpiry(cardExpiry);
+        order.setCardCVC(cardCVC);
+        order.setStatus("Xác nhận"); // Gán trạng thái mặc định cho đơn hàng mới
+
+        PaymentContext paymentContext = new PaymentContext();
+        switch (paymentMethod.toLowerCase()) {
+            case "cod":
+                paymentContext.setPaymentStrategy(new WalletPayment());
+                break;
+            case "bank":
+                paymentContext.setPaymentStrategy(new BankTransferPayment());
+                break;
+            case "credit":
+                paymentContext.setPaymentStrategy(new CreditCardPayment());
+                break;
+            default:
+                throw new IllegalArgumentException("Phương thức thanh toán không hợp lệ: " + paymentMethod);
+        }
+        paymentContext.executePayment(total);
+
+        Order savedOrder = orderRepository.save(order);
+        cartService.clearCart(userId);
+        return savedOrder;
+    }
+
+    public List<Order> getOrdersByUserId(String userId) {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("ID người dùng không được trống!");
+        }
+        return orderRepository.findByUserId(userId);
+    }
+
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    public Order updateOrder(String id, Order updatedOrder) {
+        Optional<Order> existingOrderOpt = orderRepository.findById(id);
+        if (!existingOrderOpt.isPresent()) {
+            throw new IllegalArgumentException("Đơn hàng không tồn tại!");
+        }
+        Order existingOrder = existingOrderOpt.get();
+        existingOrder.setUserId(updatedOrder.getUserId());
+        existingOrder.setItems(updatedOrder.getItems());
+        existingOrder.setTotal(updatedOrder.getTotal());
+        existingOrder.setPaymentMethod(updatedOrder.getPaymentMethod());
+        existingOrder.setStatus(updatedOrder.getStatus());
+        return orderRepository.save(existingOrder);
+    }
+
+    public void deleteOrder(String id) {
+        if (!orderRepository.existsById(id)) {
+            throw new IllegalArgumentException("Đơn hàng không tồn tại!");
+        }
+        orderRepository.deleteById(id);
+    }
 }

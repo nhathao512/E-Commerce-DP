@@ -34,7 +34,7 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
         showCloseButton: false,
         confirmButton: {
           text: "Đăng nhập",
-          onClick: () => window.location.href = "/login",
+          onClick: () => (window.location.href = "/login"),
         },
         cancelButton: {
           text: "Đóng",
@@ -96,7 +96,7 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
         showCloseButton: false,
         confirmButton: {
           text: "Đăng nhập",
-          onClick: () => window.location.href = "/login",
+          onClick: () => (window.location.href = "/login"),
         },
         cancelButton: {
           text: "Đóng",
@@ -153,7 +153,7 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
           showCloseButton: false,
           confirmButton: {
             text: "Đăng nhập",
-            onClick: () => window.location.href = "/login",
+            onClick: () => (window.location.href = "/login"),
           },
           cancelButton: {
             text: "Đóng",
