@@ -1,4 +1,3 @@
-// api.js
 import axios from "axios";
 
 const API = axios.create({
@@ -54,6 +53,8 @@ export const clearCart = (userId) =>
   });
 
 // api.js
+export const getProvinces = () =>
+  axios.get("http://localhost:8080/api/provinces");
 export const processPayment = (paymentData) =>
   API.post("/payment", paymentData);
 

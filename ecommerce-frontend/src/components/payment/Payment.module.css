@@ -97,6 +97,33 @@
   background-position: right 0.8rem center;
 }
 
+/* Thêm style cho label của dropdown */
+.formSection label {
+  display: block;
+  color: #334155;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Thêm style cho thông báo lỗi */
+.error {
+  color: #dc2626;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  background: rgba(220, 38, 38, 0.1);
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+/* Style cho loading text */
+.formSection p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
 .bankInfo {
   margin-top: 1.2rem;
   padding: 1rem;
@@ -209,34 +236,6 @@
   background: linear-gradient(45deg, #1d4ed8, #3b82f6);
 }
 
-@media (max-width: 768px) {
-  .paymentContainer {
-    padding: 1.5rem;
-    margin: 1rem;
-  }
-
-  .contentWrapper {
-    flex-direction: column;
-  }
-
-  .paymentForm {
-    padding: 1.5rem;
-  }
-
-  .paymentSummary {
-    padding: 1.5rem;
-    position: static;
-  }
-
-  .input,
-  .select {
-    width: 100%;
-  }
-
-  .creditDetails {
-    grid-template-columns: 1fr;
-  }
-}
 .timerContainer {
   margin-top: 1rem;
   padding: 1.2rem;
@@ -246,7 +245,7 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
   display: flex;
   flex-direction: column;
-  align-items: flex-start; /* Align content to the left */
+  align-items: flex-start;
   border: 1px solid #e2e8f0;
 }
 
@@ -301,20 +300,17 @@
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
-
   box-shadow: 0 2px 8px rgba(75, 85, 99, 0.2);
 }
 
 .copyButton:hover {
   background: linear-gradient(45deg, #374151, #4b5563);
-
   box-shadow: 0 4px 12px rgba(75, 85, 99, 0.3);
 }
 
 .copyButton:active {
   box-shadow: 0 1px 4px rgba(75, 85, 99, 0.2);
 }
-/* Các style hiện có giữ nguyên, chỉ thêm phần mới cho cart items */
 
 .cartItems {
   margin-bottom: 1.5rem;
@@ -372,7 +368,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.4rem;
 }
 
 .cartItemName {
@@ -384,38 +380,6 @@
 .cartItemQuantity {
   color: #64748b;
   font-size: 0.85rem;
-}
-
-.cartItemPrice {
-  color: #2563eb;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-/* Cập nhật media query để đảm bảo responsive */
-@media (max-width: 768px) {
-  .cartItem {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 1rem;
-  }
-
-  .cartItemImage {
-    width: 80px;
-    height: 80px;
-  }
-
-  .cartItemDetails {
-    width: 100%;
-  }
-}
-/* Các style hiện có giữ nguyên, chỉ thêm/chỉnh sửa cho kích thước */
-
-.cartItemDetails {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem; /* Tăng nhẹ gap để chứa thêm kích thước */
 }
 
 .cartItemSize {
@@ -432,8 +396,40 @@
   background: rgba(100, 116, 139, 0.1);
 }
 
-/* Cập nhật media query để đảm bảo responsive */
+.cartItemPrice {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
 @media (max-width: 768px) {
+  .paymentContainer {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .contentWrapper {
+    flex-direction: column;
+  }
+
+  .paymentForm {
+    padding: 1.5rem;
+  }
+
+  .paymentSummary {
+    padding: 1.5rem;
+    position: static;
+  }
+
+  .input,
+  .select {
+    width: 100%;
+  }
+
+  .creditDetails {
+    grid-template-columns: 1fr;
+  }
+
   .cartItem {
     flex-direction: column;
     align-items: flex-start;
@@ -450,6 +446,19 @@
   }
 
   .cartItemSize {
-    font-size: 0.9rem; /* Tăng nhẹ font size trên mobile cho dễ đọc */
+    font-size: 0.9rem;
+  }
+
+  .voucherContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .voucherButton {
+    width: 100%;
+  }
+
+  .bankImage {
+    max-width: 60%;
   }
 }

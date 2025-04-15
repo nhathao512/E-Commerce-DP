@@ -1,7 +1,6 @@
-// Payment.js
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom"; // Import useLocation to access navigation state
-import { processPayment } from "../../services/api";
+import { useLocation } from "react-router-dom";
+import { processPayment, getProvinces } from "../../services/api";
 import styles from "./Payment.module.css";
 import logo from "../../assets/banking.png";
 
@@ -10,7 +9,10 @@ function Payment() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    address: "",
+    province: "",
+    district: "",
+    ward: "",
+    detailedAddress: "",
     voucher: "",
     cardNumber: "",
     cardExpiry: "",
@@ -18,10 +20,101 @@ function Payment() {
   });
   const [timeLeft, setTimeLeft] = useState(300);
   const [transferCode, setTransferCode] = useState("");
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [loadingProvinces, setLoadingProvinces] = useState(true);
+  const [loadingDistricts, setLoadingDistricts] = useState(false);
+  const [loadingWards, setLoadingWards] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Access the selected cart items and total price from navigation state
   const location = useLocation();
   const { selectedCartItems = [], totalPrice = 0 } = location.state || {};
+
+  // Lấy danh sách tỉnh/thành phố
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        setLoadingProvinces(true);
+        setErrorMessage("");
+        const response = await getProvinces();
+        console.log("API Response:", response);
+        console.log("API Data:", response.data);
+        setProvinces(Array.isArray(response.data) ? response.data : []);
+        if (!Array.isArray(response.data) || response.data.length === 0) {
+          setErrorMessage(
+            "Không thể tải danh sách tỉnh/thành phố. Vui lòng thử lại sau."
+          );
+        }
+      } catch (error) {
+        console.error("Failed to fetch provinces:", error);
+        setProvinces([]);
+        setErrorMessage(
+          "Đã xảy ra lỗi khi tải danh sách tỉnh/thành phố: " + error.message
+        );
+      } finally {
+        setLoadingProvinces(false);
+      }
+    };
+    fetchProvinces();
+  }, []);
+
+  // Lấy danh sách quận/huyện khi chọn tỉnh/thành phố
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      if (formData.province) {
+        try {
+          setLoadingDistricts(true);
+          setFormData((prev) => ({ ...prev, district: "", ward: "" }));
+          setDistricts([]);
+          setWards([]);
+          const selectedProvince = provinces.find(
+            (p) => p.name === formData.province
+          );
+          if (selectedProvince) {
+            setDistricts(
+              Array.isArray(selectedProvince.district)
+                ? selectedProvince.district
+                : []
+            );
+          }
+        } catch (error) {
+          console.error("Failed to fetch districts:", error);
+          setDistricts([]);
+        } finally {
+          setLoadingDistricts(false);
+        }
+      }
+    };
+    fetchDistricts();
+  }, [formData.province, provinces]);
+
+  // Lấy danh sách phường/xã khi chọn quận/huyện
+  useEffect(() => {
+    const fetchWards = async () => {
+      if (formData.district) {
+        try {
+          setLoadingWards(true);
+          setFormData((prev) => ({ ...prev, ward: "" }));
+          setWards([]);
+          const selectedDistrict = districts.find(
+            (d) => d.name === formData.district
+          );
+          if (selectedDistrict) {
+            setWards(
+              Array.isArray(selectedDistrict.ward) ? selectedDistrict.ward : []
+            );
+          }
+        } catch (error) {
+          console.error("Failed to fetch wards:", error);
+          setWards([]);
+        } finally {
+          setLoadingWards(false);
+        }
+      }
+    };
+    fetchWards();
+  }, [formData.district, districts]);
 
   // Generate random transfer code when bank method is selected
   useEffect(() => {
@@ -53,18 +146,29 @@ function Payment() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "phone") {
+      const numericValue = value.replace(/[^0-9]/g, "");
+      setFormData((prev) => ({ ...prev, [name]: numericValue }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handlePayment = async () => {
     try {
-      // Prepare the payment data to send to the API
+      const fullAddress = `${formData.detailedAddress}, ${formData.ward}, ${formData.district}, ${formData.province}`;
       const paymentData = {
         method,
         transferCode: method === "bank" ? transferCode : undefined,
-        items: selectedCartItems, // Send the selected cart items
-        total: totalPrice, // Send the total price
-        ...formData,
+        items: selectedCartItems,
+        total: totalPrice,
+        name: formData.name,
+        phone: formData.phone,
+        address: fullAddress,
+        voucher: formData.voucher,
+        cardNumber: formData.cardNumber,
+        cardExpiry: formData.cardExpiry,
+        cardCVC: formData.cardCVC,
       };
       await processPayment(paymentData);
       alert("Thanh toán thành công!");
@@ -82,9 +186,9 @@ function Payment() {
 
   // Calculate payment details dynamically based on cart items
   const paymentDetails = {
-    subtotal: totalPrice, // Use the totalPrice passed from Cart
-    shipping: 30000, // Fixed shipping fee (you can make this dynamic if needed)
-    total: totalPrice + 30000, // Subtotal + shipping
+    subtotal: totalPrice,
+    shipping: 30000,
+    total: totalPrice + 30000,
   };
 
   return (
@@ -112,12 +216,98 @@ function Payment() {
               className={styles.input}
               required
             />
+            <label>Tỉnh/Thành phố</label>
+            {loadingProvinces ? (
+              <p>Đang tải danh sách tỉnh/thành phố...</p>
+            ) : (
+              <>
+                {errorMessage && <p className={styles.error}>{errorMessage}</p>}
+                <select
+                  name="province"
+                  value={formData.province}
+                  onChange={handleInputChange}
+                  className={styles.select}
+                  required
+                >
+                  <option value="">Chọn tỉnh/thành phố</option>
+                  {Array.isArray(provinces) && provinces.length > 0 ? (
+                    provinces.map((province) => (
+                      <option
+                        key={province.code || province.id}
+                        value={province.name || ""}
+                      >
+                        {province.name || "Không có tên"}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>
+                      Không có dữ liệu tỉnh/thành phố
+                    </option>
+                  )}
+                </select>
+              </>
+            )}
+            <label>Quận/Huyện</label>
+            {loadingDistricts ? (
+              <p>Đang tải danh sách quận/huyện...</p>
+            ) : (
+              <select
+                name="district"
+                value={formData.district}
+                onChange={handleInputChange}
+                className={styles.select}
+                required
+                disabled={!formData.province}
+              >
+                <option value="">Chọn quận/huyện</option>
+                {Array.isArray(districts) && districts.length > 0 ? (
+                  districts.map((district) => (
+                    <option
+                      key={district.code || district.id}
+                      value={district.name || ""}
+                    >
+                      {district.name || "Không có tên"}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>
+                    Không có dữ liệu quận/huyện
+                  </option>
+                )}
+              </select>
+            )}
+            <label>Phường/Xã</label>
+            {loadingWards ? (
+              <p>Đang tải danh sách phường/xã...</p>
+            ) : (
+              <select
+                name="ward"
+                value={formData.ward}
+                onChange={handleInputChange}
+                className={styles.select}
+                required
+                disabled={!formData.district}
+              >
+                <option value="">Chọn phường/xã</option>
+                {Array.isArray(wards) && wards.length > 0 ? (
+                  wards.map((ward) => (
+                    <option key={ward.code || ward.id} value={ward.name || ""}>
+                      {ward.name || "Không có tên"}
+                    </option>
+                  ))
+                ) : (
+                  <option value="" disabled>
+                    Không có dữ liệu phường/xã
+                  </option>
+                )}
+              </select>
+            )}
             <input
               type="text"
-              name="address"
-              value={formData.address}
+              name="detailedAddress"
+              value={formData.detailedAddress}
               onChange={handleInputChange}
-              placeholder="Địa chỉ giao hàng"
+              placeholder="Địa chỉ chi tiết (số nhà, đường)"
               className={styles.input}
               required
             />
@@ -232,7 +422,7 @@ function Payment() {
                   className={styles.cartItem}
                 >
                   <img
-                    src={item.imageUrl || "https://via.placeholder.com/60"} // Use item.imageUrl, fallback to placeholder
+                    src={item.imageUrl || "https://via.placeholder.com/60"}
                     alt={item.productName}
                     className={styles.cartItemImage}
                   />
