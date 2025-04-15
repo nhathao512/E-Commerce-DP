@@ -1,116 +1,290 @@
+/* Container */
 .container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
+  max-width: 1440px;
+
+  padding: 1.5rem;
+  background: linear-gradient(145deg, #f9fafb 0%, #e0e7ff 100%);
+  border-radius: 24px;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.06);
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 1rem;
+  min-height: calc(100vh - 3rem);
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+/* Header */
+.header {
+  padding: 1.25rem 2rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* Search Bar */
+.searchBar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
+
+  max-width: 600px;
+  margin-left: auto;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+}
+
+.controls input {
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.controls input:focus {
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15), 0 4px 10px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.controls button {
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.controls button:first-of-type {
+  background: #4f46e5;
+  color: white;
+}
+
+.controls button:first-of-type:hover {
+  background: #4338ca;
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.controls button:last-of-type {
+  background: #e5e7eb;
+  color: #1e293b;
+}
+
+.controls button:last-of-type:hover {
+  background: #d1d5db;
+  transform: scale(1.03);
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 24, 39, 0.9);
+  backdrop-filter: blur(10px);
+  display: grid;
+  place-items: center;
+  z-index: 5000;
+}
+
+/* Modal */
+.modal {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(14px);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 480px;
+  width: 100%;
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.12);
+  animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: grid;
+  gap: 1rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  h1 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 24px;
-    margin-bottom: 20px;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+}
+
+.modal h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: center;
+  margin: 0;
+}
+
+/* Form */
+.form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.formGroup {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.formGroup label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.formGroup input {
+  padding: 0.9rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.formGroup input:focus {
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+/* Button Group */
+.buttonGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.buttonGroup button {
+  padding: 0.9rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.buttonGroup button[type="submit"] {
+  background: #4f46e5;
+  color: white;
+}
+
+.buttonGroup button[type="submit"]:hover {
+  background: #4338ca;
+  transform: scale(1.03);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+}
+
+.buttonGroup button[type="button"] {
+  background: #e5e7eb;
+  color: #1e293b;
+}
+
+.buttonGroup button[type="button"]:hover {
+  background: #d1d5db;
+  transform: scale(1.03);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+    margin: 0.75rem;
+    border-radius: 16px;
   }
-  
-  .controls input {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    flex: 1;
-    min-width: 200px;
+
+  .header {
+    padding: 1rem;
   }
-  
-  .controls button {
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s ease;
+
+  .header h1 {
+    font-size: 1.5rem;
   }
-  
-  .controls button:hover {
-    background-color: #0056b3;
-  }
-  
-  .popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
+
+  .searchBar {
     justify-content: center;
-    z-index: 1000;
+    max-width: 100%;
+    padding: 0.75rem;
+    margin: 0 auto;
   }
-  
-  .popupContent {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 10px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+
+  .controls {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    max-width: 100%;
   }
-  
-  .popupContent h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
-    font-size: 20px;
-    text-align: center;
+
+  .controls input,
+  .controls button {
+    padding: 0.7rem;
+    font-size: 0.85rem;
   }
-  
-  .popupContent form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+
+  .modal {
+    width: 90%;
+    padding: 1.5rem;
+    border-radius: 12px;
   }
-  
-  .popupContent input {
-    padding: 8px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+
+  .modal h2 {
+    font-size: 1.25rem;
   }
-  
-  .popupButtons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
+
+  .formGroup input,
+  .buttonGroup button {
+    padding: 0.8rem;
+    font-size: 0.9rem;
   }
-  
-  .popupButtons button {
-    flex: 1;
-    margin: 0 5px;
-    padding: 8px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .container {
+    margin: 0.5rem;
   }
-  
-  .popupButtons button[type="submit"] {
-    background-color: #28a745;
-    color: white;
+
+  .buttonGroup {
+    grid-template-columns: 1fr;
   }
-  
-  .popupButtons button[type="submit"]:hover {
-    background-color: #218838;
+
+  .modal {
+    padding: 1rem;
   }
-  
-  .popupButtons button[type="button"] {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .popupButtons button[type="button"]:hover {
-    background-color: #c82333;
-  }
-  
+}

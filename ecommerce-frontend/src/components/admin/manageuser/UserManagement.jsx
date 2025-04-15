@@ -16,8 +16,8 @@ function UserManagement() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1); // New state for current page
-  const usersPerPage = 10; // Number of users per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const usersPerPage = 10;
 
   // Fetch list of users
   const fetchUsers = async () => {
@@ -26,7 +26,7 @@ function UserManagement() {
       const response = await axios.get("http://localhost:8080/api/auth/users");
       console.log("Fetched users:", response.data);
       setUsers(response.data || []);
-      setCurrentPage(1); // Reset to first page when fetching new data
+      setCurrentPage(1);
     } catch (error) {
       console.error("Error fetching users:", error);
       toast.error("Không thể tải danh sách người dùng!");
@@ -152,7 +152,7 @@ function UserManagement() {
           params: {
             username: newUser.username,
             phone: newUser.phone,
-            address: newUser.address,
+            address: form.address.value || "",
             fullName: newUser.fullName,
             avatar: newUser.avatar,
           },
@@ -193,20 +193,24 @@ function UserManagement() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>
-          <FaUsersCog /> Quản lý người dùng
+          <FaUsersCog style={{ marginRight: "0.5rem" }} /> QUẢN LÝ NGƯỜI DÙNG
         </h1>
+      </div>
+
+      <div className={styles.searchBar}>
         <div className={styles.controls}>
           <input
             type="text"
-            placeholder="Tìm kiếm..."
+            placeholder="Tìm kiếm người dùng..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             disabled={isLoading}
           />
           <button onClick={handleCreate} disabled={isLoading}>
-            ➕ Tạo
+            Tạo mới
           </button>
           <button onClick={() => setIsAsc(!isAsc)} disabled={isLoading}>
+            
             {isAsc ? "⬇ DESC" : "⬆ ASC"}
           </button>
         </div>
@@ -224,7 +228,7 @@ function UserManagement() {
               { key: "phone", label: "Số điện thoại" },
               { key: "address", label: "Địa chỉ" },
             ]}
-            data={paginatedUsers} // Use paginated users instead of filteredUsers
+            data={paginatedUsers}
             onEdit={handleEdit}
             onDelete={handleDelete}
           />
@@ -258,8 +262,8 @@ function UserManagement() {
       )}
 
       {isPopupOpen && (
-        <div className={styles.overlay}>
-          <div className={styles.modal}>
+        <div className={styles.overlay} onClick={() => setIsPopupOpen(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>{editingUser ? "Chỉnh sửa thông tin" : "Tạo tài khoản"}</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGroup}>
@@ -337,7 +341,15 @@ function UserManagement() {
                   disabled={isLoading}
                 />
               </div>
-              
+              <div className={styles.formGroup}>
+                <label>Avatar URL:</label>
+                <input
+                  type="text"
+                  name="avatar"
+                  defaultValue={editingUser?.avatar || ""}
+                  disabled={isLoading}
+                />
+              </div>
               <div className={styles.buttonGroup}>
                 <button type="submit" disabled={isLoading}>
                   {isLoading ? "Đang lưu..." : "Lưu"}
@@ -360,15 +372,15 @@ function UserManagement() {
       )}
 
       {isDeletePopupOpen && (
-        <div className={styles.overlay}>
-          <div className={styles.modal}>
+        <div className={styles.overlay} onClick={() => setIsDeletePopupOpen(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>Xác nhận xóa</h2>
             <p>
               Bạn có chắc chắn muốn xóa người dùng{" "}
               <strong>{userToDelete?.username}</strong> không?
             </p>
             <div className={styles.buttonGroup}>
-              <button onClick={confirmDelete} disabled={isLoading}>
+              <button onClick={confirmDelete} className={styles.deleteButton} disabled={isLoading}>
                 {isLoading ? "Đang xóa..." : "Xóa"}
               </button>
               <button

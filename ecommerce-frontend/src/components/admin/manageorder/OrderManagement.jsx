@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import Dashboard from "../Dashboard/Dashboard";
-import styles from "./OrderManagement.module.css"; // Dùng lại CSS
+import styles from "./OrderManagement.module.css";
 import { ShoppingCart } from "lucide-react";
-import Header from "../Header";
 
 function OrderManagement() {
   const [orders, setOrders] = useState([
@@ -17,7 +16,7 @@ function OrderManagement() {
       id: "O002",
       userId: "U456",
       items: "P003 x1",
-      total: 150, 
+      total: 150,
       paymentMethod: "PayPal",
     },
   ]);
@@ -70,22 +69,29 @@ function OrderManagement() {
 
   return (
     <div className={styles.container}>
-      <h1><ShoppingCart /> Quản lý đơn hàng</h1>
-      <div className={styles.controls}>
-        <button onClick={handleCreate}>➕ Tạo mới</button>
-        <button onClick={() => setSortAsc(!sortAsc)}>
-          {sortAsc ? "⬇ DESC" : "⬆ ASC"}
-        </button>
-        <input
-          type="text"
-          placeholder="🔍 Tìm theo User ID"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className={styles.header}>
+        <h1>
+          <ShoppingCart style={{ marginRight: "0.5rem" }} /> QUẢN LÝ ĐƠN HÀNG
+        </h1>
+      </div>
+
+      <div className={styles.searchBar}>
+        <div className={styles.controls}>
+          <input
+            type="text"
+            placeholder="Tìm kiếm theo ID người dùng..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button onClick={handleCreate}>Tạo mới</button>
+          <button onClick={() => setSortAsc(!sortAsc)}>
+           
+            {sortAsc ? "⬇ DESC" : "⬆ ASC"}
+          </button>
+        </div>
       </div>
 
       <Dashboard
-        title="Danh sách đơn hàng"
         columns={columns}
         data={filteredData}
         onEdit={handleEdit}
@@ -93,8 +99,8 @@ function OrderManagement() {
       />
 
       {popupOpen && (
-        <div className={styles.popup}>
-          <div className={styles.popupContent}>
+        <div className={styles.overlay} onClick={() => setPopupOpen(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>{editingOrder ? "Sửa đơn hàng" : "Tạo đơn hàng mới"}</h2>
             <form
               onSubmit={(e) => {
@@ -104,19 +110,51 @@ function OrderManagement() {
                   id: editingOrder?.id || null,
                   userId: form.userId.value,
                   items: form.items.value,
-                  total: parseFloat(form.total.value),
+                  total: parseFloat(form.total.value) || 0,
                   paymentMethod: form.paymentMethod.value,
                 };
                 handleSave(newOrder);
               }}
+              className={styles.form}
             >
-              <input name="userId" placeholder="ID người dùng" defaultValue={editingOrder?.userId || ""} />
-              <input name="items" placeholder="Mặt hàng (VD: P001 x2, P002 x1)" defaultValue={editingOrder?.items || ""} />
-              <input name="total" placeholder="Tổng tiền" type="number" defaultValue={editingOrder?.total || 0} />
-              <input name="paymentMethod" placeholder="Phương thức thanh toán" defaultValue={editingOrder?.paymentMethod || ""} />
-              <div className={styles.popupButtons}>
-                <button type="submit">💾 Lưu</button>
-                <button type="button" onClick={() => setPopupOpen(false)}>❌ Hủy</button>
+              <div className={styles.formGroup}>
+                <label>ID người dùng:</label>
+                <input
+                  name="userId"
+                  defaultValue={editingOrder?.userId || ""}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Mặt hàng:</label>
+                <input
+                  name="items"
+                  defaultValue={editingOrder?.items || ""}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Tổng tiền:</label>
+                <input
+                  name="total"
+                  type="number"
+                  defaultValue={editingOrder?.total || 0}
+                  required
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Phương thức thanh toán:</label>
+                <input
+                  name="paymentMethod"
+                  defaultValue={editingOrder?.paymentMethod || ""}
+                  required
+                />
+              </div>
+              <div className={styles.buttonGroup}>
+                <button type="submit">Lưu</button>
+                <button type="button" onClick={() => setPopupOpen(false)}>
+                  Hủy
+                </button>
               </div>
             </form>
           </div>

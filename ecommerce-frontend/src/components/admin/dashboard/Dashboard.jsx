@@ -29,7 +29,7 @@ function Dashboard({ title, columns, data, onEdit, onDelete, onImages }) {
                       className={styles.editBtn}
                       onClick={() => onEdit(item)}
                     >
-                      ✏ Sửa
+                      Sửa
                     </button>
                   )}
                   {onImages && (
@@ -37,7 +37,7 @@ function Dashboard({ title, columns, data, onEdit, onDelete, onImages }) {
                       className={styles.imagesBtn}
                       onClick={() => onImages(item)}
                     >
-                      🖼 Ảnh
+                      Ảnh
                     </button>
                   )}
                   {onDelete && (
@@ -45,7 +45,7 @@ function Dashboard({ title, columns, data, onEdit, onDelete, onImages }) {
                       className={styles.deleteBtn}
                       onClick={() => onDelete(item.id)}
                     >
-                      🗑 Xóa
+                      Xóa
                     </button>
                   )}
                 </td>

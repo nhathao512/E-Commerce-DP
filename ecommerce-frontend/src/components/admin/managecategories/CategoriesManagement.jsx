@@ -15,8 +15,8 @@ function CategoriesManagement() {
   const [isAsc, setIsAsc] = useState(true);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
-  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false); // State cho popup xác nhận xóa
-  const [categoryToDelete, setCategoryToDelete] = useState(null); // Lưu danh mục cần xóa
+  const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -59,7 +59,6 @@ function CategoriesManagement() {
   };
 
   const handleDelete = (id) => {
-    // Mở popup xác nhận xóa thay vì xóa ngay
     const category = categories.find((cat) => cat.id === id);
     setCategoryToDelete(category);
     setIsDeletePopupOpen(true);
@@ -127,18 +126,21 @@ function CategoriesManagement() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1>
-          <FaTags /> Quản lý danh mục
+          <FaTags style={{ marginRight: "0.5rem" }} /> QUẢN LÝ DANH MỤC
         </h1>
+      </div>
 
+      <div className={styles.searchBar}>
         <div className={styles.controls}>
           <input
             type="text"
-            placeholder="Tìm kiếm..."
+            placeholder="Tìm kiếm danh mục..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <button onClick={handleCreate}>➕ Tạo mới</button>
+          <button onClick={handleCreate}>Tạo mới</button>
           <button onClick={() => setIsAsc(!isAsc)}>
+           
             {isAsc ? "⬇ DESC" : "⬆ ASC"}
           </button>
         </div>
@@ -162,7 +164,7 @@ function CategoriesManagement() {
             <h2>{editingCategory ? "Sửa danh mục" : "Thêm danh mục mới"}</h2>
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.formGroup}>
-                <label>Name:</label>
+                <label>Tên danh mục:</label>
                 <input
                   type="text"
                   name="name"
@@ -171,7 +173,7 @@ function CategoriesManagement() {
                 />
               </div>
               <div className={styles.formGroup}>
-                <label>Icon (emoji or class):</label>
+                <label>Icon (emoji hoặc class):</label>
                 <input
                   type="text"
                   name="icon"

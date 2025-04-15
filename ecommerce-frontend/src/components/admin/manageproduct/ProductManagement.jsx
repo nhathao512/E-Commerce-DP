@@ -76,7 +76,6 @@ function ProductManagement() {
     setPopupOpen(true);
   };
 
-  // Callback để cập nhật sản phẩm sau khi upload ảnh
   const handleUpdateImages = (productId, updatedProduct) => {
     setProducts(
       products.map((p) =>
@@ -120,24 +119,30 @@ function ProductManagement() {
 
   return (
     <div className={styles.container}>
-      <h1>
-        <ShoppingBag /> Quản lý sản phẩm
-      </h1>
-      <div className={styles.controls}>
-        <button onClick={handleCreate}>Tạo mới</button>
-        <button onClick={() => setSortAsc(!sortAsc)}>
-          {sortAsc ? "⬇ DESC" : "⬆ ASC"}
-        </button>
-        <input
-          type="text"
-          placeholder="🔍 Tìm kiếm"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className={styles.header}>
+        <h1>
+          <ShoppingBag style={{ marginRight: "0.5rem" }} /> QUẢN LÝ SẢN PHẨM
+        </h1>
+      </div>
+
+      <div className={styles.searchBar}>
+        <div className={styles.controls}>
+          <input
+            type="text"
+            placeholder="Tìm kiếm sản phẩm..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <button onClick={handleCreate}>Tạo mới</button>
+          <button onClick={() => setSortAsc(!sortAsc)}>
+           
+            {sortAsc ? "⬇ DESC" : "⬆ ASC"}
+
+          </button>
+        </div>
       </div>
 
       <Dashboard
-        title="Danh sách sản phẩm"
         columns={columns}
         data={filteredData}
         onEdit={handleEdit}
@@ -149,18 +154,41 @@ function ProductManagement() {
         <ProductForm
           editingProduct={editingProduct}
           categories={categories}
-          onSave={async (formData) => {
+          onSave={async (formData, formValues) => {
             try {
+              let updatedProduct;
               if (editingProduct) {
                 const response = await updateProduct(editingProduct.id, formData);
+                updatedProduct = {
+                  ...editingProduct,
+                  ...response.data,
+                  name: response.data.name || formValues.name,
+                  description: response.data.description || formValues.description,
+                  price: response.data.price || formValues.price,
+                  categoryId: response.data.categoryId || formValues.categoryId,
+                  type: response.data.type || formValues.type,
+                  images: Array.isArray(response.data.images)
+                    ? response.data.images
+                    : editingProduct.images,
+                  quantity: response.data.quantity || formValues.quantity,
+                  sizes: response.data.sizes || formValues.sizes,
+                  material: response.data.material || formValues.material,
+                  sole: response.data.sole || formValues.sole,
+                };
                 setProducts(
                   products.map((p) =>
-                    p.id === editingProduct.id ? { ...p, ...response.data } : p
+                    p.id === editingProduct.id ? updatedProduct : p
                   )
                 );
               } else {
                 const response = await addProduct(formData);
-                setProducts([...products, response.data]);
+                updatedProduct = {
+                  ...response.data,
+                  images: Array.isArray(response.data.images)
+                    ? response.data.images
+                    : [],
+                };
+                setProducts([...products, updatedProduct]);
               }
               setPopupOpen(false);
             } catch (error) {
@@ -188,7 +216,6 @@ function ProductManagement() {
   );
 }
 
-// Giữ nguyên ProductForm như mã gốc
 function ProductForm({ editingProduct, categories, onSave, onCancel }) {
   const [type, setType] = useState(editingProduct?.type?.toLowerCase() || "clothing");
   const [sizes, setSizes] = useState(editingProduct?.sizes || []);
@@ -259,11 +286,23 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
     const form = e.target;
     const formData = new FormData();
 
-    formData.append("name", form.name.value);
-    formData.append("description", form.description.value);
-    formData.append("price", parseFloat(form.price.value) || 0);
-    formData.append("categoryId", form.categoryId.value);
-    formData.append("type", type.toLowerCase());
+    const formValues = {
+      name: form.name.value,
+      description: form.description.value,
+      price: parseFloat(form.price.value) || 0,
+      categoryId: form.categoryId.value,
+      type: type.toLowerCase(),
+      sizes: sizes,
+      quantity: quantities,
+      material: type.toLowerCase() === "clothing" ? material : undefined,
+      sole: type.toLowerCase() === "shoe" ? sole : undefined,
+    };
+
+    formData.append("name", formValues.name);
+    formData.append("description", formValues.description);
+    formData.append("price", formValues.price);
+    formData.append("categoryId", formValues.categoryId);
+    formData.append("type", formValues.type);
 
     if (type.toLowerCase() === "clothing") {
       formData.append("material", material);
@@ -274,7 +313,7 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
     formData.append("quantity", JSON.stringify(quantities));
 
     try {
-      await onSave(formData);
+      await onSave(formData, formValues);
     } catch (error) {
       console.error("Error saving product:", error);
       alert(
@@ -288,85 +327,103 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
   };
 
   return (
-    <div className={styles.popup}>
-      <div className={styles.popupContent}>
+    <div className={styles.overlay} onClick={onCancel}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <h2>{editingProduct ? "Sửa sản phẩm" : "Tạo sản phẩm mới"}</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            name="name"
-            placeholder="Tên sản phẩm"
-            defaultValue={editingProduct?.name || ""}
-            required
-          />
-          <input
-            name="description"
-            placeholder="Mô tả"
-            defaultValue={editingProduct?.description || ""}
-          />
-          <input
-            name="price"
-            placeholder="Giá bán (VD: 100000)"
-            type="number"
-            defaultValue={editingProduct?.price || ""}
-            required
-          />
-          <select
-            value={type}
-            onChange={(e) => {
-              const newType = e.target.value;
-              setType(newType);
-              setSizes([]);
-              setQuantities({});
-            }}
-          >
-            <option value="clothing">Clothing</option>
-            <option value="shoe">Shoe</option>
-          </select>
-          <select
-            name="categoryId"
-            defaultValue={editingProduct?.categoryId || ""}
-            required
-          >
-            <option value="" disabled>
-              Chọn danh mục
-            </option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.formGroup}>
+            <label>Tên sản phẩm:</label>
+            <input
+              name="name"
+              defaultValue={editingProduct?.name || ""}
+              required
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Mô tả:</label>
+            <input
+              name="description"
+              defaultValue={editingProduct?.description || ""}
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Giá bán:</label>
+            <input
+              name="price"
+              type="number"
+              defaultValue={editingProduct?.price || ""}
+              required
+            />
+          </div>
+          <div className={styles.formGroup}>
+            <label>Loại sản phẩm:</label>
+            <select
+              value={type}
+              onChange={(e) => {
+                const newType = e.target.value;
+                setType(newType);
+                setSizes([]);
+                setQuantities({});
+              }}
+            >
+              <option value="clothing">Clothing</option>
+              <option value="shoe">Shoe</option>
+            </select>
+          </div>
+          <div className={styles.formGroup}>
+            <label>Danh mục:</label>
+            <select
+              name="categoryId"
+              defaultValue={editingProduct?.categoryId || ""}
+              required
+            >
+              <option value="" disabled>
+                Chọn danh mục
               </option>
-            ))}
-          </select>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {type === "clothing" && (
-            <div>
-              <input
-                type="text"
-                placeholder="Chất liệu"
-                value={material}
-                onChange={(e) => setMaterial(e.target.value)}
-                required
-              />
+            <>
+              <div className={styles.formGroup}>
+                <label>Chất liệu:</label>
+                <input
+                  type="text"
+                  value={material}
+                  onChange={(e) => setMaterial(e.target.value)}
+                  required
+                />
+              </div>
               {sizes.map((size, index) => (
                 <div key={size} className={styles.sizeRow}>
-                  <input
-                    type="text"
-                    placeholder="Size"
-                    value={size}
-                    onChange={(e) => handleSizeChange(index, e.target.value)}
-                    required
-                  />
-                  <input
-                    type="number"
-                    placeholder={`Số lượng ${size}`}
-                    value={quantities[size] !== undefined ? quantities[size] : 0}
-                    onChange={(e) => handleQuantityChange(size, e.target.value)}
-                    required
-                  />
+                  <div className={styles.formGroup}>
+                    <label>Size:</label>
+                    <input
+                      type="text"
+                      value={size}
+                      onChange={(e) => handleSizeChange(index, e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label>Số lượng:</label>
+                    <input
+                      type="number"
+                      value={quantities[size] !== undefined ? quantities[size] : 0}
+                      onChange={(e) => handleQuantityChange(size, e.target.value)}
+                      required
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={() => handleDeleteSize(index)}
                     className={styles.deleteSizeButton}
-                    disabled={sizes.length === 1}
+                    disabled={sizes.length === 1 || isSubmitting}
                     title="Xóa size"
                   >
                     <X size={18} />
@@ -377,42 +434,49 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                 type="button"
                 onClick={handleAddSize}
                 className={styles.addSizeButton}
+                disabled={isSubmitting}
               >
-                + Thêm size
+                Thêm size
               </button>
-            </div>
+            </>
           )}
 
           {type === "shoe" && (
-            <div>
-              <input
-                type="text"
-                placeholder="Loại đế giày"
-                value={sole}
-                onChange={(e) => setSole(e.target.value)}
-                required
-              />
+            <>
+              <div className={styles.formGroup}>
+                <label>Loại đế giày:</label>
+                <input
+                  type="text"
+                  value={sole}
+                  onChange={(e) => setSole(e.target.value)}
+                  required
+                />
+              </div>
               {sizes.map((size, index) => (
                 <div key={size} className={styles.sizeRow}>
-                  <input
-                    type="text"
-                    placeholder="Size"
-                    value={size}
-                    onChange={(e) => handleSizeChange(index, e.target.value)}
-                    required
-                  />
-                  <input
-                    type="number"
-                    placeholder={`Số lượng ${size}`}
-                    value={quantities[size] !== undefined ? quantities[size] : 0}
-                    onChange={(e) => handleQuantityChange(size, e.target.value)}
-                    required
-                  />
+                  <div className={styles.formGroup}>
+                    <label>Size:</label>
+                    <input
+                      type="text"
+                      value={size}
+                      onChange={(e) => handleSizeChange(index, e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label>Số lượng:</label>
+                    <input
+                      type="number"
+                      value={quantities[size] !== undefined ? quantities[size] : 0}
+                      onChange={(e) => handleQuantityChange(size, e.target.value)}
+                      required
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={() => handleDeleteSize(index)}
                     className={styles.deleteSizeButton}
-                    disabled={sizes.length === 1}
+                    disabled={sizes.length === 1 || isSubmitting}
                     title="Xóa size"
                   >
                     <X size={18} />
@@ -423,13 +487,14 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                 type="button"
                 onClick={handleAddSize}
                 className={styles.addSizeButton}
+                disabled={isSubmitting}
               >
-                + Thêm size
+                Thêm size
               </button>
-            </div>
+            </>
           )}
 
-          <div className={styles.popupButtons}>
+          <div className={styles.buttonGroup}>
             <button type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Đang lưu..." : "Lưu"}
             </button>
