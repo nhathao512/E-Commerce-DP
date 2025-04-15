@@ -121,6 +121,10 @@
   background-color: #e74c3c;
 }
 
+.statusGray {
+  background-color: #95a5a6;
+}
+
 .popupOverlay {
   position: fixed;
   top: 0;

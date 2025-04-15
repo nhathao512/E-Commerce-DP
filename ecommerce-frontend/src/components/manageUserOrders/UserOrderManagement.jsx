@@ -41,6 +41,17 @@ const ordersData = [
       },
     ],
   },
+  {
+    id: 4,
+    status: "Chờ xác nhận",
+    items: [
+      {
+        name: "Túi xách",
+        quantity: 1,
+        imageUrl: "https://via.placeholder.com/50?text=Túi+xách",
+      },
+    ],
+  },
 ];
 
 const UserOrderManagement = () => {
@@ -54,6 +65,8 @@ const UserOrderManagement = () => {
         return styles.statusYellow;
       case "Đã hủy":
         return styles.statusRed;
+      case "Chờ xác nhận":
+        return styles.statusGray;
       default:
         return "";
     }
