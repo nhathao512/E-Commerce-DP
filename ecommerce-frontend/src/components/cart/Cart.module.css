@@ -220,3 +220,11 @@
     opacity: 1;
   }
 }
+
+.emptyCartImage {
+  display: block;
+  margin: 0 auto;
+  width: 500px;
+  height: auto;
+  padding: 25px;
+}

@@ -53,7 +53,9 @@ export const clearCart = (userId) =>
     params: { userId },
   });
 
-export const processPayment = (method) => API.post("/payment", { method });
+// api.js
+export const processPayment = (paymentData) =>
+  API.post("/payment", paymentData);
 
 export const addReview = (data) => API.post("/reviews", data);
 export const getReviews = (productCode) =>

@@ -1,4 +1,6 @@
+// Payment.js
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom"; // Import useLocation to access navigation state
 import { processPayment } from "../../services/api";
 import styles from "./Payment.module.css";
 import logo from "../../assets/banking.png";
@@ -12,33 +14,22 @@ function Payment() {
     voucher: "",
     cardNumber: "",
     cardExpiry: "",
-    cardCVC: ""
+    cardCVC: "",
   });
-  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes in seconds
+  const [timeLeft, setTimeLeft] = useState(300);
   const [transferCode, setTransferCode] = useState("");
 
-  // Danh sách sản phẩm mẫu (có thể thay bằng dữ liệu thực từ API hoặc props)
-  const cartItems = [
-    {
-      id: 1,
-      name: "Áo thun nam cao cấp",
-      quantity: 2,
-      price: 200000,
-      image: "https://via.placeholder.com/60" // Ảnh mẫu
-    },
-    {
-      id: 2,
-      name: "Quần jeans nam",
-      quantity: 1,
-      price: 300000,
-      image: "https://via.placeholder.com/60" // Ảnh mẫu
-    }
-  ];
+  // Access the selected cart items and total price from navigation state
+  const location = useLocation();
+  const { selectedCartItems = [], totalPrice = 0 } = location.state || {};
 
   // Generate random transfer code when bank method is selected
   useEffect(() => {
     if (method === "bank") {
-      const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const randomCode = Math.random()
+        .toString(36)
+        .substring(2, 8)
+        .toUpperCase();
       setTransferCode(randomCode);
       setTimeLeft(300); // Reset timer to 5 minutes
     }
@@ -48,7 +39,7 @@ function Payment() {
   useEffect(() => {
     if (method === "bank" && timeLeft > 0) {
       const timer = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
+        setTimeLeft((prev) => prev - 1);
       }, 1000);
       return () => clearInterval(timer);
     }
@@ -62,18 +53,23 @@ function Payment() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePayment = async () => {
     try {
-      await processPayment({
+      // Prepare the payment data to send to the API
+      const paymentData = {
         method,
         transferCode: method === "bank" ? transferCode : undefined,
-        ...formData
-      });
+        items: selectedCartItems, // Send the selected cart items
+        total: totalPrice, // Send the total price
+        ...formData,
+      };
+      await processPayment(paymentData);
       alert("Thanh toán thành công!");
-    } catch {
+    } catch (error) {
+      console.error("Payment failed:", error);
       alert("Thanh toán thất bại!");
     }
   };
@@ -84,10 +80,11 @@ function Payment() {
     }
   };
 
+  // Calculate payment details dynamically based on cart items
   const paymentDetails = {
-    subtotal: 500000,
-    shipping: 30000,
-    total: 530000
+    subtotal: totalPrice, // Use the totalPrice passed from Cart
+    shipping: 30000, // Fixed shipping fee (you can make this dynamic if needed)
+    total: totalPrice + 30000, // Subtotal + shipping
   };
 
   return (
@@ -140,7 +137,7 @@ function Payment() {
 
             {method === "bank" && (
               <div className={styles.bankInfo}>
-                <img 
+                <img
                   src={logo}
                   alt="Banking Info"
                   className={styles.bankImage}
@@ -228,26 +225,36 @@ function Payment() {
           <h3>Tóm tắt thanh toán</h3>
           <div className={styles.cartItems}>
             <h4 className={styles.cartTitle}>Sản phẩm</h4>
-            {cartItems.map(item => (
-              <div key={item.id} className={styles.cartItem}>
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className={styles.cartItemImage}
-                />
-                <div className={styles.cartItemDetails}>
-                  <span className={styles.cartItemName}>{item.name}</span>
-                  
-                  <span className={styles.cartItemQuantity}>
-                    Số lượng: {item.quantity}
-                  </span>
-                  <span className={styles.cartItemSize}>Kích thước: {item.size}</span>
-                  <span className={styles.cartItemPrice}>
-                    {(item.price * item.quantity).toLocaleString()} VNĐ
-                  </span>
+            {selectedCartItems.length > 0 ? (
+              selectedCartItems.map((item) => (
+                <div
+                  key={`${item.id}-${item.size}`}
+                  className={styles.cartItem}
+                >
+                  <img
+                    src={item.imageUrl || "https://via.placeholder.com/60"} // Use item.imageUrl, fallback to placeholder
+                    alt={item.productName}
+                    className={styles.cartItemImage}
+                  />
+                  <div className={styles.cartItemDetails}>
+                    <span className={styles.cartItemName}>
+                      {item.productName}
+                    </span>
+                    <span className={styles.cartItemQuantity}>
+                      Số lượng: {item.quantity}
+                    </span>
+                    <span className={styles.cartItemSize}>
+                      Kích thước: {item.size}
+                    </span>
+                    <span className={styles.cartItemPrice}>
+                      {(item.price * item.quantity).toLocaleString()} VNĐ
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>Không có sản phẩm nào để thanh toán.</p>
+            )}
           </div>
           <div className={styles.summaryItem}>
             <span>Tổng tiền hàng:</span>
@@ -261,10 +268,7 @@ function Payment() {
             <span>Tổng thanh toán:</span>
             <span>{paymentDetails.total.toLocaleString()} VNĐ</span>
           </div>
-          <button
-            onClick={handlePayment}
-            className={styles.paymentButton}
-          >
+          <button onClick={handlePayment} className={styles.paymentButton}>
             Hoàn tất thanh toán
           </button>
         </div>

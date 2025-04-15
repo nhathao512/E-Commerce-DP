@@ -5,6 +5,7 @@ import CartItem from "./CartItem";
 import Popup from "../common/Popup";
 import styles from "./Cart.module.css";
 import { AuthContext } from "../../context/AuthContext";
+import ImgCart from "../../assets/empty-cart.png";
 
 function Cart() {
   const [cartItems, setCartItems] = useState([]);
@@ -164,6 +165,7 @@ function Cart() {
     }
   };
 
+  // Cart.js
   const handleProcessToPayment = () => {
     if (selectedItems.length === 0) {
       setPopup({
@@ -173,7 +175,10 @@ function Cart() {
       });
       return;
     }
-    console.log("Processing payment for items:", selectedItems);
+    // Navigate to Payment page with selected cart items and total price
+    navigate("/payment", {
+      state: { selectedCartItems, totalPrice },
+    });
   };
 
   if (isLoading) {
@@ -221,7 +226,11 @@ function Cart() {
       )}
 
       {cartItems.length === 0 ? (
-        <p className={styles.emptyCart}>Giỏ hàng trống</p>
+        <img
+          src={ImgCart}
+          alt="Giỏ hàng trống"
+          className={styles.emptyCartImage}
+        />
       ) : (
         <>
           <ul className={styles.cartList}>
