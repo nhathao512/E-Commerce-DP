@@ -70,6 +70,7 @@ function Cart() {
           text: "Đóng",
           onClick: () => setPopup(null),
         },
+        className: styles.popupOverlay, // Add the popup class
       });
       setLoading(false);
       return;
@@ -79,7 +80,7 @@ function Cart() {
   }, [isAuthenticated, isLoading, navigate]);
 
   const handleClearCart = async (event) => {
-    event.preventDefault(); // Ngăn chặn reload
+    event.preventDefault();
     const userId = localStorage.getItem("userID");
     if (!userId) {
       setPopup({
@@ -95,6 +96,7 @@ function Cart() {
           text: "Đóng",
           onClick: () => setPopup(null),
         },
+        className: styles.popupOverlay, // Add the popup class
       });
       return;
     }
@@ -104,6 +106,7 @@ function Cart() {
         message: "Giỏ hàng đã trống!",
         type: "info",
         onClose: () => setPopup(null),
+        className: styles.popupOverlay, // Add the popup class
       });
       return;
     }
@@ -112,14 +115,13 @@ function Cart() {
       await clearCart(userId);
       setCartItems([]);
       setSelectedItems([]);
-      // Cập nhật localStorage để đồng bộ với trạng thái giỏ hàng rỗng
       localStorage.setItem("cartItems", JSON.stringify([]));
-      // Dispatch sự kiện cartUpdated để thông báo cho các component khác (như Navbar)
       window.dispatchEvent(new Event("cartUpdated"));
       setPopup({
         message: "Đã xóa toàn bộ giỏ hàng!",
         type: "success",
         onClose: () => setPopup(null),
+        className: styles.popupOverlay, // Add the popup class
       });
     } catch (err) {
       console.error("Error clearing cart:", err);
@@ -127,6 +129,7 @@ function Cart() {
         message: "Không thể xóa giỏ hàng. Vui lòng thử lại!",
         type: "error",
         onClose: () => setPopup(null),
+        className: styles.popupOverlay, // Add the popup class
       });
     }
   };
@@ -155,12 +158,13 @@ function Cart() {
   };
 
   const handleProcessToPayment = (event) => {
-    event.preventDefault(); // Ngăn chặn reload
+    event.preventDefault();
     if (selectedItems.length === 0) {
       setPopup({
         message: "Vui lòng chọn ít nhất một sản phẩm để thanh toán!",
         type: "warning",
         onClose: () => setPopup(null),
+        className: styles.popupOverlay, // Add the popup class
       });
       return;
     }
@@ -208,7 +212,7 @@ function Cart() {
           />
           <label>Chọn tất cả ({cartItems.length} sản phẩm)</label>
           <button
-            type="button" // Ngăn chặn hành vi submit
+            type="button"
             className={styles.clearCartButton}
             onClick={handleClearCart}
           >
@@ -268,7 +272,7 @@ function Cart() {
                   <span>Tổng tiền: {totalPrice.toLocaleString()} VNĐ</span>
                   <span></span>
                   <button
-                    type="button" // Ngăn chặn hành vi submit
+                    type="button"
                     className={styles.paymentButton}
                     onClick={handleProcessToPayment}
                     disabled={!selectedItems.length}

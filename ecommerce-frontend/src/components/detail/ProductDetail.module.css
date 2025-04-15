@@ -408,6 +408,54 @@
   }
 }
 
+/* Notification styles */
+.notification {
+  margin-top: 80px;
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  padding: 15px 20px !important;
+  border-radius: 5px !important;
+  color: #fff !important;
+  z-index: 10000 !important;
+  font-size: 16px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+  animation: slideIn 0.3s ease-in-out, fadeOut 0.3s ease-in-out 2.7s !important;
+}
+
+.notificationSuccess {
+  background-color: #28a745 !important;
+}
+
+.notificationWarning {
+  background-color: #ffc107 !important; /* Same as success per request */
+  /* Alternative: background-color: #ffc107 !important; /* Yellow for warning */
+}
+
+.notificationError {
+  background-color: #dc3545 !important;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .productWrapper {
@@ -450,5 +498,12 @@
   .thumbnail {
     width: 60px;
     height: 60px;
+  }
+
+  .notification {
+    top: 10px !important;
+    right: 10px !important;
+    padding: 10px 15px !important;
+    font-size: 14px !important;
   }
 }

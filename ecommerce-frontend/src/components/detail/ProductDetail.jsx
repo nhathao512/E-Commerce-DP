@@ -16,6 +16,7 @@ function ProductDetail() {
   const [quantity, setQuantity] = useState(1);
   const [showLoginPopup, setShowLoginPopup] = useState(false);
   const [popup, setPopup] = useState(null);
+  const [notification, setNotification] = useState(null);
   const { isAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
   const API_URL = "http://localhost:8080/api";
@@ -75,21 +76,25 @@ function ProductDetail() {
     }
 
     if (!selectedSize) {
-      setPopup({
+      console.log("Triggering no-size notification");
+      setNotification({
         message: "Vui lòng chọn kích thước!",
-        type: "warning",
-        onClose: () => setPopup(null),
+        type: "success",
       });
+      setTimeout(() => {
+        console.log("Clearing no-size notification");
+        setNotification(null);
+      }, 3000);
       return;
     }
 
     const availableQuantity = product.quantity?.[selectedSize] ?? 0;
     if (quantity > availableQuantity) {
-      setPopup({
+      setNotification({
         message: `Chỉ còn ${availableQuantity} sản phẩm cho kích thước ${selectedSize}!`,
-        type: "warning",
-        onClose: () => setPopup(null),
+        type: "Error",
       });
+     
       return;
     }
 
@@ -135,16 +140,15 @@ function ProductDetail() {
       }));
 
       localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
-      setPopup({
-        message: (
-          <>
-            Đã thêm <span className="productName">{product.name}</span> (
-            {selectedSize}) x{quantity} vào giỏ hàng!
-          </>
-        ),
+      console.log("Triggering success notification");
+      setNotification({
+        message: `Đã thêm ${product.name} (${selectedSize}) x${quantity} vào giỏ hàng!`,
         type: "success",
-        onClose: () => setPopup(null),
       });
+      setTimeout(() => {
+        console.log("Clearing success notification");
+        setNotification(null);
+      }, 3000);
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
       if (error.response && error.response.status === 409) {
@@ -155,7 +159,7 @@ function ProductDetail() {
               {selectedSize}) đã có trong giỏ hàng!
             </>
           ),
-          type: "info",
+          type: "success",
           onClose: () => setPopup(null),
         });
       } else {
@@ -166,7 +170,7 @@ function ProductDetail() {
         });
         setPopup({
           message: "Thêm vào giỏ hàng thất bại! Vui lòng thử lại.",
-          type: "error",
+          type: "success",
           onClose: () => setPopup(null),
         });
       }
@@ -288,6 +292,13 @@ function ProductDetail() {
       )}
 
       {popup && <Popup {...popup} />}
+      {notification && (
+        <div
+          className={`${styles.notification} ${styles.notificationSuccess}`}
+        >
+          {notification.message}
+        </div>
+      )}
     </div>
   );
 }
