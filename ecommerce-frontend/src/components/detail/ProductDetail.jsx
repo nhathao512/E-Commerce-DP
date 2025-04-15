@@ -94,7 +94,6 @@ function ProductDetail() {
         message: `Chỉ còn ${availableQuantity} sản phẩm cho kích thước ${selectedSize}!`,
         type: "Error",
       });
-     
       return;
     }
 
@@ -238,6 +237,10 @@ function ProductDetail() {
                   key={size}
                   className={`${styles.sizeButton} ${
                     selectedSize === size ? styles.selectedSize : ""
+                  } ${
+                    product.quantity && product.quantity[size] === 0
+                      ? styles.disabledSize
+                      : ""
                   }`}
                   onClick={() => handleSizeSelect(size)}
                   disabled={product.quantity && product.quantity[size] === 0}

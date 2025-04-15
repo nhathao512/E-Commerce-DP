@@ -246,6 +246,14 @@
   box-shadow: 0 0 5px rgba(82, 51, 255, 0.5);
 }
 
+.disabledSize {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  background: #f0f0f0;
+  border-color: #ccc;
+}
+
 .quantitySection {
   display: flex;
   align-items: center;
