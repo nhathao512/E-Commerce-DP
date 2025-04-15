@@ -29,8 +29,10 @@ import ProductsPage from "./manageproduct/ProductManagement";
 import CategoriesPage from "./managecategories/CategoriesManagement";
 import OrderPage from "./manageorder/OrderManagement";
 import styles from "./AdminPage.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logo from "../../assets/logo1.png";
+import { getProducts } from "../../services/api";
+import axios from "axios"; // Thêm axios
 
 ChartJS.register(
   CategoryScale,
@@ -51,12 +53,51 @@ function AdminPage() {
   });
   const [chartType, setChartType] = useState("bar");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [productsData, setProductsData] = useState([]);
+  const [usersData, setUsersData] = useState([]); // Thay thế mảng tĩnh bằng state
   const itemsPerPage = 5;
+
+  // Gọi API để lấy danh sách sản phẩm
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getProducts();
+        const validProducts = response.data
+          .filter(
+            (product) =>
+              product &&
+              product.name &&
+              typeof product.name === "string"
+          )
+          .map((product) => ({
+            ...product,
+            images: Array.isArray(product.images) ? product.images : [],
+          }));
+        setProductsData(validProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // Gọi API để lấy danh sách người dùng
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/api/auth/users");
+        setUsersData(response.data || []);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   const navLinkClass = (path) =>
     `${location.pathname === path ? styles.activeLink : ""}`;
 
-  // Sample data with improved structure
+  // Sample data for orders (giữ nguyên)
   const ordersData = [
     { id: 1, userId: 1, productId: 1, total: 100000, status: "completed" },
     { id: 2, userId: 2, productId: 2, total: 90000, status: "completed" },
@@ -65,21 +106,6 @@ function AdminPage() {
     { id: 5, userId: 2, productId: 5, total: 60000, status: "completed" },
     { id: 6, userId: 1, productId: 6, total: 50000, status: "completed" },
     { id: 7, userId: 2, productId: 1, total: 100000, status: "completed" },
-  ];
-
-  const productsData = [
-    { id: 1, name: "Product 1" },
-    { id: 2, name: "Product 2" },
-    { id: 3, name: "Product 3" },
-    { id: 4, name: "Product 4" },
-    { id: 5, name: "Product 5" },
-    { id: 6, name: "Product 6" },
-  ];
-
-  const usersData = [
-    { id: 1, username: "viet" },
-    { id: 2, username: "hao" },
-    { id: 3, username: "huy" },
   ];
 
   // Calculate monthly revenue (completed orders)
@@ -222,7 +248,7 @@ function AdminPage() {
             {!isSidebarCollapsed && (
               <div className={styles.navLinks}>
                 <Link to="/admin" className={navLinkClass("/admin")}>
-                  <FaCogs style={{ marginRight: 14 }} /> Admin Panel
+                  <FaCogs style={{ marginRight: 14 }} /> Trang Chủ
                 </Link>
                 <Link to="/admin/users" className={navLinkClass("/admin/users")}>
                   <FaUserCog style={{ marginRight: 14 }} /> Quản lý người dùng
@@ -282,7 +308,7 @@ function AdminPage() {
                       <FaUserCog className={styles.cardIcon} />
                       <div>
                         <h4>Người dùng</h4>
-                        <p>{usersData.length} người</p>
+                        <p>{usersData.length} người</p> {/* Cập nhật số lượng người dùng */}
                       </div>
                     </div>
                   </div>

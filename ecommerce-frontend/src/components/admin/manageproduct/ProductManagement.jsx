@@ -38,6 +38,8 @@ function ProductManagement() {
           )
           .map((product) => ({
             ...product,
+            id: product.id || "N/A",
+            productCode: product.productCode || "N/A",
             images: Array.isArray(product.images) ? product.images : [],
           }));
         setProducts(validProducts);
@@ -135,9 +137,7 @@ function ProductManagement() {
           />
           <button onClick={handleCreate}>Tạo mới</button>
           <button onClick={() => setSortAsc(!sortAsc)}>
-           
             {sortAsc ? "⬇ DESC" : "⬆ ASC"}
-
           </button>
         </div>
       </div>
@@ -162,6 +162,8 @@ function ProductManagement() {
                 updatedProduct = {
                   ...editingProduct,
                   ...response.data,
+                  id: response.data.id || editingProduct.id,
+                  productCode: response.data.productCode || editingProduct.productCode || "N/A",
                   name: response.data.name || formValues.name,
                   description: response.data.description || formValues.description,
                   price: response.data.price || formValues.price,
@@ -181,14 +183,29 @@ function ProductManagement() {
                   )
                 );
               } else {
+                console.log("Sending formData to addProduct:", [...formData.entries()]);
                 const response = await addProduct(formData);
+                console.log("API response:", response.data);
                 updatedProduct = {
                   ...response.data,
+                  id: response.data.id || `temp-${Date.now()}`,
+                  productCode: response.data.productCode || `CODE-${Date.now()}`,
                   images: Array.isArray(response.data.images)
                     ? response.data.images
                     : [],
+                  name: response.data.name || formValues.name,
+                  description: response.data.description || formValues.description,
+                  price: response.data.price || formValues.price,
+                  categoryId: response.data.categoryId || formValues.categoryId,
+                  type: response.data.type || formValues.type,
+                  quantity: response.data.quantity || formValues.quantity,
+                  sizes: response.data.sizes || formValues.sizes,
+                  material: response.data.material || formValues.material,
+                  sole: response.data.sole || formValues.sole,
                 };
-                setProducts([...products, updatedProduct]);
+                console.log("New product added:", updatedProduct);
+                // Reload the page to fetch updated product list
+                window.location.reload();
               }
               setPopupOpen(false);
             } catch (error) {
@@ -282,6 +299,7 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
     setIsSubmitting(true);
     const form = e.target;
     const formData = new FormData();
@@ -312,15 +330,13 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
     formData.append("sizes", JSON.stringify(sizes));
     formData.append("quantity", JSON.stringify(quantities));
 
+    console.log("Form values before save:", formValues);
+    console.log("FormData before save:", [...formData.entries()]);
+
     try {
       await onSave(formData, formValues);
     } catch (error) {
-      console.error("Error saving product:", error);
-      alert(
-        `Failed to save product: ${
-          error.response?.data?.message || error.message
-        }`
-      );
+      console.error("Error in handleSubmit:", error);
     } finally {
       setIsSubmitting(false);
     }
