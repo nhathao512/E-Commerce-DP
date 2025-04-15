@@ -7,22 +7,38 @@ const ordersData = [
     id: 1,
     status: "Thành công",
     items: [
-      { name: "Balo", quantity: 2, imageUrl: "https://via.placeholder.com/50?text=Balo" },
-      { name: "Giày", quantity: 1, imageUrl: "https://via.placeholder.com/50?text=Giày" },
+      {
+        name: "Balo",
+        quantity: 2,
+        imageUrl: "https://via.placeholder.com/50?text=Balo",
+      },
+      {
+        name: "Giày",
+        quantity: 1,
+        imageUrl: "https://via.placeholder.com/50?text=Giày",
+      },
     ],
   },
   {
     id: 2,
     status: "Đang giao",
     items: [
-      { name: "Mũ", quantity: 1, imageUrl: "https://via.placeholder.com/50?text=Mũ" },
+      {
+        name: "Mũ",
+        quantity: 1,
+        imageUrl: "https://via.placeholder.com/50?text=Mũ",
+      },
     ],
   },
   {
     id: 3,
     status: "Đã hủy",
     items: [
-      { name: "Áo khoác", quantity: 1, imageUrl: "https://via.placeholder.com/50?text=Áo+khoác" },
+      {
+        name: "Áo khoác",
+        quantity: 1,
+        imageUrl: "https://via.placeholder.com/50?text=Áo+khoác",
+      },
     ],
   },
 ];
@@ -44,7 +60,8 @@ const UserOrderManagement = () => {
   };
 
   const canRate = (status) => status === "Thành công" || status === "Đã hủy";
-  const canRepurchase = (status) => status === "Thành công" || status === "Đã hủy";
+  const canRepurchase = (status) =>
+    status === "Thành công" || status === "Đã hủy";
 
   return (
     <div className={styles.container}>
@@ -82,7 +99,11 @@ const UserOrderManagement = () => {
                 </div>
               </td>
               <td>
-                <span className={`${styles.statusBadge} ${getStatusClass(order.status)}`}>
+                <span
+                  className={`${styles.statusBadge} ${getStatusClass(
+                    order.status
+                  )}`}
+                >
                   {order.status}
                 </span>
               </td>
@@ -121,7 +142,10 @@ const UserOrderManagement = () => {
                       <div className={styles.popupButtons}>
                         <button
                           className={styles.actionBtn}
-                          disabled={!canRate(selectedOrder.status) || selectedOrder.status === "Đã hủy"}
+                          disabled={
+                            !canRate(selectedOrder.status) ||
+                            selectedOrder.status === "Đã hủy"
+                          }
                         >
                           Đánh giá
                         </button>
@@ -134,7 +158,11 @@ const UserOrderManagement = () => {
                       </div>
                     </td>
                     <td>
-                      <span className={`${styles.statusBadge} ${getStatusClass(selectedOrder.status)}`}>
+                      <span
+                        className={`${styles.statusBadge} ${getStatusClass(
+                          selectedOrder.status
+                        )}`}
+                      >
                         {selectedOrder.status}
                       </span>
                     </td>
@@ -143,7 +171,10 @@ const UserOrderManagement = () => {
               </tbody>
             </table>
 
-            <button className={styles.closeBtn} onClick={() => setSelectedOrder(null)}>
+            <button
+              className={styles.closeBtn}
+              onClick={() => setSelectedOrder(null)}
+            >
               Đóng
             </button>
           </div>

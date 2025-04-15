@@ -42,6 +42,16 @@ export const addToCart = (product, quantity, size, userId) =>
     },
   });
 
+export const updateCartItemQuantity = (userId, productId, size, quantity) =>
+  API.put("/cart/update-quantity", null, {
+    params: {
+      userId,
+      productId,
+      size,
+      quantity,
+    },
+  });
+
 export const removeFromCart = (userId, productId, size) =>
   API.delete("/cart/remove", {
     params: { userId, productId, size },
@@ -52,11 +62,27 @@ export const clearCart = (userId) =>
     params: { userId },
   });
 
-// api.js
-export const getProvinces = () =>
-  axios.get("http://localhost:8080/api/provinces");
+export const getProvinces = () => API.get("/provinces");
+
 export const processPayment = (paymentData) =>
-  API.post("/payment", paymentData);
+  API.post("/orders/create", paymentData.items, {
+    params: {
+      userId: paymentData.userId,
+      paymentMethod: paymentData.paymentMethod,
+      total: paymentData.total,
+      name: paymentData.name,
+      phone: paymentData.phone,
+      address: paymentData.address,
+      voucher: paymentData.voucher,
+    },
+  });
+
+export const getOrdersByUserId = (userId) => API.get(`/orders/user/${userId}`);
+
+export const updateOrderStatus = (orderId, status) =>
+  API.put(`/orders/${orderId}/status`, null, {
+    params: { status },
+  });
 
 export const addReview = (data) => API.post("/reviews", data);
 export const getReviews = (productCode) =>

@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }) => {
                 size: item.size,
               }));
               localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
+              // Dispatch sự kiện cartUpdated để thông báo cho các component khác
               window.dispatchEvent(new Event("cartUpdated"));
             } catch (cartError) {
               console.error("Failed to fetch cart after auth:", cartError);
@@ -100,6 +101,7 @@ export const AuthProvider = ({ children }) => {
           size: item.size,
         }));
         localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
+        // Dispatch sự kiện cartUpdated để thông báo cho các component khác
         window.dispatchEvent(new Event("cartUpdated"));
       } catch (cartError) {
         console.error("Failed to fetch cart after login:", cartError);
@@ -132,13 +134,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    // Không xóa giỏ hàng trên server khi đăng xuất
+    // Xóa localStorage
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     localStorage.removeItem("userID");
     localStorage.removeItem("cartItems");
+
+    // Cập nhật state
     setIsAuthenticated(false);
     setUser(null);
+
+    // Dispatch sự kiện cartUpdated để đồng bộ giỏ hàng trên giao diện
     window.dispatchEvent(new Event("cartUpdated"));
   };
 

@@ -17,9 +17,43 @@ function Cart() {
   const navigate = useNavigate();
   const API_URL = "http://localhost:8080/api";
 
+  const fetchCartItems = async () => {
+    const userId = localStorage.getItem("userID");
+    if (!userId) {
+      setError("Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await getCart(userId);
+      console.log("API response:", response.data);
+      const cartData = response.data;
+      const mappedCartData = cartData.map((item) => ({
+        id: item.product.id,
+        productName: item.product.name,
+        imageUrl:
+          item.product.images && item.product.images.length > 0
+            ? `${API_URL}/images/${item.product.images[0]}`
+            : null,
+        price: item.product.price,
+        quantity: item.quantity,
+        size: item.size,
+      }));
+
+      setCartItems(mappedCartData);
+    } catch (err) {
+      setError("Không thể tải dữ liệu giỏ hàng. Vui lòng thử lại sau!");
+      console.error("Error fetching cart:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isLoading) {
-      return; // Chờ AuthProvider xác minh
+      return;
     }
 
     if (!isAuthenticated) {
@@ -41,58 +75,11 @@ function Cart() {
       return;
     }
 
-    const fetchCartItems = async () => {
-      const userId = localStorage.getItem("userID");
-      if (!userId) {
-        setError(
-          "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!"
-        );
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const response = await getCart(userId);
-        console.log("API response:", response.data);
-        const cartData = response.data;
-        const mappedCartData = cartData.map((item) => ({
-          id: item.product.id,
-          productName: item.product.name,
-          imageUrl:
-            item.product.images && item.product.images.length > 0
-              ? `${API_URL}/images/${item.product.images[0]}`
-              : null,
-          price: item.product.price,
-          quantity: item.quantity,
-          size: item.size,
-        }));
-
-        setCartItems(mappedCartData);
-        localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
-      } catch (err) {
-        setError("Không thể tải dữ liệu giỏ hàng. Vui lòng thử lại sau!");
-        console.error("Error fetching cart:", err);
-        const storedCartItems = JSON.parse(localStorage.getItem("cartItems"));
-        if (storedCartItems && storedCartItems.length > 0) {
-          setCartItems(storedCartItems);
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCartItems();
   }, [isAuthenticated, isLoading, navigate]);
 
-  useEffect(() => {
-    if (isAuthenticated && !isLoading) {
-      localStorage.setItem("cartItems", JSON.stringify(cartItems));
-      window.dispatchEvent(new Event("cartUpdated"));
-    }
-  }, [cartItems, isAuthenticated, isLoading]);
-
-  const handleClearCart = async () => {
+  const handleClearCart = async (event) => {
+    event.preventDefault(); // Ngăn chặn reload
     const userId = localStorage.getItem("userID");
     if (!userId) {
       setPopup({
@@ -125,7 +112,9 @@ function Cart() {
       await clearCart(userId);
       setCartItems([]);
       setSelectedItems([]);
+      // Cập nhật localStorage để đồng bộ với trạng thái giỏ hàng rỗng
       localStorage.setItem("cartItems", JSON.stringify([]));
+      // Dispatch sự kiện cartUpdated để thông báo cho các component khác (như Navbar)
       window.dispatchEvent(new Event("cartUpdated"));
       setPopup({
         message: "Đã xóa toàn bộ giỏ hàng!",
@@ -165,8 +154,8 @@ function Cart() {
     }
   };
 
-  // Cart.js
-  const handleProcessToPayment = () => {
+  const handleProcessToPayment = (event) => {
+    event.preventDefault(); // Ngăn chặn reload
     if (selectedItems.length === 0) {
       setPopup({
         message: "Vui lòng chọn ít nhất một sản phẩm để thanh toán!",
@@ -175,7 +164,6 @@ function Cart() {
       });
       return;
     }
-    // Navigate to Payment page with selected cart items and total price
     navigate("/payment", {
       state: { selectedCartItems, totalPrice },
     });
@@ -219,7 +207,11 @@ function Cart() {
             className={styles.checkbox}
           />
           <label>Chọn tất cả ({cartItems.length} sản phẩm)</label>
-          <button className={styles.clearCartButton} onClick={handleClearCart}>
+          <button
+            type="button" // Ngăn chặn hành vi submit
+            className={styles.clearCartButton}
+            onClick={handleClearCart}
+          >
             Xóa toàn bộ
           </button>
         </div>
@@ -276,6 +268,7 @@ function Cart() {
                   <span>Tổng tiền: {totalPrice.toLocaleString()} VNĐ</span>
                   <span></span>
                   <button
+                    type="button" // Ngăn chặn hành vi submit
                     className={styles.paymentButton}
                     onClick={handleProcessToPayment}
                     disabled={!selectedItems.length}
