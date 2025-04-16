@@ -15,7 +15,7 @@ function Cart() {
   const [popup, setPopup] = useState(null);
   const { isAuthenticated, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
-  const API_URL = "http://localhost:8080/api";
+  const API_URL = "http://localhost:8080/api"; // Giữ tạm thời, sẽ tối ưu sau
 
   const fetchCartItems = async () => {
     const userId = localStorage.getItem("userID");
@@ -28,7 +28,6 @@ function Cart() {
     try {
       setLoading(true);
       const response = await getCart(userId);
-      console.log("API response:", response.data);
       const cartData = response.data;
       const mappedCartData = cartData.map((item) => ({
         id: item.product.id,
@@ -52,9 +51,7 @@ function Cart() {
   };
 
   useEffect(() => {
-    if (isLoading) {
-      return;
-    }
+    if (isLoading) return;
 
     if (!isAuthenticated) {
       setPopup({
@@ -70,7 +67,7 @@ function Cart() {
           text: "Đóng",
           onClick: () => setPopup(null),
         },
-        className: styles.popupOverlay, // Add the popup class
+        className: styles.popupOverlay,
       });
       setLoading(false);
       return;
@@ -96,7 +93,7 @@ function Cart() {
           text: "Đóng",
           onClick: () => setPopup(null),
         },
-        className: styles.popupOverlay, // Add the popup class
+        className: styles.popupOverlay,
       });
       return;
     }
@@ -106,7 +103,7 @@ function Cart() {
         message: "Giỏ hàng đã trống!",
         type: "info",
         onClose: () => setPopup(null),
-        className: styles.popupOverlay, // Add the popup class
+        className: styles.popupOverlay,
       });
       return;
     }
@@ -121,7 +118,7 @@ function Cart() {
         message: "Đã xóa toàn bộ giỏ hàng!",
         type: "success",
         onClose: () => setPopup(null),
-        className: styles.popupOverlay, // Add the popup class
+        className: styles.popupOverlay,
       });
     } catch (err) {
       console.error("Error clearing cart:", err);
@@ -129,7 +126,7 @@ function Cart() {
         message: "Không thể xóa giỏ hàng. Vui lòng thử lại!",
         type: "error",
         onClose: () => setPopup(null),
-        className: styles.popupOverlay, // Add the popup class
+        className: styles.popupOverlay,
       });
     }
   };
@@ -164,7 +161,7 @@ function Cart() {
         message: "Vui lòng chọn ít nhất một sản phẩm để thanh toán!",
         type: "warning",
         onClose: () => setPopup(null),
-        className: styles.popupOverlay, // Add the popup class
+        className: styles.popupOverlay,
       });
       return;
     }
