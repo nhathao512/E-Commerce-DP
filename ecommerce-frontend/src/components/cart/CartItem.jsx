@@ -7,6 +7,7 @@ import {
 import Popup from "../common/Popup";
 import styles from "./CartItem.module.css";
 import cartStyles from "./Cart.module.css"; // Import Cart.module.css to reuse popupOverlay
+import { getCart } from "../../services/api";
 
 function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
   const [popup, setPopup] = useState(null);
@@ -159,24 +160,30 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
             text: "Đóng",
             onClick: () => setPopup(null),
           },
-          className: cartStyles.popupOverlay, // Use the popupOverlay class
+          className: cartStyles.popupOverlay,
         });
         return;
       }
       await removeFromCart(userId, item.id, item.size);
-      setCartItems((prevItems) => {
-        const updatedItems = prevItems.filter(
-          (i) => !(i.id === item.id && i.size === item.size)
-        );
-        localStorage.setItem("cartItems", JSON.stringify(updatedItems));
-        window.dispatchEvent(new Event("cartUpdated"));
-        return updatedItems;
-      });
+      const cartResponse = await getCart(userId); // Lấy giỏ hàng mới nhất
+      const updatedItems = cartResponse.data.map((item) => ({
+        id: item.product.id,
+        productName: item.product.name,
+        imageUrl: item.product.images?.[0]
+          ? `${API_URL}/images/${item.product.images[0]}`
+          : null,
+        price: item.product.price,
+        quantity: item.quantity,
+        size: item.size,
+      }));
+      setCartItems(updatedItems);
+      localStorage.setItem("cartItems", JSON.stringify(updatedItems));
+      window.dispatchEvent(new Event("cartUpdated"));
       setPopup({
         message: `Đã xóa ${item.productName} (${item.size}) khỏi giỏ hàng!`,
         type: "success",
         onClose: () => setPopup(null),
-        className: cartStyles.popupOverlay, // Use the popupOverlay class
+        className: cartStyles.popupOverlay,
       });
     } catch (err) {
       console.error("Error removing item from cart:", err);
@@ -184,7 +191,7 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
         message: "Không thể xóa sản phẩm. Vui lòng thử lại!",
         type: "error",
         onClose: () => setPopup(null),
-        className: cartStyles.popupOverlay, // Use the popupOverlay class
+        className: cartStyles.popupOverlay,
       });
     }
   };

@@ -59,14 +59,8 @@ public class CartController {
             @RequestParam String productId,
             @RequestParam String size) {
         try {
-            boolean removed = cartService.removeFromCart(userId, productId, size);
-            if (removed) {
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .header("Error-Message", "Item not found in cart")
-                        .build();
-            }
+            cartService.removeFromCart(userId, productId, size);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .header("Error-Message", e.getMessage())

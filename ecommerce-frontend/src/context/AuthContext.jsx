@@ -2,6 +2,24 @@ import React, { createContext, useState, useEffect } from "react";
 import API from "../services/api";
 import { getCart } from "../services/api";
 
+// Hàm giải mã token JWT
+const decodeToken = (token) => {
+  try {
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return null;
+  }
+};
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -16,6 +34,11 @@ export const AuthProvider = ({ children }) => {
 
       if (token && storedUser) {
         try {
+          const decodedToken = decodeToken(token);
+          if (!decodedToken || !decodedToken.userId) {
+            throw new Error("Invalid token");
+          }
+
           const parsedUser = JSON.parse(storedUser);
           const response = await API.get(
             `/auth/me?username=${parsedUser.username}`
@@ -29,42 +52,43 @@ export const AuthProvider = ({ children }) => {
           setUser(fetchedUser);
           setIsAuthenticated(true);
 
-          // Đồng bộ giỏ hàng sau khi xác minh
-          const userId = localStorage.getItem("userId"); // Đổi "userID" thành "userId"
-          if (userId) {
-            try {
-              const cartResponse = await getCart(userId);
-              const cartData = cartResponse.data;
-              const mappedCartData = cartData.map((item) => ({
-                id: item.product.id,
-                productName: item.product.name,
-                imageUrl:
-                  item.product.images && item.product.images.length > 0
-                    ? `http://localhost:8080/api/images/${item.product.images[0]}`
-                    : null,
-                price: item.product.price,
-                quantity: item.quantity,
-                size: item.size,
-              }));
-              localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
-              window.dispatchEvent(new Event("cartUpdated"));
-            } catch (cartError) {
-              console.error("Failed to fetch cart after auth:", cartError);
-              localStorage.setItem("cartItems", JSON.stringify([]));
-              window.dispatchEvent(new Event("cartUpdated"));
-            }
+          // Lưu userID vào localStorage (nếu chưa có)
+          localStorage.setItem("userID", decodedToken.userId);
+
+          // Đồng bộ giỏ hàng
+          try {
+            const cartResponse = await getCart(decodedToken.userId);
+            const cartData = cartResponse.data;
+            const mappedCartData = cartData.map((item) => ({
+              id: item.product.id,
+              productName: item.product.name,
+              imageUrl:
+                item.product.images && item.product.images.length > 0
+                  ? `http://localhost:8080/api/images/${item.product.images[0]}`
+                  : null,
+              price: item.product.price,
+              quantity: item.quantity,
+              size: item.size,
+            }));
+            localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
+            window.dispatchEvent(new Event("cartUpdated"));
+          } catch (cartError) {
+            console.error("Failed to fetch cart after auth:", cartError);
+            localStorage.setItem("cartItems", JSON.stringify([]));
+            window.dispatchEvent(new Event("cartUpdated"));
           }
         } catch (error) {
           console.error("Failed to verify auth:", error);
           localStorage.removeItem("token");
           localStorage.removeItem("user");
-          localStorage.removeItem("userId"); // Đổi "userID" thành "userId"
+          localStorage.removeItem("userID");
           localStorage.removeItem("cartItems");
           setIsAuthenticated(false);
           setUser(null);
         }
       } else {
         localStorage.removeItem("cartItems");
+        localStorage.removeItem("userID");
         setIsAuthenticated(false);
         setUser(null);
       }
@@ -76,17 +100,31 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
+      // Xóa các giá trị cũ trong localStorage trước khi đăng nhập
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userID");
+      localStorage.removeItem("cartItems");
+
       const response = await API.post("/auth/login", { username, password });
       const { id, token, ...userData } = response.data;
-      localStorage.setItem("userId", id); // Đổi "userID" thành "userId"
+
+      // Giải mã token để lấy userId
+      const decodedToken = decodeToken(token);
+      if (!decodedToken || !decodedToken.userId) {
+        throw new Error("Invalid token");
+      }
+
+      // Lưu thông tin mới
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem("userID", decodedToken.userId); // Lưu userId với tên userID
       setUser(userData);
       setIsAuthenticated(true);
 
-      // Đồng bộ giỏ hàng sau khi đăng nhập
+      // Đồng bộ giỏ hàng
       try {
-        const cartResponse = await getCart(id);
+        const cartResponse = await getCart(decodedToken.userId);
         const cartData = cartResponse.data;
         const mappedCartData = cartData.map((item) => ({
           id: item.product.id,
@@ -135,12 +173,10 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    localStorage.removeItem("userId"); // Đổi "userID" thành "userId"
+    localStorage.removeItem("userID");
     localStorage.removeItem("cartItems");
-
     setIsAuthenticated(false);
     setUser(null);
-
     window.dispatchEvent(new Event("cartUpdated"));
   };
 

@@ -3,12 +3,13 @@ package com.ecommerce.service;
 import com.ecommerce.model.Cart;
 import com.ecommerce.model.CartItem;
 import com.ecommerce.model.Product;
+import com.ecommerce.observer.ConcreteCartObserver;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,9 @@ public class CartService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public void addToCart(String userId, Product product, int quantity, String size) {
         // Kiểm tra tồn kho
@@ -33,6 +37,13 @@ public class CartService {
         // Lấy giỏ hàng từ Singleton
         Cart cart = Cart.getInstance(userId);
 
+        // Đăng ký observer nếu chưa có
+        boolean hasObserver = cart.getObservers().stream()
+                .anyMatch(observer -> observer instanceof ConcreteCartObserver);
+        if (!hasObserver) {
+            cart.addObserver(new ConcreteCartObserver("UIObserver", userId, messagingTemplate));
+        }
+
         // Đồng bộ dữ liệu từ MongoDB khi khởi tạo
         Optional<Cart> optionalCart = cartRepository.findById(userId);
         if (optionalCart.isPresent() && cart.getItems().isEmpty()) {
@@ -41,9 +52,6 @@ public class CartService {
 
         // Thêm sản phẩm
         cart.addItem(product, quantity, size);
-
-        // Lưu giỏ hàng
-        cartRepository.save(cart);
     }
 
     public void updateCartItemQuantity(String userId, String productId, String size, int quantity) {
@@ -61,7 +69,6 @@ public class CartService {
 
         Cart cart = Cart.getInstance(userId);
         cart.updateItemQuantity(productId, size, quantity);
-        cartRepository.save(cart);
     }
 
     public boolean isProductInCart(String userId, String productId, String size) {
@@ -84,7 +91,6 @@ public class CartService {
     public void clearCart(String userId) {
         Cart cart = Cart.getInstance(userId);
         cart.clear();
-        cartRepository.save(cart);
     }
 
     public double getTotal(String userId) {
@@ -92,10 +98,15 @@ public class CartService {
         return cart.getTotal();
     }
 
-    public boolean removeFromCart(String userId, String productId, String size) {
+    public void removeFromCart(String userId, String productId, String size) {
         Cart cart = Cart.getInstance(userId);
-        boolean removed = cart.removeItem(productId, size);
-        cartRepository.save(cart);
-        return removed;
+        // Đăng ký observer nếu chưa có
+        boolean hasObserver = cart.getObservers().stream()
+                .anyMatch(observer -> observer instanceof ConcreteCartObserver);
+        if (!hasObserver) {
+            cart.addObserver(new ConcreteCartObserver("UIObserver", userId, messagingTemplate));
+        }
+
+        cart.removeItem(productId, size);
     }
 }

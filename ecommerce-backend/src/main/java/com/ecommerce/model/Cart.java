@@ -72,13 +72,13 @@ public class Cart {
         notifyObservers();
     }
 
-    public boolean removeItem(String productId, String size) {
-        boolean removed = items.removeIf(item ->
-                item.getProduct().getId().equals(productId) && item.getSize().equals(size));
-        if (removed) {
-            notifyObservers();
-        }
-        return removed;
+    public void removeItem(String productId, String size) {
+        items.removeIf(item -> item.getProduct().getId().equals(productId) && item.getSize().equals(size));
+        notifyObservers();
+    }
+
+    public List<CartObserver> getObservers() {
+        return observers;
     }
 
     public double getTotal() {

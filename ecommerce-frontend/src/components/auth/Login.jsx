@@ -21,6 +21,7 @@ function Login() {
       setTimeout(() => {
         setNotification(null);
         navigate("/");
+        window.location.reload();
       }, 2000);
     } catch (error) {
       let errorMsg = "Đăng nhập không thành công! Vui lòng kiểm tra lại.";
