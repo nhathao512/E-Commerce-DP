@@ -31,8 +31,8 @@ import OrderPage from "./manageorder/OrderManagement";
 import styles from "./AdminPage.module.css";
 import { useState, useEffect } from "react";
 import logo from "../../assets/logo1.png";
-import { getProducts } from "../../services/api";
-import axios from "axios"; // Thêm axios
+import { getProducts, getAllOrders } from "../../services/api"; // Import getAllOrders
+import axios from "axios";
 
 ChartJS.register(
   CategoryScale,
@@ -54,10 +54,11 @@ function AdminPage() {
   const [chartType, setChartType] = useState("bar");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [productsData, setProductsData] = useState([]);
-  const [usersData, setUsersData] = useState([]); // Thay thế mảng tĩnh bằng state
+  const [usersData, setUsersData] = useState([]);
+  const [ordersData, setOrdersData] = useState([]); // State for orders
   const itemsPerPage = 5;
 
-  // Gọi API để lấy danh sách sản phẩm
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -81,7 +82,7 @@ function AdminPage() {
     fetchProducts();
   }, []);
 
-  // Gọi API để lấy danh sách người dùng
+  // Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -94,19 +95,21 @@ function AdminPage() {
     fetchUsers();
   }, []);
 
+  // Fetch orders
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await getAllOrders();
+        setOrdersData(response.data || []);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+      }
+    };
+    fetchOrders();
+  }, []);
+
   const navLinkClass = (path) =>
     `${location.pathname === path ? styles.activeLink : ""}`;
-
-  // Sample data for orders (giữ nguyên)
-  const ordersData = [
-    { id: 1, userId: 1, productId: 1, total: 100000, status: "completed" },
-    { id: 2, userId: 2, productId: 2, total: 90000, status: "completed" },
-    { id: 3, userId: 3, productId: 3, total: 80000, status: "pending" },
-    { id: 4, userId: 1, productId: 4, total: 70000, status: "completed" },
-    { id: 5, userId: 2, productId: 5, total: 60000, status: "completed" },
-    { id: 6, userId: 1, productId: 6, total: 50000, status: "completed" },
-    { id: 7, userId: 2, productId: 1, total: 100000, status: "completed" },
-  ];
 
   // Calculate monthly revenue (completed orders)
   const monthlyRevenue = ordersData
@@ -216,7 +219,7 @@ function AdminPage() {
     return <div className={styles.pagination}>{pages}</div>;
   };
 
-  // Export data (placeholder)
+  // Export data
   const exportToCSV = (data, filename) => {
     const csv = ["ID,Name,Count"];
     data.forEach((item) => csv.push(`${item.id},${item.name},${item.count}`));
@@ -301,14 +304,14 @@ function AdminPage() {
                       <FaClipboardList className={styles.cardIcon} />
                       <div>
                         <h4>Đơn hàng</h4>
-                        <p>{ordersData.length} đơn</p>
+                        <p>{ordersData.length} đơn</p> {/* Updated to use fetched orders */}
                       </div>
                     </div>
                     <div className={`${styles.card} ${styles.cardUsers}`}>
                       <FaUserCog className={styles.cardIcon} />
                       <div>
                         <h4>Người dùng</h4>
-                        <p>{usersData.length} người</p> {/* Cập nhật số lượng người dùng */}
+                        <p>{usersData.length} người</p>
                       </div>
                     </div>
                   </div>
