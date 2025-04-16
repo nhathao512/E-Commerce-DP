@@ -151,7 +151,7 @@ function Navbar() {
               stroke="currentColor"
               strokeWidth="2"
             >
-              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-10 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+              <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 0 0 0 4 2 2 0 0 0 0-4zm-10 2a2 2 0 0 0 0 4 2 2 0 0 0 0-4z" />
             </svg>
             {cartCount > 0 && (
               <span className={styles.cartCount}>{cartCount}</span>
@@ -231,7 +231,7 @@ function Navbar() {
                   stroke="currentColor"
                   strokeWidth="2"
                 >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 0 0 1 2-2h4" />
+                  <path d="M9 21H5a2 2 0 1 1-2-2V5a2 2 0 0 1 2-2h4" />
                   <polyline points="16 17 21 12 16 7" />
                   <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
