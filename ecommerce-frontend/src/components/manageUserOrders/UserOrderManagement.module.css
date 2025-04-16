@@ -211,3 +211,14 @@
   background-color: #e6e9ff;
   transform: scale(1.05);
 }
+.noOrders {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.noOrdersImage {
+  max-width: 50%;
+  height: auto;
+}

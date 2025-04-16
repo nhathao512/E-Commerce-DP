@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { getOrdersByUserId } from "../../services/api";
 import styles from "./UserOrderManagement.module.css";
 import { FaList } from "react-icons/fa";
+import noOrdersImage from "../../assets/emptyorder.png"; // Import the image
 
 const UserOrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -82,7 +83,7 @@ const UserOrderManagement = () => {
     switch (status) {
       case "Thành công":
         return styles.statusGreen;
-      case "Đang giao hàng": // Cập nhật để khớp với trạng thái người dùng
+      case "Đang giao hàng":
         return styles.statusYellow;
       case "Đã hủy":
         return styles.statusRed;
@@ -112,7 +113,9 @@ const UserOrderManagement = () => {
       </h2>
 
       {orders.length === 0 ? (
-        <p>Không có đơn hàng nào.</p>
+        <div className={styles.noOrders}>
+          <img src={noOrdersImage} alt="No orders" className={styles.noOrdersImage} />
+        </div>
       ) : (
         <table className={styles.orderTable}>
           <thead className={styles.gradientRow}>
