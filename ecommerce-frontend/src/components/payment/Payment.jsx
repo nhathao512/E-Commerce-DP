@@ -140,7 +140,7 @@ function Payment() {
       return;
     }
 
-    const userId = localStorage.getItem("userId");
+    const userId = localStorage.getItem("userID");
 
     try {
       const fullAddress = `${formData.detailedAddress}, ${formData.ward}, ${formData.district}, ${formData.province}`;
