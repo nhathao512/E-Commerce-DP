@@ -29,7 +29,7 @@ function Payment() {
   const [loadingDistricts, setLoadingDistricts] = useState(false);
   const [loadingWards, setLoadingWards] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [showPopup, setShowPopup] = useState(false); // State for popup visibility
+  const [popup, setPopup] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -38,8 +38,24 @@ function Payment() {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      alert("Vui lòng đăng nhập để tiếp tục thanh toán!");
-      navigate("/login");
+      setPopup({
+        message: "Vui lòng đăng nhập để tiếp tục thanh toán!",
+        type: "warning",
+        onClose: () => {
+          setPopup(null);
+          navigate("/login");
+        },
+        showCloseButton: false,
+        confirmButton: {
+          text: "Đăng nhập",
+          onClick: () => navigate("/login"),
+        },
+        cancelButton: {
+          text: "Đóng",
+          onClick: () => setPopup(null),
+        },
+        className: styles.popupOverlay,
+      });
     }
   }, [isAuthenticated, isLoading, navigate]);
 
@@ -125,27 +141,138 @@ function Payment() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "phone") {
+    if (name === "phone" || name === "cardNumber" || name === "cardCVC") {
       const numericValue = value.replace(/[^0-9]/g, "");
+      setFormData((prev) => ({ ...prev, [name]: numericValue }));
+    } else if (name === "cardExpiry") {
+      let numericValue = value.replace(/[^0-9]/g, "");
+      if (numericValue.length >= 3) {
+        numericValue = `${numericValue.slice(0, 2)}/${numericValue.slice(
+          2,
+          4
+        )}`;
+      }
       setFormData((prev) => ({ ...prev, [name]: numericValue }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
+  const validateForm = () => {
+    if (!formData.name) {
+      setPopup({
+        message: "Vui lòng nhập họ và tên!",
+        type: "error",
+        onClose: () => setPopup(null),
+        className: styles.popupOverlay,
+      });
+      return false;
+    }
+    if (!formData.phone || formData.phone.length < 10) {
+      setPopup({
+        message: "Vui lòng nhập số điện thoại hợp lệ (10 chữ số)!",
+        type: "error",
+        onClose: () => setPopup(null),
+        className: styles.popupOverlay,
+      });
+      return false;
+    }
+    if (!formData.province || !formData.district || !formData.ward) {
+      setPopup({
+        message: "Vui lòng chọn đầy đủ tỉnh/thành, quận/huyện, phường/xã!",
+        type: "error",
+        onClose: () => setPopup(null),
+        className: styles.popupOverlay,
+      });
+      return false;
+    }
+    if (!formData.detailedAddress) {
+      setPopup({
+        message: "Vui lòng nhập địa chỉ chi tiết!",
+        type: "error",
+        onClose: () => setPopup(null),
+        className: styles.popupOverlay,
+      });
+      return false;
+    }
+    if (method === "credit") {
+      if (formData.cardNumber.length < 16) {
+        setPopup({
+          message: "Số thẻ tín dụng phải có ít nhất 16 chữ số!",
+          type: "error",
+          onClose: () => setPopup(null),
+          className: styles.popupOverlay,
+        });
+        return false;
+      }
+      if (!/^\d{2}\/\d{2}$/.test(formData.cardExpiry)) {
+        setPopup({
+          message: "Ngày hết hạn phải có định dạng MM/YY!",
+          type: "error",
+          onClose: () => setPopup(null),
+          className: styles.popupOverlay,
+        });
+        return false;
+      }
+      if (formData.cardCVC.length < 3 || formData.cardCVC.length > 4) {
+        setPopup({
+          message: "Mã CVC phải có 3 hoặc 4 chữ số!",
+          type: "error",
+          onClose: () => setPopup(null),
+          className: styles.popupOverlay,
+        });
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handlePayment = async () => {
     if (!isAuthenticated) {
-      alert("Vui lòng đăng nhập để tiếp tục!");
-      navigate("/login");
+      setPopup({
+        message: "Vui lòng đăng nhập để tiếp tục!",
+        type: "warning",
+        onClose: () => {
+          setPopup(null);
+          navigate("/login");
+        },
+        className: styles.popupOverlay,
+      });
       return;
     }
 
     const userId = localStorage.getItem("userID");
+    if (!userId) {
+      setPopup({
+        message: "Không tìm thấy thông tin người dùng. Vui lòng đăng nhập lại!",
+        type: "error",
+        onClose: () => {
+          setPopup(null);
+          navigate("/login");
+        },
+        className: styles.popupOverlay,
+      });
+      return;
+    }
+
+    if (selectedCartItems.length === 0) {
+      setPopup({
+        message: "Không có sản phẩm nào để thanh toán!",
+        type: "error",
+        onClose: () => setPopup(null),
+        className: styles.popupOverlay,
+      });
+      return;
+    }
+
+    if (!validateForm()) {
+      return;
+    }
 
     try {
       const fullAddress = `${formData.detailedAddress}, ${formData.ward}, ${formData.district}, ${formData.province}`;
       const paymentData = {
-        userId: userId,
+        userId,
         method,
         transferCode: method === "bank" ? transferCode : undefined,
         items: selectedCartItems,
@@ -153,25 +280,47 @@ function Payment() {
         name: formData.name,
         phone: formData.phone,
         address: fullAddress,
-        voucher: formData.voucher,
+        voucher: formData.voucher || undefined,
         cardNumber: method === "credit" ? formData.cardNumber : undefined,
         cardExpiry: method === "credit" ? formData.cardExpiry : undefined,
         cardCVC: method === "credit" ? formData.cardCVC : undefined,
       };
       await processPayment(paymentData);
-      setShowPopup(true); // Show popup on success
+      setPopup({
+        message: "Thanh toán thành công! Cảm ơn bạn đã mua sắm.",
+        type: "success",
+        onClose: () => {
+          setPopup(null);
+          navigate("/");
+          window.location.reload();
+        },
+        duration: 3000,
+        showCloseButton: true,
+        className: styles.popupOverlay,
+      });
     } catch (error) {
       console.error("Thanh toán thất bại:", error);
-      alert("Thanh toán thất bại! Vui lòng thử lại.");
+      setPopup({
+        message:
+          error.response?.data?.message ||
+          "Thanh toán thất bại! Vui lòng thử lại.",
+        type: "error",
+        onClose: () => setPopup(null),
+        className: styles.popupOverlay,
+      });
     }
   };
 
   const handleVoucherAccept = () => {
     if (formData.voucher) {
-      alert(`Đã áp dụng voucher: ${formData.voucher}`);
-    } else {
-      alert("Vui lòng nhập mã voucher!");
+      setPopup({
+        message: `Đã áp dụng voucher: ${formData.voucher}`,
+        type: "success",
+        onClose: () => setPopup(null),
+        className: styles.popupOverlay,
+      });
     }
+    // Không hiển thị thông báo nếu không nhập voucher
   };
 
   const paymentDetails = {
@@ -181,7 +330,7 @@ function Payment() {
   };
 
   if (isLoading) {
-    return <div>Đang tải...</div>;
+    return <div className={styles.container}>Đang tải...</div>;
   }
 
   return (
@@ -208,6 +357,7 @@ function Payment() {
               placeholder="Số điện thoại"
               className={styles.input}
               required
+              maxLength={10}
             />
             <label>Tỉnh/Thành phố</label>
             {loadingProvinces ? (
@@ -318,7 +468,12 @@ function Payment() {
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(transferCode);
-                        alert("Đã sao chép mã: " + transferCode);
+                        setPopup({
+                          message: `Đã sao chép mã: ${transferCode}`,
+                          type: "success",
+                          onClose: () => setPopup(null),
+                          className: styles.popupOverlay,
+                        });
                       }}
                       className={styles.copyButton}
                     >
@@ -337,9 +492,10 @@ function Payment() {
                   name="cardNumber"
                   value={formData.cardNumber}
                   onChange={handleInputChange}
-                  placeholder="Số thẻ"
+                  placeholder="Số thẻ (16 chữ số)"
                   className={styles.input}
                   required
+                  maxLength={16}
                 />
                 <div className={styles.creditDetails}>
                   <input
@@ -350,15 +506,17 @@ function Payment() {
                     placeholder="MM/YY"
                     className={styles.input}
                     required
+                    maxLength={5}
                   />
                   <input
                     type="text"
                     name="cardCVC"
                     value={formData.cardCVC}
                     onChange={handleInputChange}
-                    placeholder="CVC"
+                    placeholder="CVC (3-4 chữ số)"
                     className={styles.input}
                     required
+                    maxLength={4}
                   />
                 </div>
               </div>
@@ -366,22 +524,24 @@ function Payment() {
           </div>
 
           <div className={styles.formSection}>
-            <h3>Mã giảm giá</h3>
+            <h3>Mã giảm giá (tùy chọn)</h3>
             <div className={styles.voucherContainer}>
               <input
                 type="text"
                 name="voucher"
                 value={formData.voucher}
                 onChange={handleInputChange}
-                placeholder="Nhập mã voucher"
+                placeholder="Nhập mã voucher nếu có"
                 className={styles.input}
               />
-              <button
-                onClick={handleVoucherAccept}
-                className={styles.voucherButton}
-              >
-                Áp dụng
-              </button>
+              {formData.voucher && (
+                <button
+                  onClick={handleVoucherAccept}
+                  className={styles.voucherButton}
+                >
+                  Áp dụng
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -439,19 +599,7 @@ function Payment() {
         </div>
       </div>
 
-      {showPopup && (
-        <Popup
-          message="Thanh toán thành công! Cảm ơn bạn đã mua sắm."
-          type="success"
-          onClose={() => {
-            setShowPopup(false);
-            navigate("/");
-            window.location.reload();
-          }}
-          duration={3000}
-          showCloseButton={true}
-        />
-      )}
+      {popup && <Popup {...popup} />}
     </div>
   );
 }
