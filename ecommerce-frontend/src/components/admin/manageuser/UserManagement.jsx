@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import Dashboard from "../Dashboard/Dashboard";
+import Dashboard from "../dashboard/Dashboard";
 import styles from "./UserManagement.module.css";
 import { FaUsersCog, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
@@ -104,7 +104,9 @@ function UserManagement() {
   const confirmDelete = async () => {
     setIsLoading(true);
     try {
-      await axios.delete(`http://localhost:8080/api/auth/users/${userToDelete.id}`);
+      await axios.delete(
+        `http://localhost:8080/api/auth/users/${userToDelete.id}`
+      );
       await fetchUsers();
       toast.success(`Đã xóa người dùng ${userToDelete.username}`);
       setIsDeletePopupOpen(false);
@@ -148,15 +150,19 @@ function UserManagement() {
           return;
         }
         console.log("Sending update for user:", newUser);
-        const response = await axios.put("http://localhost:8080/api/auth/me", null, {
-          params: {
-            username: newUser.username,
-            phone: newUser.phone,
-            address: form.address.value || "",
-            fullName: newUser.fullName,
-            avatar: newUser.avatar,
-          },
-        });
+        const response = await axios.put(
+          "http://localhost:8080/api/auth/me",
+          null,
+          {
+            params: {
+              username: newUser.username,
+              phone: newUser.phone,
+              address: form.address.value || "",
+              fullName: newUser.fullName,
+              avatar: newUser.avatar,
+            },
+          }
+        );
         console.log("Update response:", response.data);
         toast.success(`Đã cập nhật thông tin cho ${newUser.username}`);
       } else {
@@ -166,10 +172,13 @@ function UserManagement() {
           return;
         }
         console.log("Creating user:", newUser);
-        const response = await axios.post("http://localhost:8080/api/auth/register", {
-          ...newUser,
-          confirmPassword: undefined,
-        });
+        const response = await axios.post(
+          "http://localhost:8080/api/auth/register",
+          {
+            ...newUser,
+            confirmPassword: undefined,
+          }
+        );
         console.log("Create response:", response.data);
         toast.success(`Đã tạo người dùng ${newUser.username}`);
       }
@@ -183,7 +192,9 @@ function UserManagement() {
       if (error.response) {
         console.error("Error response:", error.response.data);
       }
-      toast.error(`Lỗi: ${error.response?.data?.message || "Không thể lưu người dùng!"}`);
+      toast.error(
+        `Lỗi: ${error.response?.data?.message || "Không thể lưu người dùng!"}`
+      );
     } finally {
       setIsLoading(false);
     }
@@ -210,7 +221,6 @@ function UserManagement() {
             Tạo mới
           </button>
           <button onClick={() => setIsAsc(!isAsc)} disabled={isLoading}>
-            
             {isAsc ? "⬇ DESC" : "⬆ ASC"}
           </button>
         </div>
@@ -240,16 +250,18 @@ function UserManagement() {
               >
                 Trước
               </button>
-              {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={page === currentPage ? styles.activePage : ""}
-                  disabled={isLoading}
-                >
-                  {page}
-                </button>
-              ))}
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={page === currentPage ? styles.activePage : ""}
+                    disabled={isLoading}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
               <button
                 onClick={() => handlePageChange(currentPage + 1)}
                 disabled={currentPage === totalPages || isLoading}
@@ -306,7 +318,9 @@ function UserManagement() {
                       />
                       <span
                         className={styles.eyeIcon}
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                       >
                         {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                       </span>
@@ -372,7 +386,10 @@ function UserManagement() {
       )}
 
       {isDeletePopupOpen && (
-        <div className={styles.overlay} onClick={() => setIsDeletePopupOpen(false)}>
+        <div
+          className={styles.overlay}
+          onClick={() => setIsDeletePopupOpen(false)}
+        >
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h2>Xác nhận xóa</h2>
             <p>
@@ -380,7 +397,11 @@ function UserManagement() {
               <strong>{userToDelete?.username}</strong> không?
             </p>
             <div className={styles.buttonGroup}>
-              <button onClick={confirmDelete} className={styles.deleteButton} disabled={isLoading}>
+              <button
+                onClick={confirmDelete}
+                className={styles.deleteButton}
+                disabled={isLoading}
+              >
                 {isLoading ? "Đang xóa..." : "Xóa"}
               </button>
               <button

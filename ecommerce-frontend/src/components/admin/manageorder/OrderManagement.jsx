@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Dashboard from "../Dashboard/Dashboard";
+import Dashboard from "../dashboard/Dashboard";
 import styles from "./OrderManagement.module.css";
 import { ShoppingCart } from "lucide-react";
 import { getAllOrders, updateOrder, deleteOrder } from "../../../services/api";
