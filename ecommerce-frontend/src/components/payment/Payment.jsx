@@ -445,7 +445,8 @@ function Payment() {
           type="success"
           onClose={() => {
             setShowPopup(false);
-            navigate("/"); // Navigate to homepage after closing popup
+            navigate("/");
+            window.location.reload();
           }}
           duration={3000}
           showCloseButton={true}
