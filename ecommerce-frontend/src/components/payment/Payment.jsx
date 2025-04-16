@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext"; // Import AuthContext
+import { AuthContext } from "../../context/AuthContext";
 import { processPayment, getProvinces } from "../../services/api";
 import styles from "./Payment.module.css";
 import logo from "../../assets/banking.png";
+import Popup from "../common/Popup";
 
 function Payment() {
   const [method, setMethod] = useState("cod");
@@ -28,15 +29,13 @@ function Payment() {
   const [loadingDistricts, setLoadingDistricts] = useState(false);
   const [loadingWards, setLoadingWards] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPopup, setShowPopup] = useState(false); // State for popup visibility
 
   const location = useLocation();
   const navigate = useNavigate();
   const { selectedCartItems = [], totalPrice = 0 } = location.state || {};
-
-  // Lấy thông tin từ AuthContext
   const { isAuthenticated, isLoading } = useContext(AuthContext);
 
-  // Kiểm tra trạng thái đăng nhập
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       alert("Vui lòng đăng nhập để tiếp tục thanh toán!");
@@ -44,7 +43,6 @@ function Payment() {
     }
   }, [isAuthenticated, isLoading, navigate]);
 
-  // Lấy danh sách tỉnh/thành phố
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
@@ -70,7 +68,6 @@ function Payment() {
     fetchProvinces();
   }, []);
 
-  // Lấy danh sách quận/huyện
   useEffect(() => {
     if (formData.province) {
       const selectedProvince = provinces.find(
@@ -87,7 +84,6 @@ function Payment() {
     }
   }, [formData.province, provinces]);
 
-  // Lấy danh sách phường/xã
   useEffect(() => {
     if (formData.district) {
       const selectedDistrict = districts.find(
@@ -101,7 +97,6 @@ function Payment() {
     }
   }, [formData.district, districts]);
 
-  // Tạo mã chuyển khoản ngẫu nhiên
   useEffect(() => {
     if (method === "bank") {
       const randomCode = Math.random()
@@ -113,7 +108,6 @@ function Payment() {
     }
   }, [method]);
 
-  // Đếm ngược thời gian
   useEffect(() => {
     if (method === "bank" && timeLeft > 0) {
       const timer = setInterval(() => {
@@ -146,7 +140,6 @@ function Payment() {
       return;
     }
 
-    // Lấy userId từ localStorage (đã được đồng bộ trong AuthProvider)
     const userId = localStorage.getItem("userId");
 
     try {
@@ -166,8 +159,7 @@ function Payment() {
         cardCVC: method === "credit" ? formData.cardCVC : undefined,
       };
       await processPayment(paymentData);
-      alert("Thanh toán thành công!");
-      navigate("/"); // Chuyển hướng về trang chủ
+      setShowPopup(true); // Show popup on success
     } catch (error) {
       console.error("Thanh toán thất bại:", error);
       alert("Thanh toán thất bại! Vui lòng thử lại.");
@@ -188,7 +180,6 @@ function Payment() {
     total: totalPrice + 30000,
   };
 
-  // Nếu đang tải trạng thái xác thực, hiển thị loading
   if (isLoading) {
     return <div>Đang tải...</div>;
   }
@@ -447,6 +438,19 @@ function Payment() {
           </button>
         </div>
       </div>
+
+      {showPopup && (
+        <Popup
+          message="Thanh toán thành công! Cảm ơn bạn đã mua sắm."
+          type="success"
+          onClose={() => {
+            setShowPopup(false);
+            navigate("/"); // Navigate to homepage after closing popup
+          }}
+          duration={3000}
+          showCloseButton={true}
+        />
+      )}
     </div>
   );
 }
