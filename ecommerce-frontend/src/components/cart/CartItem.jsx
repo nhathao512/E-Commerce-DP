@@ -10,7 +10,7 @@ import cartStyles from "./Cart.module.css";
 
 function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
   const [popup, setPopup] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(false); // Thêm trạng thái isDeleting
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const checkStockAvailability = async (productId, size, desiredQuantity) => {
     try {

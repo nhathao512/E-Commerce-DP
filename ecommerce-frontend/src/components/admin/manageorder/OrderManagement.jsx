@@ -2,7 +2,11 @@ import React, { useState, useEffect } from "react";
 import Dashboard from "../dashboard/Dashboard";
 import styles from "./OrderManagement.module.css";
 import { ShoppingCart } from "lucide-react";
-import { getAllOrders, updateOrder, deleteOrder } from "../../../services/api";
+import {
+  getAllOrders,
+  updateOrderStatus,
+  deleteOrder,
+} from "../../../services/api";
 
 function OrderManagement() {
   const [orders, setOrders] = useState([]);
@@ -17,7 +21,6 @@ function OrderManagement() {
     const fetchOrders = async () => {
       try {
         const response = await getAllOrders();
-        console.log("Orders fetched:", response.data);
         setOrders(response.data);
       } catch (err) {
         console.error("Failed to fetch orders:", err);
@@ -46,27 +49,25 @@ function OrderManagement() {
   };
 
   const handleCreate = () => {
-    setEditingOrder(null);
-    setPopupOpen(true);
+    alert(
+      "Tạo mới đơn hàng không được hỗ trợ trực tiếp. Vui lòng sử dụng trang Thanh toán!"
+    );
   };
 
-  const handleSave = async (newOrder) => {
+  const handleSave = async (status, cancelReason = "") => {
     try {
       if (editingOrder) {
-        const updatedOrder = await updateOrder(newOrder.id, newOrder);
+        await updateOrderStatus(editingOrder.id, status, cancelReason);
         setOrders(
-          orders.map((o) => (o.id === newOrder.id ? updatedOrder.data : o))
+          orders.map((o) =>
+            o.id === editingOrder.id ? { ...o, status, cancelReason } : o
+          )
         );
-      } else {
-        alert(
-          "Tạo mới đơn hàng không được hỗ trợ trực tiếp. Vui lòng sử dụng trang Thanh toán!"
-        );
-        return;
+        setPopupOpen(false);
       }
-      setPopupOpen(false);
     } catch (err) {
-      console.error("Failed to save order:", err);
-      alert("Không thể lưu đơn hàng. Vui lòng thử lại sau!");
+      console.error("Failed to update order status:", err);
+      alert("Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại sau!");
     }
   };
 
@@ -141,48 +142,16 @@ function OrderManagement() {
       {popupOpen && (
         <div className={styles.overlay} onClick={() => setPopupOpen(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-            <h2>{editingOrder ? "Sửa đơn hàng" : "Tạo đơn hàng mới"}</h2>
+            <h2>Cập nhật trạng thái đơn hàng</h2>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                const form = e.target;
-                const newOrder = {
-                  id: editingOrder?.id || null,
-                  userId: form.userId.value,
-                  items: editingOrder?.items || [],
-                  total: parseFloat(form.total.value) || 0,
-                  paymentMethod: form.paymentMethod.value,
-                  status: form.status.value,
-                };
-                handleSave(newOrder);
+                const status = e.target.status.value;
+                const cancelReason = e.target.cancelReason?.value || "";
+                handleSave(status, cancelReason);
               }}
               className={styles.form}
             >
-              <div className={styles.formGroup}>
-                <label>ID người dùng:</label>
-                <input
-                  name="userId"
-                  defaultValue={editingOrder?.userId || ""}
-                  required
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Tổng tiền:</label>
-                <input
-                  name="total"
-                  type="number"
-                  defaultValue={editingOrder?.total || 0}
-                  required
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Phương thức thanh toán:</label>
-                <input
-                  name="paymentMethod"
-                  defaultValue={editingOrder?.paymentMethod || ""}
-                  required
-                />
-              </div>
               <div className={styles.formGroup}>
                 <label>Trạng thái:</label>
                 <select
@@ -191,11 +160,23 @@ function OrderManagement() {
                   required
                 >
                   <option value="Xác nhận">Xác nhận</option>
+                  <option value="Đang xử lý">Đang xử lý</option>
                   <option value="Giao hàng">Giao hàng</option>
                   <option value="Hoàn thành">Hoàn thành</option>
                   <option value="Hủy">Hủy</option>
+                  <option value="Trả hàng">Trả hàng</option>
                 </select>
               </div>
+              {editingOrder?.status === "Hủy" && (
+                <div className={styles.formGroup}>
+                  <label>Lý do hủy:</label>
+                  <textarea
+                    name="cancelReason"
+                    defaultValue={editingOrder?.cancelReason || ""}
+                    placeholder="Nhập lý do hủy đơn hàng"
+                  />
+                </div>
+              )}
               <div className={styles.buttonGroup}>
                 <button type="submit">Lưu</button>
                 <button type="button" onClick={() => setPopupOpen(false)}>

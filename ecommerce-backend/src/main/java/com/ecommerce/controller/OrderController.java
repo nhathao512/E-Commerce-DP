@@ -42,14 +42,12 @@ public class OrderController {
         return ResponseEntity.ok(orders);
     }
 
-    // Thêm endpoint để lấy tất cả đơn hàng
     @GetMapping
     public ResponseEntity<List<Order>> getAllOrders() {
         List<Order> orders = orderService.getAllOrders();
         return ResponseEntity.ok(orders);
     }
 
-    // Thêm endpoint để cập nhật đơn hàng
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(
             @PathVariable String id,
@@ -58,7 +56,15 @@ public class OrderController {
         return ResponseEntity.ok(order);
     }
 
-    // Thêm endpoint để xóa đơn hàng
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Order> updateOrderStatus(
+            @PathVariable String id,
+            @RequestParam String status,
+            @RequestParam(required = false) String cancelReason) {
+        Order order = orderService.updateOrderStatus(id, status, cancelReason);
+        return ResponseEntity.ok(order);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable String id) {
         orderService.deleteOrder(id);

@@ -3,7 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { getOrdersByUserId } from "../../services/api";
 import styles from "./UserOrderManagement.module.css";
 import { FaList } from "react-icons/fa";
-import noOrdersImage from "../../assets/emptyorder.png"; // Import the image
+import noOrdersImage from "../../assets/emptyorder.png";
 
 const UserOrderManagement = () => {
   const [orders, setOrders] = useState([]);
@@ -17,19 +17,22 @@ const UserOrderManagement = () => {
     isLoading: authLoading,
   } = useContext(AuthContext);
 
-  // Hàm ánh xạ trạng thái từ admin sang người dùng
   const mapStatusForUser = (adminStatus) => {
     switch (adminStatus) {
       case "Xác nhận":
         return "Chờ xác nhận";
+      case "Đang xử lý":
+        return "Đang xử lý";
       case "Giao hàng":
         return "Đang giao hàng";
-      case "Hủy":
-        return "Đã hủy";
       case "Hoàn thành":
         return "Thành công";
+      case "Hủy":
+        return "Đã hủy";
+      case "Trả hàng":
+        return "Đã trả hàng";
       default:
-        return adminStatus || "Chờ xác nhận"; // Mặc định nếu không xác định
+        return adminStatus || "Chờ xác nhận";
     }
   };
 
@@ -50,7 +53,9 @@ const UserOrderManagement = () => {
         const response = await getOrdersByUserId(userId);
         const ordersData = response.data.map((order) => ({
           id: order.id,
-          status: mapStatusForUser(order.status), // Ánh xạ trạng thái
+          status: mapStatusForUser(order.status),
+          total: order.total,
+          createdAt: new Date(order.createdAt).toLocaleDateString("vi-VN"),
           items: order.items.map((item) => ({
             name: item.productName,
             quantity: item.quantity,
@@ -60,6 +65,7 @@ const UserOrderManagement = () => {
                 item.productName
               )}`,
           })),
+          cancelReason: order.cancelReason || "",
         }));
         setOrders(ordersData);
       } catch (err) {
@@ -84,8 +90,10 @@ const UserOrderManagement = () => {
       case "Thành công":
         return styles.statusGreen;
       case "Đang giao hàng":
+      case "Đang xử lý":
         return styles.statusYellow;
       case "Đã hủy":
+      case "Đã trả hàng":
         return styles.statusRed;
       case "Chờ xác nhận":
         return styles.statusGray;
@@ -94,9 +102,9 @@ const UserOrderManagement = () => {
     }
   };
 
-  const canRate = (status) => status === "Thành công" || status === "Đã hủy";
+  const canRate = (status) => status === "Thành công";
   const canRepurchase = (status) =>
-    status === "Thành công" || status === "Đã hủy";
+    status === "Thành công" || status === "Đã hủy" || status === "Đã trả hàng";
 
   if (authLoading || loading) {
     return <div>Đang tải...</div>;
@@ -114,7 +122,11 @@ const UserOrderManagement = () => {
 
       {orders.length === 0 ? (
         <div className={styles.noOrders}>
-          <img src={noOrdersImage} alt="No orders" className={styles.noOrdersImage} />
+          <img
+            src={noOrdersImage}
+            alt="No orders"
+            className={styles.noOrdersImage}
+          />
         </div>
       ) : (
         <table className={styles.orderTable}>
@@ -122,6 +134,8 @@ const UserOrderManagement = () => {
             <tr>
               <th>Mã đơn</th>
               <th>Sản phẩm</th>
+              <th>Tổng tiền</th>
+              <th>Ngày đặt</th>
               <th>Trạng thái</th>
               <th>Thao tác</th>
             </tr>
@@ -146,6 +160,8 @@ const UserOrderManagement = () => {
                     )}
                   </div>
                 </td>
+                <td>{order.total.toLocaleString("vi-VN")} VNĐ</td>
+                <td>{order.createdAt}</td>
                 <td>
                   <span
                     className={`${styles.statusBadge} ${getStatusClass(
@@ -173,6 +189,12 @@ const UserOrderManagement = () => {
         <div className={styles.popupOverlay}>
           <div className={styles.popup}>
             <h3>Chi tiết đơn hàng</h3>
+            {selectedOrder.cancelReason &&
+              selectedOrder.status === "Đã hủy" && (
+                <p className={styles.cancelReason}>
+                  Lý do hủy: {selectedOrder.cancelReason}
+                </p>
+              )}
             <table className={styles.detailTable}>
               <thead>
                 <tr>
@@ -191,10 +213,7 @@ const UserOrderManagement = () => {
                       <div className={styles.popupButtons}>
                         <button
                           className={styles.actionBtn}
-                          disabled={
-                            !canRate(selectedOrder.status) ||
-                            selectedOrder.status === "Đã hủy"
-                          }
+                          disabled={!canRate(selectedOrder.status)}
                         >
                           Đánh giá
                         </button>

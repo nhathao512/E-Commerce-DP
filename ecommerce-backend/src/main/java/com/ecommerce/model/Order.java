@@ -3,6 +3,7 @@ package com.ecommerce.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
 import java.util.List;
 
 @Document(collection = "orders")
@@ -21,7 +22,13 @@ public class Order {
     private String cardNumber;
     private String cardExpiry;
     private String cardCVC;
-    private String status; // Thêm trường status
+    private String status;
+    private String cancelReason;
+    private Date createdAt;
+
+    public Order() {
+        this.createdAt = new Date();
+    }
 
     // Getters và Setters
     public String getId() { return id; }
@@ -52,4 +59,8 @@ public class Order {
     public void setCardCVC(String cardCVC) { this.cardCVC = cardCVC; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getCancelReason() { return cancelReason; }
+    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
+    public Date getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
 }

@@ -10,6 +10,7 @@ import com.ecommerce.strategy.WalletPayment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +21,10 @@ public class OrderService {
 
     @Autowired
     private CartService cartService;
+
+    private static final List<String> VALID_STATUSES = Arrays.asList(
+            "Xác nhận", "Đang xử lý", "Giao hàng", "Hoàn thành", "Hủy", "Trả hàng"
+    );
 
     public Order createOrder(String userId, List<CartItem> items, String paymentMethod, double total,
                              String name, String phone, String address, String voucher,
@@ -44,7 +49,7 @@ public class OrderService {
         order.setCardNumber(cardNumber);
         order.setCardExpiry(cardExpiry);
         order.setCardCVC(cardCVC);
-        order.setStatus("Xác nhận"); // Gán trạng thái mặc định cho đơn hàng mới
+        order.setStatus("Xác nhận");
 
         PaymentContext paymentContext = new PaymentContext();
         switch (paymentMethod.toLowerCase()) {
@@ -89,6 +94,32 @@ public class OrderService {
         existingOrder.setTotal(updatedOrder.getTotal());
         existingOrder.setPaymentMethod(updatedOrder.getPaymentMethod());
         existingOrder.setStatus(updatedOrder.getStatus());
+        existingOrder.setName(updatedOrder.getName());
+        existingOrder.setPhone(updatedOrder.getPhone());
+        existingOrder.setAddress(updatedOrder.getAddress());
+        existingOrder.setTransferCode(updatedOrder.getTransferCode());
+        existingOrder.setCardNumber(updatedOrder.getCardNumber());
+        existingOrder.setCardExpiry(updatedOrder.getCardExpiry());
+        existingOrder.setCardCVC(updatedOrder.getCardCVC());
+        existingOrder.setCancelReason(updatedOrder.getCancelReason());
+        return orderRepository.save(existingOrder);
+    }
+
+    public Order updateOrderStatus(String id, String status, String cancelReason) {
+        Optional<Order> existingOrderOpt = orderRepository.findById(id);
+        if (!existingOrderOpt.isPresent()) {
+            throw new IllegalArgumentException("Đơn hàng không tồn tại!");
+        }
+        if (!VALID_STATUSES.contains(status)) {
+            throw new IllegalArgumentException("Trạng thái không hợp lệ: " + status);
+        }
+        Order existingOrder = existingOrderOpt.get();
+        existingOrder.setStatus(status);
+        if (status.equals("Hủy") && cancelReason != null && !cancelReason.isEmpty()) {
+            existingOrder.setCancelReason(cancelReason);
+        } else if (!status.equals("Hủy")) {
+            existingOrder.setCancelReason(null);
+        }
         return orderRepository.save(existingOrder);
     }
 

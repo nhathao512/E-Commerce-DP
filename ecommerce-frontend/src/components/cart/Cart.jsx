@@ -15,7 +15,7 @@ function Cart() {
   const [popup, setPopup] = useState(null);
   const { isAuthenticated, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
-  const API_URL = "http://localhost:8080/api"; // Giữ tạm thời, sẽ tối ưu sau
+  const API_URL = "http://localhost:8080/api";
 
   const fetchCartItems = async () => {
     const userId = localStorage.getItem("userID");

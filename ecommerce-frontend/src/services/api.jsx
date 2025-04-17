@@ -87,19 +87,15 @@ export const processPayment = (paymentData) =>
 
 export const getOrdersByUserId = (userId) => API.get(`/orders/user/${userId}`);
 
-// Thêm API để lấy tất cả đơn hàng
 export const getAllOrders = () => API.get("/orders");
 
-// Thêm API để cập nhật đơn hàng
 export const updateOrder = (id, order) => API.put(`/orders/${id}`, order);
 
-// Thêm API để xóa đơn hàng
 export const deleteOrder = (id) => API.delete(`/orders/${id}`);
 
-// API cho trạng thái đơn hàng
-export const updateOrderStatus = (orderId, status) =>
+export const updateOrderStatus = (orderId, status, cancelReason) =>
   API.put(`/orders/${orderId}/status`, null, {
-    params: { status },
+    params: { status, cancelReason },
   });
 
 // API cho đánh giá
