@@ -25,6 +25,8 @@ public class OrderService {
     private static final List<String> VALID_STATUSES = Arrays.asList(
             "Xác nhận", "Đang xử lý", "Giao hàng", "Hoàn thành", "Hủy", "Trả hàng"
     );
+    @Autowired
+    private ProductService productService;
 
     public Order createOrder(String userId, List<CartItem> items, String paymentMethod, double total,
                              String name, String phone, String address, String voucher,
@@ -68,6 +70,7 @@ public class OrderService {
         paymentContext.executePayment(total);
 
         Order savedOrder = orderRepository.save(order);
+        productService.updateProductQuantity(items);
         cartService.removeSelectedItems(userId, items);
         return savedOrder;
     }
@@ -116,8 +119,12 @@ public class OrderService {
         Order existingOrder = existingOrderOpt.get();
         existingOrder.setStatus(status);
         if (status.equals("Hủy") && cancelReason != null && !cancelReason.isEmpty()) {
+            productService.refundProductQuantity(existingOrder.getItems());
             existingOrder.setCancelReason(cancelReason);
-        } else if (!status.equals("Hủy")) {
+        } else if(status.equals("Hủy")){
+            productService.refundProductQuantity(existingOrder.getItems());
+        }
+        else if (!status.equals("Hủy")) {
             existingOrder.setCancelReason(null);
         }
         return orderRepository.save(existingOrder);

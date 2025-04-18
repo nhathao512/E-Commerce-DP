@@ -2,6 +2,7 @@ package com.ecommerce.service;
 
 import com.ecommerce.dto.ProductRequest;
 import com.ecommerce.factory.ProductFactory;
+import com.ecommerce.model.CartItem;
 import com.ecommerce.model.ClothingProduct;
 import com.ecommerce.model.Product;
 import com.ecommerce.model.ShoeProduct;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -78,6 +80,49 @@ public class ProductService {
 
     public List<Product> getProductsByCategory(String categoryId) {
         return productRepository.findByCategoryId(categoryId);
+    }
+
+    public void updateProductQuantity(List<CartItem> items) {
+        for (CartItem item : items) {
+            String productId = item.getProduct().getId();
+            String size = item.getSize();
+            int quantity = item.getQuantity();
+            Optional<Product> optionalProduct = productRepository.findById(productId);
+            if (!optionalProduct.isPresent()) {
+                throw new IllegalArgumentException("Sản phẩm không tồn tại với ID: " + productId);
+            }
+            Product product = optionalProduct.get();
+
+            Integer currentQuantity = product.getQuantityForSize(size);
+            if (currentQuantity == null || currentQuantity < quantity) {
+                throw new IllegalArgumentException(
+                        "Số lượng tồn kho không đủ cho kích thước " + size + "! Chỉ còn " +
+                                (currentQuantity != null ? currentQuantity : 0)
+                );
+            }
+
+            product.updateQuantity(size, currentQuantity - quantity);
+            productRepository.save(product);
+        }
+    }
+
+    public void refundProductQuantity(List<CartItem> items) {
+        for (CartItem item : items) {
+            String productId = item.getProduct().getId();
+            String size = item.getSize();
+            int quantity = item.getQuantity();
+            Optional<Product> optionalProduct = productRepository.findById(productId);
+            if (!optionalProduct.isPresent()) {
+                throw new IllegalArgumentException("Sản phẩm không tồn tại với ID: " + productId);
+            }
+            Product product = optionalProduct.get();
+
+            Integer currentQuantity = product.getQuantityForSize(size);
+
+            product.updateQuantity(size, currentQuantity + quantity);
+            productRepository.save(product);
+        }
+
     }
 
     public List<Product> getAllProducts() {
