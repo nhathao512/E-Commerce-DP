@@ -24,7 +24,7 @@ function Cart() {
       setLoading(false);
       return;
     }
-
+  
     try {
       setLoading(true);
       const response = await getCart(userId);
@@ -39,8 +39,9 @@ function Cart() {
         price: item.product.price,
         quantity: item.quantity,
         size: item.size,
+        _class: item.product._class, // Thêm thuộc tính _class
       }));
-
+  
       setCartItems(mappedCartData);
     } catch (err) {
       setError("Không thể tải dữ liệu giỏ hàng. Vui lòng thử lại sau!");

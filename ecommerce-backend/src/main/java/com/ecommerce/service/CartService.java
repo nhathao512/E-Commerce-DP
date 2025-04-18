@@ -98,6 +98,19 @@ public class CartService {
         return cart.getTotal();
     }
 
+    public void removeSelectedItems(String userId, List<CartItem> selectedItems) {
+        Cart cart = Cart.getInstance(userId);
+        boolean hasObserver = cart.getObservers().stream()
+                .anyMatch(observer -> observer instanceof ConcreteCartObserver);
+        if (!hasObserver) {
+            cart.addObserver(new ConcreteCartObserver("UIObserver", userId, messagingTemplate));
+        }
+
+        for (CartItem item : selectedItems) {
+            cart.removeItem(item.getProduct().getId(), item.getSize());
+        }
+    }
+
     public void removeFromCart(String userId, String productId, String size) {
         Cart cart = Cart.getInstance(userId);
         // Đăng ký observer nếu chưa có

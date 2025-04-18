@@ -264,7 +264,7 @@ function Payment() {
       });
       return;
     }
-
+  
     if (!validateForm()) {
       return;
     }
@@ -275,7 +275,18 @@ function Payment() {
         userId,
         method,
         transferCode: method === "bank" ? transferCode : undefined,
-        items: selectedCartItems,
+        items: selectedCartItems.map((item) => ({
+          product: {
+            id: item.id,
+            productName: item.productName,
+            imageUrl: item.imageUrl,
+            price: item.price,
+            _class: item._class,
+          },
+          imageUrl: item.imageUrl,
+          quantity: item.quantity,
+          size: item.size,
+        })), // Bao gồm _class
         total: totalPrice,
         name: formData.name,
         phone: formData.phone,

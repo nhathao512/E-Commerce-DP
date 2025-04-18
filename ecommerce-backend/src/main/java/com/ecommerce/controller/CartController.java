@@ -91,4 +91,18 @@ public class CartController {
                     .build();
         }
     }
+
+    @DeleteMapping("/remove-selected")
+    public ResponseEntity<Void> removeSelectedItems(
+            @RequestParam String userId,
+            @RequestBody List<CartItem> selectedItems) {
+        try {
+            cartService.removeSelectedItems(userId, selectedItems);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .header("Error-Message", "Failed to remove selected items: " + e.getMessage())
+                    .build();
+        }
+    }
 }

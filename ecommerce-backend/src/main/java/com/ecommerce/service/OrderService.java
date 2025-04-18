@@ -68,7 +68,7 @@ public class OrderService {
         paymentContext.executePayment(total);
 
         Order savedOrder = orderRepository.save(order);
-        cartService.clearCart(userId);
+        cartService.removeSelectedItems(userId, items);
         return savedOrder;
     }
 
