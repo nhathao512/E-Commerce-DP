@@ -32,9 +32,12 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       const storedUser = localStorage.getItem("user");
 
+      console.log("Initializing auth:", { token: !!token, storedUser: !!storedUser });
+
       if (token && storedUser) {
         try {
           const decodedToken = decodeToken(token);
+          console.log("Decoded token:", decodedToken);
           if (!decodedToken || !decodedToken.userId) {
             throw new Error("Invalid token");
           }
@@ -44,9 +47,10 @@ export const AuthProvider = ({ children }) => {
             `/auth/me?username=${parsedUser.username}`
           );
           const fetchedUser = response.data;
+          console.log("Fetched user from /auth/me:", fetchedUser);
 
-          if (fetchedUser.error) {
-            throw new Error(fetchedUser.error);
+          if (fetchedUser.error || typeof fetchedUser.role !== "number") {
+            throw new Error(fetchedUser.error || "Invalid user data");
           }
 
           setUser(fetchedUser);
@@ -72,6 +76,7 @@ export const AuthProvider = ({ children }) => {
             }));
             localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
             window.dispatchEvent(new Event("cartUpdated"));
+            console.log("Cart synchronized:", mappedCartData);
           } catch (cartError) {
             console.error("Failed to fetch cart after auth:", cartError);
             localStorage.setItem("cartItems", JSON.stringify([]));
@@ -91,6 +96,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("userID");
         setIsAuthenticated(false);
         setUser(null);
+        console.log("No token or user found, cleared localStorage");
       }
       setIsLoading(false);
     };
@@ -107,19 +113,26 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem("cartItems");
 
       const response = await API.post("/auth/login", { username, password });
-      const { id, token, ...userData } = response.data;
+      const { id, token, role, ...userData } = response.data;
+      console.log("Login response:", { id, role, userData });
 
       // Giải mã token để lấy userId
       const decodedToken = decodeToken(token);
+      console.log("Decoded token on login:", decodedToken);
       if (!decodedToken || !decodedToken.userId) {
         throw new Error("Invalid token");
       }
 
+      // Kiểm tra role
+      if (typeof role !== "number") {
+        throw new Error("Invalid role data");
+      }
+
       // Lưu thông tin mới
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(userData));
-      localStorage.setItem("userID", decodedToken.userId); // Lưu userId với tên userID
-      setUser(userData);
+      localStorage.setItem("user", JSON.stringify({ ...userData, role }));
+      localStorage.setItem("userID", decodedToken.userId);
+      setUser({ ...userData, role });
       setIsAuthenticated(true);
 
       // Đồng bộ giỏ hàng
@@ -139,13 +152,14 @@ export const AuthProvider = ({ children }) => {
         }));
         localStorage.setItem("cartItems", JSON.stringify(mappedCartData));
         window.dispatchEvent(new Event("cartUpdated"));
+        console.log("Cart synchronized after login:", mappedCartData);
       } catch (cartError) {
         console.error("Failed to fetch cart after login:", cartError);
         localStorage.setItem("cartItems", JSON.stringify([]));
         window.dispatchEvent(new Event("cartUpdated"));
       }
 
-      return { token, id };
+      return { token, id, role }; // Trả về role để xử lý redirect
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -162,6 +176,7 @@ export const AuthProvider = ({ children }) => {
         fullName,
       });
       const userData = response.data;
+      console.log("Register response:", userData);
       localStorage.setItem("user", JSON.stringify(userData));
       return userData;
     } catch (error) {
@@ -170,11 +185,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = async () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("userID");
-    localStorage.removeItem("cartItems");
+  const logout = () => {
+    console.log("Logging out, clearing auth state");
+    localStorage.clear(); // Clear all localStorage to prevent stale data
     setIsAuthenticated(false);
     setUser(null);
     window.dispatchEvent(new Event("cartUpdated"));

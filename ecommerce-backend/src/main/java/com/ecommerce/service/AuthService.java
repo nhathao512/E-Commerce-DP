@@ -61,8 +61,9 @@ public class AuthService {
         user.setPhone(phone);
         user.setAddress(address);
         user.setFullName(fullName);
-        user.setAvatar(avatar != null && !avatar.isEmpty() ? avatar : "/uploads/avatars/default-avatar.png");
+        user.setAvatar(avatar != null && !avatar.isEmpty() ? avatar : "/Uploads/avatars/default-avatar.png");
         user.setShortUserId(generateShortUserId());
+        user.setRole(0); // Mặc định role = 0 cho người dùng mới
         User savedUser = userRepository.save(user);
         logger.info("User registered with ID: {}, shortUserId: {}", savedUser.getId(), savedUser.getShortUserId());
         return "User registered successfully with username: " + username + " and shortUserId: " + savedUser.getShortUserId();
@@ -88,7 +89,6 @@ public class AuthService {
         }
     }
 
-    // Thêm phương thức lấy thông tin người dùng hiện tại
     public UserResponse getCurrentUser(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -97,7 +97,6 @@ public class AuthService {
         return new UserResponse(user);
     }
 
-    // Thêm phương thức cập nhật thông tin người dùng
     public UserResponse updateUser(String username, String phone, String address, String fullName, String avatar) {
         User user = userRepository.findByUsername(username);
         if (user == null) {

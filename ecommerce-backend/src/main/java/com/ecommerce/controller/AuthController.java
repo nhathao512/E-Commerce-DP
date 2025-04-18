@@ -7,7 +7,6 @@ import com.ecommerce.model.User;
 import com.ecommerce.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -78,17 +77,27 @@ public class AuthController {
     }
 
     @PutMapping("/me")
-public ResponseEntity<UserResponse> updateCurrentUser(
-    @RequestParam(value = "phone", required = false) String phone,
-    @RequestParam(value = "address", required = false) String address,
-    @RequestParam(value = "fullName", required = false) String fullName,
-    @RequestParam(value = "avatar", required = false) String avatar,
-    @RequestParam("username") String username) {
+    public ResponseEntity<UserResponse> updateCurrentUser(
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "fullName", required = false) String fullName,
+            @RequestParam(value = "avatar", required = false) String avatar,
+            @RequestParam("username") String username) {
         try {
             UserResponse userResponse = authService.updateUser(username, phone, address, fullName, avatar);
             return ResponseEntity.ok(userResponse);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(404).body(new UserResponse("Không tìm thấy người dùng: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/role")
+    public ResponseEntity<Integer> getUserRole(@RequestParam("username") String username) {
+        try {
+            UserResponse userResponse = authService.getCurrentUser(username);
+            return ResponseEntity.ok(userResponse.getRole());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(-1);
         }
     }
 }

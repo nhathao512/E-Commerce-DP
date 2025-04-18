@@ -8,7 +8,7 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [notification, setNotification] = useState(null); // Thay popup bằng notification
+  const [notification, setNotification] = useState(null);
   const { login } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -16,11 +16,11 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(username, password);
+      const role = await login(username, password);
       setNotification({ message: "Đăng nhập thành công!", type: "success" });
       setTimeout(() => {
         setNotification(null);
-        navigate("/");
+        navigate(role === 1 ? "/admin" : "/");
         window.location.reload();
       }, 2000);
     } catch (error) {
@@ -35,7 +35,7 @@ function Login() {
         }
       }
       setNotification({ message: errorMsg, type: "error" });
-      setTimeout(() => setNotification(null), 3000); // Thông báo lỗi biến mất sau 3s
+      setTimeout(() => setNotification(null), 3000);
     }
   };
 

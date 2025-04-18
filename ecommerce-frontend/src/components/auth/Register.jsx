@@ -35,7 +35,7 @@ function Register() {
       return;
     }
     try {
-      await register(username, password, phone, address, fullName, ""); // Để avatar rỗng, backend sẽ gán mặc định
+      await register(username, password, phone, address, fullName, "");
       setPopup({ message: "Đăng ký thành công!", type: "success" });
       setTimeout(() => {
         setPopup(null);
@@ -79,7 +79,6 @@ function Register() {
               className={styles.input}
             />
           </div>
-
           <div className={styles.inputWrapper}>
             <FaLock className={styles.icon} />
             <input

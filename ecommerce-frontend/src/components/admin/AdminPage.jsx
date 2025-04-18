@@ -1,4 +1,5 @@
-import { Routes, Route, Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   FaUserCog,
   FaBoxOpen,
@@ -11,6 +12,7 @@ import {
   FaArrowLeft,
   FaArrowRight,
   FaSignOutAlt,
+  FaOutdent,
 } from "react-icons/fa";
 import { Bar, Line } from "react-chartjs-2";
 import {
@@ -24,12 +26,12 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { AuthContext } from "../../context/AuthContext";
 import UsersPage from "./manageuser/UserManagement";
 import ProductsPage from "./manageproduct/ProductManagement";
 import CategoriesPage from "./managecategories/CategoriesManagement";
 import OrderPage from "./manageorder/OrderManagement";
 import styles from "./AdminPage.module.css";
-import { useState, useEffect } from "react";
 import logo from "../../assets/logo1.png";
 import { getProducts, getAllOrders } from "../../services/api";
 import axios from "axios";
@@ -46,6 +48,8 @@ ChartJS.register(
 );
 
 function AdminPage() {
+  const { user, isAuthenticated, isLoading, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
   const location = useLocation();
   const [chartType, setChartType] = useState("bar");
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -54,6 +58,23 @@ function AdminPage() {
   const [ordersData, setOrdersData] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+
+  // Kiểm tra quyền truy cập admin
+  useEffect(() => {
+    console.log("Checking admin access:", {
+      isLoading,
+      isAuthenticated,
+      user: user ? { username: user.username, role: user.role } : null,
+    });
+    if (!isLoading) {
+      if (!isAuthenticated || !user || user.role !== 1) {
+        console.log("Unauthorized access to /admin, redirecting to /");
+        navigate("/", { replace: true });
+      } else {
+        console.log("Authorized admin access, role:", user.role);
+      }
+    }
+  }, [isAuthenticated, user, isLoading, navigate]);
 
   // Fetch products
   useEffect(() => {
@@ -322,8 +343,15 @@ function AdminPage() {
     window.URL.revokeObjectURL(url);
   };
 
+  // Handle logout
+  const handleLogout = () => {
+    console.log("Admin logging out, redirecting to /login");
+    logout();
+    navigate("/login", { replace: true });
+  };
+
   // Render loading or error state
-  if (loading) {
+  if (isLoading || loading) {
     return <div className={styles.loading}>Đang tải...</div>;
   }
   if (error) {
@@ -381,15 +409,21 @@ function AdminPage() {
                   <FaClipboardList style={{ marginRight: 14 }} /> Quản lý đơn
                   hàng
                 </Link>
-                <Link to="/" className={styles.logoutLink}>
-                  <FaSignOutAlt style={{ marginRight: 14 }} /> Thoát
-                </Link>
+                  <Link
+                    to="/"
+                    className={navLinkClass("/")}
+                  >
+                    <FaSignOutAlt style={{ marginRight: 14 }} /> Thoát
+                  </Link>
               </div>
             )}
           </div>
         </div>
 
         <main className={styles.main}>
+          <div className={styles.header}>
+            <h2>Chào {user?.username || "Admin"}!</h2>
+          </div>
           <Routes>
             <Route
               path="/"

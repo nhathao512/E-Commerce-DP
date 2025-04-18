@@ -14,9 +14,12 @@ public class User {
     private String address;
     private String fullName; // Thêm trường Họ và tên
     private String avatar; // Thêm trường Ảnh đại diện (URL hoặc đường dẫn)
+    private int role; // Thêm trường role (0 = user, 1 = admin)
 
     // Constructors
-    public User() {}
+    public User() {
+        this.role = 0; // Mặc định role = 0 khi tạo mới
+    }
 
     // Getters và Setters
     public String getId() { return id; }
@@ -35,4 +38,6 @@ public class User {
     public void setFullName(String fullName) { this.fullName = fullName; }
     public String getAvatar() { return avatar; }
     public void setAvatar(String avatar) { this.avatar = avatar; }
+    public int getRole() { return role; }
+    public void setRole(int role) { this.role = role; }
 }

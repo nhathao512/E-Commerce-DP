@@ -12,6 +12,7 @@ public class UserResponse {
     private String address;
     private String token;
     private String error; // Thêm trường error để chứa thông báo lỗi
+    private int role; // Thêm trường role
 
     // Constructor nhận một User (dùng khi trả về thông tin người dùng)
     public UserResponse(User user) {
@@ -22,6 +23,7 @@ public class UserResponse {
         this.avatar = user.getAvatar();
         this.phone = user.getPhone();
         this.address = user.getAddress();
+        this.role = user.getRole();
         this.error = null; // Không có lỗi
     }
 
@@ -34,6 +36,7 @@ public class UserResponse {
         this.avatar = null;
         this.phone = null;
         this.address = null;
+        this.role = 0;
         this.error = null;
     }
 
@@ -46,11 +49,12 @@ public class UserResponse {
         this.avatar = null;
         this.phone = null;
         this.address = null;
+        this.role = 0;
         this.error = error;
     }
 
     // Constructor đầy đủ với tất cả các tham số (dùng khi cần tạo đối tượng thủ công)
-    public UserResponse(String id, String shortUserId, String username, String fullName, String avatar, String phone, String address) {
+    public UserResponse(String id, String shortUserId, String username, String fullName, String avatar, String phone, String address, int role) {
         this.id = id;
         this.shortUserId = shortUserId;
         this.username = username;
@@ -58,76 +62,32 @@ public class UserResponse {
         this.avatar = avatar;
         this.phone = phone;
         this.address = address;
+        this.role = role;
         this.error = null;
     }
 
     // Getters và Setters
-    public String getId() {
-        return id;
-    }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getShortUserId() { return shortUserId; }
+    public void setShortUserId(String shortUserId) { this.shortUserId = shortUserId; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+    public String getAvatar() { return avatar; }
+    public void setAvatar(String avatar) { this.avatar = avatar; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getError() { return error; }
+    public void setError(String error) { this.error = error; }
+    public String getToken() { return token; }
+    public void setToken(String token) { this.token = token; }
+    public int getRole() { return role; }
+    public void setRole(int role) { this.role = role; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getShortUserId() {
-        return shortUserId;
-    }
-
-    public void setShortUserId(String shortUserId) {
-        this.shortUserId = shortUserId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-    
-    public String getToken() {return token;}
-    public void setToken(String token) {this.token = token;}
     // Phương thức toString để hỗ trợ debug
     @Override
     public String toString() {
@@ -139,6 +99,7 @@ public class UserResponse {
                 ", avatar='" + avatar + '\'' +
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
+                ", role=" + role +
                 ", error='" + error + '\'' +
                 '}';
     }
