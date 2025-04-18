@@ -157,21 +157,12 @@ public class ExportController {
     }
 
     private ResponseEntity<ByteArrayResource> createResponse(byte[] data, String filename, String format) {
-        String contentType;
+        String contentType = format.equalsIgnoreCase("csv") ? "text/csv" : "application/json";
         String extension = format.toLowerCase();
-
-        if (format.equalsIgnoreCase("csv")) {
-            // Specify charset for CSV to handle Vietnamese characters
-            contentType = "text/csv;charset=UTF-8";
-        } else {
-            // Specify charset for JSON to handle Vietnamese characters
-            contentType = "application/json;charset=UTF-8";
-        }
 
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=" + filename + "." + extension)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename + "." + extension)
                 .body(new ByteArrayResource(data));
     }
 }
