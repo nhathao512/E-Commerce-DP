@@ -99,7 +99,12 @@ export const updateOrderStatus = (orderId, status, cancelReason) =>
   });
 
 // API cho đánh giá
-export const addReview = (data) => API.post("/reviews", data);
+export const addReview = (data) =>
+  API.post("/reviews", data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 export const getReviews = (productCode) =>
   API.get(`/reviews/product/${productCode}`);
 

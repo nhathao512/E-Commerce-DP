@@ -264,7 +264,7 @@ function Payment() {
       });
       return;
     }
-  
+
     if (!validateForm()) {
       return;
     }
@@ -282,10 +282,12 @@ function Payment() {
             imageUrl: item.imageUrl,
             price: item.price,
             _class: item._class,
+            productCode: item.productCode,
           },
           imageUrl: item.imageUrl,
           quantity: item.quantity,
           size: item.size,
+          productName: item.productName,
         })), // Bao gồm _class
         total: totalPrice,
         name: formData.name,

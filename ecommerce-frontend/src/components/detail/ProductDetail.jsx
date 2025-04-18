@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProductById, addToCart, getCart } from "../../services/api";
-import ReviewForm from "../review/ReviewForm";
+import ReviewList from "../review/ReviewList";
 import Popup from "../common/Popup";
 import styles from "./ProductDetail.module.css";
 import notFound from "../../assets/productnotfound.png";
@@ -123,7 +123,6 @@ function ProductDetail() {
 
       await addToCart(productPayload, quantity, selectedSize, userId);
 
-      // Đồng bộ giỏ hàng từ backend
       const cartResponse = await getCart(userId);
       const cartData = cartResponse.data;
       const mappedCartData = cartData.map((item) => ({
@@ -274,7 +273,7 @@ function ProductDetail() {
         </div>
       </div>
 
-      <ReviewForm productCode={product.productCode} />
+      <ReviewList productCode={product.productCode} />
 
       {showLoginPopup && (
         <div className={styles.loginPopup}>
@@ -296,9 +295,7 @@ function ProductDetail() {
 
       {popup && <Popup {...popup} />}
       {notification && (
-        <div
-          className={`${styles.notification} ${styles.notificationSuccess}`}
-        >
+        <div className={`${styles.notification} ${styles.notificationSuccess}`}>
           {notification.message}
         </div>
       )}

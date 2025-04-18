@@ -27,7 +27,7 @@ function ReviewList({ productCode }) {
           {reviews.map((review) => (
             <li key={review.id} className={styles.reviewItem}>
               <span className={styles.reviewUser}>
-                {review.fullName || "Anonymous"} {/* Hiển thị fullName */}
+                {review.fullName || "Anonymous"}
               </span>
               <div className={styles.reviewRating}>
                 {[...Array(5)].map((_, index) => (

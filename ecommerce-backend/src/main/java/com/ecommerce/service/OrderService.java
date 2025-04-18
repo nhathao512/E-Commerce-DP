@@ -22,11 +22,12 @@ public class OrderService {
     @Autowired
     private CartService cartService;
 
+    @Autowired
+    private ProductService productService;
+
     private static final List<String> VALID_STATUSES = Arrays.asList(
             "Xác nhận", "Đang xử lý", "Giao hàng", "Hoàn thành", "Hủy", "Trả hàng"
     );
-    @Autowired
-    private ProductService productService;
 
     public Order createOrder(String userId, List<CartItem> items, String paymentMethod, double total,
                              String name, String phone, String address, String voucher,
@@ -36,6 +37,14 @@ public class OrderService {
         }
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("ID người dùng không được trống!");
+        }
+
+        // Đảm bảo mỗi CartItem có productCode
+        for (CartItem item : items) {
+            if (item.getProduct() == null || item.getProduct().getProductCode() == null) {
+                throw new IllegalArgumentException("Sản phẩm hoặc mã sản phẩm không hợp lệ: " + item.getProductName());
+            }
+            item.setProductCode(item.getProduct().getProductCode());
         }
 
         Order order = new Order();
@@ -79,11 +88,37 @@ public class OrderService {
         if (userId == null || userId.isEmpty()) {
             throw new IllegalArgumentException("ID người dùng không được trống!");
         }
-        return orderRepository.findByUserId(userId);
+        List<Order> orders = orderRepository.findByUserId(userId);
+        // Đảm bảo productCode được bao gồm trong mỗi CartItem
+        for (Order order : orders) {
+            for (CartItem item : order.getItems()) {
+                if (item.getProductCode() == null || item.getProductCode().isEmpty()) {
+                    if (item.getProduct() != null && item.getProduct().getProductCode() != null) {
+                        item.setProductCode(item.getProduct().getProductCode());
+                    } else {
+                        item.setProductCode("UNKNOWN");
+                    }
+                }
+            }
+        }
+        return orders;
     }
 
     public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+        List<Order> orders = orderRepository.findAll();
+        // Đảm bảo productCode được bao gồm trong mỗi CartItem
+        for (Order order : orders) {
+            for (CartItem item : order.getItems()) {
+                if (item.getProductCode() == null || item.getProductCode().isEmpty()) {
+                    if (item.getProduct() != null && item.getProduct().getProductCode() != null) {
+                        item.setProductCode(item.getProduct().getProductCode());
+                    } else {
+                        item.setProductCode("UNKNOWN");
+                    }
+                }
+            }
+        }
+        return orders;
     }
 
     public Order updateOrder(String id, Order updatedOrder) {
@@ -121,10 +156,9 @@ public class OrderService {
         if (status.equals("Hủy") && cancelReason != null && !cancelReason.isEmpty()) {
             productService.refundProductQuantity(existingOrder.getItems());
             existingOrder.setCancelReason(cancelReason);
-        } else if(status.equals("Hủy")){
+        } else if (status.equals("Hủy")) {
             productService.refundProductQuantity(existingOrder.getItems());
-        }
-        else if (!status.equals("Hủy")) {
+        } else if (!status.equals("Hủy")) {
             existingOrder.setCancelReason(null);
         }
         return orderRepository.save(existingOrder);

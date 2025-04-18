@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { getOrdersByUserId } from "../../services/api";
+import ReviewForm from "../review/ReviewForm";
 import styles from "./UserOrderManagement.module.css";
 import { FaList } from "react-icons/fa";
 import noOrdersImage from "../../assets/emptyorder.png";
@@ -8,6 +9,7 @@ import noOrdersImage from "../../assets/emptyorder.png";
 const UserOrderManagement = () => {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showReviewForm, setShowReviewForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -57,19 +59,21 @@ const UserOrderManagement = () => {
           total: order.total,
           createdAt: new Date(order.createdAt).toLocaleDateString("vi-VN"),
           items: order.items.map((item) => ({
-            name: item.productName,
+            name: item.productName || "Sản phẩm không xác định",
             quantity: item.quantity,
             imageUrl:
               item.imageUrl ||
               `https://placehold.co/50x50?text=${encodeURIComponent(
-                item.productName
+                item.productName || "Sản phẩm"
               )}`,
+            productCode: item.productCode,
           })),
           cancelReason: order.cancelReason || "",
         }));
+        console.log("Dữ liệu đơn hàng:", JSON.stringify(ordersData, null, 2)); // Ghi log chi tiết
         setOrders(ordersData);
       } catch (err) {
-        console.error("Failed to fetch orders:", err);
+        console.error("Lỗi khi lấy đơn hàng:", err);
         setError(
           err.response?.status === 404
             ? "Không tìm thấy đơn hàng nào cho người dùng này."
@@ -103,8 +107,16 @@ const UserOrderManagement = () => {
   };
 
   const canRate = (status) => status === "Thành công";
-  const canRepurchase = (status) =>
-    status === "Thành công" || status === "Đã hủy" || status === "Đã trả hàng";
+
+  const handleRateClick = (item) => {
+    console.log("Nhấn nút Đánh giá cho item:", item); // Ghi log để debug
+    if (!item.productCode || item.productCode === "UNKNOWN") {
+      console.error("Mã sản phẩm không hợp lệ:", item);
+      alert("Không thể đánh giá: Mã sản phẩm không hợp lệ!");
+      return;
+    }
+    setShowReviewForm(item);
+  };
 
   if (authLoading || loading) {
     return <div>Đang tải...</div>;
@@ -124,7 +136,7 @@ const UserOrderManagement = () => {
         <div className={styles.noOrders}>
           <img
             src={noOrdersImage}
-            alt="No orders"
+            alt="Không có đơn hàng"
             className={styles.noOrdersImage}
           />
         </div>
@@ -200,7 +212,7 @@ const UserOrderManagement = () => {
                 <tr>
                   <th>Tên</th>
                   <th>SL</th>
-                  <th>Actions</th>
+                  <th>Thao tác</th>
                   <th>Trạng thái</th>
                 </tr>
               </thead>
@@ -213,15 +225,12 @@ const UserOrderManagement = () => {
                       <div className={styles.popupButtons}>
                         <button
                           className={styles.actionBtn}
-                          disabled={!canRate(selectedOrder.status)}
+                          onClick={() => handleRateClick(item)}
+                          disabled={
+                            !canRate(selectedOrder.status) || !item.productCode
+                          }
                         >
                           Đánh giá
-                        </button>
-                        <button
-                          className={styles.actionBtn}
-                          disabled={!canRepurchase(selectedOrder.status)}
-                        >
-                          Mua lại
                         </button>
                       </div>
                     </td>
@@ -242,6 +251,24 @@ const UserOrderManagement = () => {
             <button
               className={styles.closeBtn}
               onClick={() => setSelectedOrder(null)}
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showReviewForm && (
+        <div className={styles.popupOverlay}>
+          <div className={styles.popup}>
+            <h3>Đánh giá sản phẩm: {showReviewForm.name}</h3>
+            <ReviewForm
+              productCode={showReviewForm.productCode}
+              onClose={() => setShowReviewForm(null)}
+            />
+            <button
+              className={styles.closeBtn}
+              onClick={() => setShowReviewForm(null)}
             >
               Đóng
             </button>
