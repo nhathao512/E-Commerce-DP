@@ -119,4 +119,10 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + id));
         userRepository.delete(user);
     }
+
+    // Thêm phương thức getUserById
+    public User getUserById(String userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
+    }
 }

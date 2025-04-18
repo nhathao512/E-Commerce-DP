@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Routes, Route, Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Link,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import {
   FaUserCog,
   FaBoxOpen,
@@ -12,7 +18,6 @@ import {
   FaArrowLeft,
   FaArrowRight,
   FaSignOutAlt,
-  FaOutdent,
 } from "react-icons/fa";
 import { Bar, Line } from "react-chartjs-2";
 import {
@@ -33,7 +38,12 @@ import CategoriesPage from "./managecategories/CategoriesManagement";
 import OrderPage from "./manageorder/OrderManagement";
 import styles from "./AdminPage.module.css";
 import logo from "../../assets/logo1.png";
-import { getProducts, getAllOrders } from "../../services/api";
+import {
+  getProducts,
+  getAllOrders,
+  exportTopProducts,
+  exportTopUsers,
+} from "../../services/api";
 import axios from "axios";
 
 ChartJS.register(
@@ -48,7 +58,7 @@ ChartJS.register(
 );
 
 function AdminPage() {
-  const { user, isAuthenticated, isLoading, logout } = useContext(AuthContext);
+  const { user, isAuthenticated, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [chartType, setChartType] = useState("bar");
@@ -59,75 +69,44 @@ function AdminPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  // Kiểm tra quyền truy cập admin
   useEffect(() => {
-    console.log("Checking admin access:", {
-      isLoading,
-      isAuthenticated,
-      user: user ? { username: user.username, role: user.role } : null,
-    });
-    if (!isLoading) {
-      if (!isAuthenticated || !user || user.role !== 1) {
-        console.log("Unauthorized access to /admin, redirecting to /");
-        navigate("/", { replace: true });
-      } else {
-        console.log("Authorized admin access, role:", user.role);
-      }
+    if (!isLoading && (!isAuthenticated || !user || user.role !== 1)) {
+      navigate("/", { replace: true });
     }
   }, [isAuthenticated, user, isLoading, navigate]);
 
-  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await getProducts();
-        const validProducts = response.data
-          .filter(
-            (product) =>
-              product &&
-              product.name &&
-              typeof product.name === "string"
-          )
-          .map((product) => ({
-            ...product,
-            id: product.id || "N/A",
-            productCode: product.productCode || "N/A",
-            images: Array.isArray(product.images) ? product.images : [],
-          }));
-        setProductsData(validProducts);
-        console.log("Fetched products:", validProducts);
-      } catch (error) {
-        console.error("Error fetching products:", error);
+        setProductsData(response.data || []);
+      } catch {
         setError("Không thể tải dữ liệu sản phẩm.");
       }
     };
     fetchProducts();
   }, []);
 
-  // Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/auth/users");
+        const response = await axios.get(
+          "http://localhost:8080/api/auth/users"
+        );
         setUsersData(response.data || []);
-        console.log("Fetched users:", response.data);
-      } catch (error) {
-        console.error("Error fetching users:", error);
+      } catch {
         setError("Không thể tải dữ liệu người dùng.");
       }
     };
     fetchUsers();
   }, []);
 
-  // Fetch orders
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await getAllOrders();
         setOrdersData(response.data || []);
-        console.log("Fetched orders:", response.data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
+      } catch {
         setError("Không thể tải dữ liệu đơn hàng.");
       } finally {
         setLoading(false);
@@ -139,49 +118,30 @@ function AdminPage() {
   const navLinkClass = (path) =>
     `${location.pathname === path ? styles.activeLink : ""}`;
 
-  // Calculate monthly revenue
   const monthlyRevenue = ordersData
     .filter((order) => order.status === "Hoàn thành")
     .reduce((sum, order) => sum + order.total, 0)
     .toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 
-  // Top products and users
   const { productCounts, userCounts } = ordersData
     .filter((order) => order.status === "Hoàn thành")
     .reduce(
       (acc, order) => {
         const userId = String(order.userId);
         acc.userCounts[userId] = (acc.userCounts[userId] || 0) + 1;
-        if (!usersData.find((u) => String(u.id) === userId)) {
-          console.warn(`User ID ${userId} not found in usersData`);
-        }
-
-        if (order.items && Array.isArray(order.items)) {
-          order.items.forEach((item, index) => {
-            const productName = item.productName || "Unknown Product";
-            console.log(`Order ${order.id}, item ${index}:`, item);
-            if (productName) {
-              if (!acc.productCounts[productName]) {
-                acc.productCounts[productName] = {
-                  name: productName,
-                  count: 0,
-                };
-              }
-              acc.productCounts[productName].count += item.quantity || 1;
-            } else {
-              console.warn(`Invalid item in order ${order.id}:`, item);
+        order.items.forEach((item) => {
+          const productName = item.productName || "Unknown Product";
+          if (productName) {
+            if (!acc.productCounts[productName]) {
+              acc.productCounts[productName] = { name: productName, count: 0 };
             }
-          });
-        } else {
-          console.warn(`Order ${order.id} missing items:`, order);
-        }
+            acc.productCounts[productName].count += item.quantity || 1;
+          }
+        });
         return acc;
       },
       { productCounts: {}, userCounts: {} }
     );
-
-  console.log("Product counts:", productCounts);
-  console.log("User counts:", userCounts);
 
   const topProducts = Object.values(productCounts)
     .sort((a, b) => b.count - a.count)
@@ -200,7 +160,6 @@ function AdminPage() {
     .sort((a, b) => b.count - a.count)
     .slice(0, 10);
 
-  // Monthly revenue chart data
   const monthlyRevenueData = Array(12).fill(0);
   ordersData
     .filter((order) => order.status === "Hoàn thành")
@@ -211,14 +170,6 @@ function AdminPage() {
         monthlyRevenueData[month] += order.total;
       }
     });
-
-  // Gradient for chart
-  const createGradient = (ctx, chartArea) => {
-    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-    gradient.addColorStop(0, "rgba(34, 197, 94, 0.2)");
-    gradient.addColorStop(1, "rgba(34, 197, 94, 0.8)");
-    return gradient;
-  };
 
   const chartData = {
     labels: [
@@ -239,12 +190,7 @@ function AdminPage() {
       {
         label: "Doanh thu hàng tháng (VND)",
         data: monthlyRevenueData,
-        backgroundColor: (context) => {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
-          if (!chartArea) return "rgba(34, 197, 94, 0.6)";
-          return chartType === "bar" ? createGradient(ctx, chartArea) : "transparent";
-        },
+        backgroundColor: "#22c55e",
         borderColor: "#22c55e",
         borderWidth: 2,
         pointBackgroundColor: "#22c55e",
@@ -262,100 +208,68 @@ function AdminPage() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: "top",
-        labels: {
-          font: { size: 14, weight: "500" },
-          color: "#1e293b",
-        },
-      },
+      legend: { position: "top" },
       title: {
         display: true,
         text: "Doanh thu 12 tháng (2025)",
-        font: { size: 20, weight: "600" },
-        color: "#1e293b",
-        padding: { top: 10, bottom: 20 },
-      },
-      tooltip: {
-        backgroundColor: "#1e293b",
-        titleFont: { size: 14 },
-        bodyFont: { size: 12 },
-        callbacks: {
-          label: (context) =>
-            `${context.dataset.label}: ${new Intl.NumberFormat("vi-VN", {
-              style: "currency",
-              currency: "VND",
-            }).format(context.parsed.y)}`,
-        },
       },
     },
     scales: {
       y: {
         beginAtZero: true,
         ticks: {
-          color: "#4b5563",
-          font: { size: 12 },
           callback: (value) =>
             new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
-              minimumFractionDigits: 0,
             }).format(value),
         },
-        grid: {
-          color: "rgba(0, 0, 0, 0.05)",
-        },
-      },
-      x: {
-        ticks: {
-          color: "#4b5563",
-          font: { size: 12 },
-        },
-        grid: {
-          display: false,
-        },
       },
     },
-    animation: {
-      duration: 1000,
-      easing: "easeOutQuart",
-    },
   };
 
-  // Export data
-  const exportToCSV = (data, filename) => {
-    const csv = filename.includes("users")
-      ? ["Username,FullName,Count"]
-      : ["Name,Count"];
-    data.forEach((item) =>
-      csv.push(
-        filename.includes("users")
-          ? `${item.username},${item.fullName},${item.count}`
-          : `${item.name},${item.count}`
-      )
-    );
-    const blob = new Blob([csv.join("\n")], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${filename}.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+  // Hàm gọi API xuất dữ liệu
+  const exportData = async (type, format) => {
+    try {
+      const response =
+        type === "top-products"
+          ? await exportTopProducts(format)
+          : await exportTopUsers(format);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${type}.${format}`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(`Lỗi khi xuất ${type} dưới dạng ${format}:`, error);
+      const errorMessage =
+        error.response?.status === 401
+          ? "Bạn cần đăng nhập với quyền admin để xuất dữ liệu."
+          : `Không thể xuất dữ liệu ${type}. Vui lòng thử lại.`;
+      setError(errorMessage);
+    }
   };
 
-  // Handle logout
-  const handleLogout = () => {
-    console.log("Admin logging out, redirecting to /login");
-    logout();
-    navigate("/login", { replace: true });
-  };
-
-  // Render loading or error state
   if (isLoading || loading) {
     return <div className={styles.loading}>Đang tải...</div>;
   }
   if (error) {
-    return <div className={styles.error}>Lỗi: {error}</div>;
+    return (
+      <div className={styles.error}>
+        Lỗi: {error}
+        <button
+          className={styles.actionButton}
+          onClick={() => setError("")}
+          style={{ marginTop: "10px" }}
+        >
+          Thử lại
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -387,7 +301,10 @@ function AdminPage() {
                 <Link to="/admin" className={navLinkClass("/admin")}>
                   <FaCogs style={{ marginRight: 14 }} /> Trang Chủ
                 </Link>
-                <Link to="/admin/users" className={navLinkClass("/admin/users")}>
+                <Link
+                  to="/admin/users"
+                  className={navLinkClass("/admin/users")}
+                >
                   <FaUserCog style={{ marginRight: 14 }} /> Quản lý người dùng
                 </Link>
                 <Link
@@ -409,12 +326,9 @@ function AdminPage() {
                   <FaClipboardList style={{ marginRight: 14 }} /> Quản lý đơn
                   hàng
                 </Link>
-                  <Link
-                    to="/"
-                    className={navLinkClass("/")}
-                  >
-                    <FaSignOutAlt style={{ marginRight: 14 }} /> Thoát
-                  </Link>
+                <Link to="/" className={navLinkClass("/")}>
+                  <FaSignOutAlt style={{ marginRight: 14 }} /> Thoát
+                </Link>
               </div>
             )}
           </div>
@@ -469,29 +383,34 @@ function AdminPage() {
                   <div className={styles.actionsSection}>
                     <h3>Thao tác nhanh</h3>
                     <div className={styles.actionsContainer}>
-                      <Link
-                        to="/admin/products"
-                        className={styles.actionButton}
-                      >
-                        <FaPlus /> Thêm sản phẩm
-                      </Link>
-                      <Link to="/admin/orders" className={styles.actionButton}>
-                        <FaClipboardList /> Xem đơn hàng chờ
-                      </Link>
-                      <button
-                        className={styles.actionButton}
-                        onClick={() =>
-                          exportToCSV(topProducts, "top_products")
-                        }
-                      >
-                        <FaFileExport /> Xuất dữ liệu sản phẩm
-                      </button>
-                      <button
-                        className={styles.actionButton}
-                        onClick={() => exportToCSV(topUsers, "top_users")}
-                      >
-                        <FaFileExport /> Xuất dữ liệu người dùng
-                      </button>
+                      <div className={styles.exportButtonGroup}>
+                        <button
+                          className={styles.actionButton}
+                          onClick={() => exportData("top-products", "csv")}
+                        >
+                          <FaFileExport /> Xuất top sản phẩm (CSV)
+                        </button>
+                        <button
+                          className={styles.actionButton}
+                          onClick={() => exportData("top-products", "json")}
+                        >
+                          <FaFileExport /> Xuất top sản phẩm (JSON)
+                        </button>
+                      </div>
+                      <div className={styles.exportButtonGroup}>
+                        <button
+                          className={styles.actionButton}
+                          onClick={() => exportData("top-users", "csv")}
+                        >
+                          <FaFileExport /> Xuất top người dùng (CSV)
+                        </button>
+                        <button
+                          className={styles.actionButton}
+                          onClick={() => exportData("top-users", "json")}
+                        >
+                          <FaFileExport /> Xuất top người dùng (JSON)
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -517,7 +436,7 @@ function AdminPage() {
                             </tbody>
                           </table>
                         ) : (
-                          <p>Không có dữ liệu sản phẩm được mua. Vui lòng kiểm tra đơn hàng.</p>
+                          <p>Không có dữ liệu sản phẩm được mua.</p>
                         )}
                       </div>
                     ) : (
@@ -547,7 +466,7 @@ function AdminPage() {
                             </tbody>
                           </table>
                         ) : (
-                          <p>Không có dữ liệu người dùng mua hàng. Vui lòng kiểm tra đơn hàng.</p>
+                          <p>Không có dữ liệu người dùng mua hàng.</p>
                         )}
                       </div>
                     ) : (

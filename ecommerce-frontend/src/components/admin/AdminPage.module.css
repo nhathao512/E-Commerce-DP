@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -19,7 +20,8 @@ html, body {
   background-color: #ffffff;
   border-radius: 20px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   margin: 0;
 }
 
@@ -124,14 +126,16 @@ html, body {
   background: #ffffff;
   padding: 28px;
   border-radius: 16px;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.08), -5px -5px 15px rgba(255, 255, 255, 0.8);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.08),
+    -5px -5px 15px rgba(255, 255, 255, 0.8);
   display: flex;
   align-items: center;
   transition: box-shadow 0.2s ease;
 }
 
 .card:hover {
-  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1), -8px -8px 20px rgba(255, 255, 255, 0.9);
+  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1),
+    -8px -8px 20px rgba(255, 255, 255, 0.9);
 }
 
 .cardIcon {
@@ -157,7 +161,7 @@ html, body {
 .cardRevenue {
   border: 3px solid transparent;
   background: linear-gradient(#ffffff, #ffffff) padding-box,
-              linear-gradient(135deg, #22c55e, #16a34a) border-box;
+    linear-gradient(135deg, #22c55e, #16a34a) border-box;
 }
 
 .cardRevenue .cardIcon {
@@ -203,7 +207,7 @@ html, body {
 }
 
 .actionsSection h3::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -8px;
   left: 50%;
@@ -228,7 +232,8 @@ html, body {
   background: #ffffff;
   border: none;
   border-radius: 12px;
-  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.08), -4px -4px 12px rgba(255, 255, 255, 0.8);
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.08),
+    -4px -4px 12px rgba(255, 255, 255, 0.8);
   color: #1e293b;
   font-size: 16px;
   font-weight: 500;
@@ -241,7 +246,8 @@ html, body {
 }
 
 .actionButton:hover {
-  box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.1), -6px -6px 15px rgba(255, 255, 255, 0.9);
+  box-shadow: 6px 6px 15px rgba(0, 0, 0, 0.1),
+    -6px -6px 15px rgba(255, 255, 255, 0.9);
 }
 
 .actionButton svg {
@@ -261,12 +267,14 @@ html, body {
   background: #ffffff;
   padding: 32px;
   border-radius: 16px;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.08), -5px -5px 15px rgba(255, 255, 255, 0.8);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.08),
+    -5px -5px 15px rgba(255, 255, 255, 0.8);
   transition: box-shadow 0.2s ease;
 }
 
 .cardTable:hover {
-  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1), -8px -8px 20px rgba(255, 255, 255, 0.9);
+  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1),
+    -8px -8px 20px rgba(255, 255, 255, 0.9);
 }
 
 .cardTable h3 {
@@ -321,12 +329,14 @@ html, body {
   background: #ffffff;
   padding: 32px;
   border-radius: 16px;
-  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.08), -5px -5px 15px rgba(255, 255, 255, 0.8);
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.08),
+    -5px -5px 15px rgba(255, 255, 255, 0.8);
   transition: box-shadow 0.2s ease;
 }
 
 .chartSection:hover {
-  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1), -8px -8px 20px rgba(255, 255, 255, 0.9);
+  box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1),
+    -8px -8px 20px rgba(255, 255, 255, 0.9);
 }
 
 .chartHeader {
@@ -387,7 +397,8 @@ html, body {
   border: none;
   border-radius: 10px;
   background: #ffffff;
-  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.08), -3px -3px 10px rgba(255, 255, 255, 0.8);
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.08),
+    -3px -3px 10px rgba(255, 255, 255, 0.8);
   color: #1e293b;
   font-size: 16px;
   font-weight: 500;
@@ -396,7 +407,8 @@ html, body {
 }
 
 .paginationButton:hover {
-  box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.1), -5px -5px 12px rgba(255, 255, 255, 0.9);
+  box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.1),
+    -5px -5px 12px rgba(255, 255, 255, 0.9);
   background: #0da2ff;
   color: #1e293b;
 }
@@ -404,7 +416,8 @@ html, body {
 .activePagination {
   background: #1e40af;
   color: #ffffff;
-  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.08), -3px -3px 10px rgba(255, 255, 255, 0.8);
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.08),
+    -3px -3px 10px rgba(255, 255, 255, 0.8);
 }
 
 /* Sidebar collapsed state */
@@ -594,5 +607,33 @@ html, body {
 
   .actionButton {
     width: 100%; /* Chiếm toàn bộ chiều rộng trên màn hình rất nhỏ */
+  }
+}
+
+/* Export Button Group */
+.exportButtonGroup {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Responsive Design for Export Button Group */
+@media (max-width: 768px) {
+  .exportButtonGroup {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .exportButtonGroup {
+    width: 100%;
+  }
+
+  .exportButtonGroup .actionButton {
+    width: 100%;
+    text-align: center;
   }
 }

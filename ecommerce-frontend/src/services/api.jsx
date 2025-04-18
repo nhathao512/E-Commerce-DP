@@ -111,4 +111,17 @@ export const updateCategory = (id, name, icon) =>
   API.put(`/categories/${id}`, null, { params: { name, icon } });
 export const deleteCategory = (id) => API.delete(`/categories/${id}`);
 
+// API cho xuất dữ liệu
+export const exportTopProducts = (format) =>
+  API.get("/export/top-products", {
+    params: { format },
+    responseType: "blob",
+  });
+
+export const exportTopUsers = (format) =>
+  API.get("/export/top-users", {
+    params: { format },
+    responseType: "blob",
+  });
+
 export default API;
