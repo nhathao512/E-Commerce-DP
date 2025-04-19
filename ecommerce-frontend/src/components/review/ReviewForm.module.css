@@ -1,262 +1,275 @@
 .commentSection {
-  margin-top: 40px;
-  padding-top: 20px;
-  border-top: 1px solid #ddd;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
+  margin-top: 48px;
+  padding: 32px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.commentSection:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
 .commentTitle {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #333;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #1a202c;
+  background: linear-gradient(to right, #2b6cb0, #9f7aea);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-align: center;
 }
 
-/* Bố cục hai cột */
 .commentLayout {
   display: flex;
-  gap: 30px;
-  flex-wrap: wrap; /* Cho phép wrap trên mobile */
+  gap: 32px;
+  flex-wrap: wrap;
 }
 
 .commentFormWrapper {
   flex: 1;
-  min-width: 300px; /* Đảm bảo form không bị quá nhỏ */
+  min-width: 320px;
 }
 
 .commentForm {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  margin-left: 0;
-  margin-right: auto;
+  gap: 16px;
 }
 
 .ratingSection {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  background: #edf2f7;
+  padding: 12px;
+  border-radius: 8px;
 }
 
 .ratingSection p {
   font-size: 16px;
+  font-weight: 500;
   margin: 0;
-  color: #333;
+  color: #2d3748;
 }
 
 .stars {
   display: flex;
-  gap: 5px;
+  gap: 8px;
 }
 
 .star {
-  font-size: 20px;
-  color: #ddd;
+  font-size: 24px;
+  color: #e2e8f0;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.star:hover,
+.star:hover {
+  transform: scale(1.2);
+}
+
 .starFilled {
-  color: #ffcc00;
+  color: #fbd919;
+  filter: drop-shadow(0 0 4px rgba(246, 224, 94, 0.5));
 }
 
 .commentInput {
   width: 100%;
-  height: 100px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
+  height: 120px;
+  padding: 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
   resize: vertical;
-  transition: border-color 0.3s ease;
+  background: #fff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .commentInput:focus {
-  border-color: #ff0000;
+  border-color: #5a67d8;
+  box-shadow: 0 0 0 4px rgba(90, 103, 216, 0.1);
   outline: none;
 }
 
 .submitButton {
-  background: #016fec;
+  background: linear-gradient(90deg, #5a67d8 0%, #9f7aea 100%);
   color: #fff;
   border: none;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: bold;
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  border-radius: 8px;
   text-transform: uppercase;
-  transition: background 0.3s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .submitButton:hover {
-  background: #1500ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(90, 103, 216, 0.3);
+}
+
+.submitButton:active {
+  transform: scale(0.98);
+}
+
+.cancelButton {
+  background: transparent;
+  color: #ffffff;
+
+  background: linear-gradient(90deg, #5a67d8 0%, #9f7aea 100%);
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 8px;
+  text-transform: uppercase;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+  margin-left: 20px;
+}
+
+.cancelButton:hover {
+  
+  transform: translateY(-2px);
+
+}
+
+.cancelButton:active {
+  transform: scale(0.98);
 }
 
 .commentListWrapper {
   flex: 1;
-  min-width: 300px; /* Đảm bảo danh sách không bị quá nhỏ */
+  min-width: 320px;
 }
 
 .commentList {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
 .commentItem {
-  padding: 15px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
   background: #fff;
-  transition: box-shadow 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .commentItem:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .commentUser {
-  font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 5px;
-  color: #333;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 8px;
+  color: #2d3748;
 }
 
 .commentRating {
   display: flex;
-  gap: 5px;
-  margin-bottom: 5px;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 .commentContent {
   font-size: 14px;
-  margin-bottom: 5px;
-  color: #555;
+  margin-bottom: 8px;
+  color: #4a5568;
+  line-height: 1.6;
 }
 
 .commentDate {
-  font-size: 12px;
-  color: #999;
+  font-size: 13px;
+  color: #a0aec0;
 }
 
-.loginPopup {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #fff;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  text-align: center;
-  font-size: 16px;
-  color: #333;
-  border: 2px solid #4c4b4b;
-  animation: fadeIn 0.3s ease-in-out;
-  min-width: 300px;
-}
-
+.loginPopup,
 .alertPopup {
   position: fixed;
   top: 20%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: #fff;
-  padding: 25px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  background: #fff;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   text-align: center;
   font-size: 16px;
-  color: #333;
-  border: 2px solid #4c4b4b;
-  animation: fadeIn 0.3s ease-in-out;
-  min-width: 300px;
+  color: #2d3748;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+  animation: slideIn 0.4s ease-in-out;
+  min-width: 320px;
 }
 
-.success {
-  background-color: #d4edda; /* Màu xanh nhạt cho thành công */
-  border-color: #c3e6cb;
-  color: #155724;
+.loginPopup {
+  background: linear-gradient(135deg, #fefcbf, #fed7e2);
+  border-image: linear-gradient(135deg, #f6e05e, #f687b3) 1;
 }
 
-.error {
-  background-color: #f8d7da; /* Màu đỏ nhạt cho lỗi */
-  border-color: #f5c6cb;
-  color: #721c24;
+.alertPopup.success {
+  background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+  border-image: linear-gradient(135deg, #68d391, #48bb78) 1;
 }
 
-.alertPopup p {
-  font-weight: bold;
-  margin-bottom: 10px;
+.alertPopup.error {
+  background: linear-gradient(135deg, #fed7e2, #feb2b2);
+  border-image: linear-gradient(135deg, #f687b3, #e53e3e) 1;
 }
 
-.alertPopup button {
-  padding: 10px 20px;
-  margin: 10px 5px 0;
-  font-size: 14px;
-  font-weight: 500;
+.alertPopup p,
+.loginPopup p {
+  font-weight: 600;
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+
+.alertPopup button,
+.loginPopup button {
+  padding: 12px 24px;
+  margin: 12px 6px 0;
+  font-size: 15px;
+  font-weight: 600;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.alertPopup .closeButton {
-  background-color: #e63946; /* Màu đỏ */
-  color: white;
+.alertPopup .closeButton,
+.loginPopup .closeButton {
+  background: linear-gradient(90deg, #e53e3e, #f56565);
+  color: #fff;
 }
 
-.alertPopup .closeButton:hover {
-  background-color: #d00000;
+.alertPopup .closeButton:hover,
+.loginPopup .closeButton:hover {
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
 }
 
-.alertPopup .closeButton:active {
+.alertPopup .closeButton:active,
+.loginPopup .closeButton:active {
   transform: scale(0.98);
 }
 
-@keyframes fadeIn {
+@keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
+    transform: translateX(-50%) translateY(-20px);
   }
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
-}
-
-/* Style chung cho các nút trong popup */
-.loginPopup button {
-  padding: 10px 20px;
-  margin: 10px 5px 0;
-  font-size: 14px;
-  font-weight: 500;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.loginPopup p {
-  font-weight: bold;
-}
-
-.closeButton {
-  background-color: #e63946; /* Màu đỏ */
-  color: white;
-}
-
-.closeButton:hover {
-  background-color: #d00000;
-  transform: translateY(-2px);
-}
-
-.closeButton:active {
-  transform: scale(0.98);
 }

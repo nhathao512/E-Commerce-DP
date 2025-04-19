@@ -12,12 +12,10 @@ const UserOrderManagement = () => {
   const [showReviewForm, setShowReviewForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1); // New state for current page
+  const ordersPerPage = 5; // Display 3 orders per page
 
-  const {
-    user,
-    isAuthenticated,
-    isLoading: authLoading,
-  } = useContext(AuthContext);
+  const { user, isAuthenticated, isLoading: authLoading } = useContext(AuthContext);
 
   const mapStatusForUser = (adminStatus) => {
     switch (adminStatus) {
@@ -75,7 +73,6 @@ const UserOrderManagement = () => {
           phone: order.phone || "Không xác định",
           address: order.address || "Không xác định",
         }));
-        console.log("Dữ liệu đơn hàng:", JSON.stringify(ordersData, null, 2));
         setOrders(ordersData);
       } catch (err) {
         console.error("Lỗi khi lấy đơn hàng:", err);
@@ -114,13 +111,34 @@ const UserOrderManagement = () => {
   const canRate = (status) => status === "Thành công";
 
   const handleRateClick = (item) => {
-    console.log("Nhấn nút Đánh giá cho item:", item);
     if (!item.productCode || item.productCode === "UNKNOWN") {
       console.error("Mã sản phẩm không hợp lệ:", item);
       alert("Không thể đánh giá: Mã sản phẩm không hợp lệ!");
       return;
     }
     setShowReviewForm(item);
+  };
+
+  // Pagination logic
+  const totalPages = Math.ceil(orders.length / ordersPerPage);
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   if (authLoading || loading) {
@@ -146,60 +164,91 @@ const UserOrderManagement = () => {
           />
         </div>
       ) : (
-        <table className={styles.orderTable}>
-          <thead className={styles.gradientRow}>
-            <tr>
-              <th>Mã đơn</th>
-              <th>Sản phẩm</th>
-              <th>Tổng tiền</th>
-              <th>Ngày đặt</th>
-              <th>Trạng thái</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id}>
-                <td>{order.id}</td>
-                <td>
-                  <div className={styles.productCell}>
-                    {order.items[0] ? (
-                      <>
-                        <img
-                          src={order.items[0].imageUrl}
-                          alt={order.items[0].name}
-                          className={styles.productImage}
-                        />
-                        <span>{order.items[0].name}</span>
-                      </>
-                    ) : (
-                      "Không có sản phẩm"
-                    )}
-                  </div>
-                </td>
-                <td>{order.total.toLocaleString("vi-VN")} VNĐ</td>
-                <td>{order.createdAt}</td>
-                <td>
-                  <span
-                    className={`${styles.statusBadge} ${getStatusClass(
-                      order.status
-                    )}`}
-                  >
-                    {order.status}
-                  </span>
-                </td>
-                <td>
-                  <button
-                    className={styles.actionBtn}
-                    onClick={() => setSelectedOrder(order)}
-                  >
-                    Chi tiết
-                  </button>
-                </td>
+        <>
+          <table className={styles.orderTable}>
+            <thead className={styles.gradientRow}>
+              <tr>
+                <th>Mã đơn</th>
+                <th>Sản phẩm</th>
+                <th>Tổng tiền</th>
+                <th>Ngày đặt</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
               </tr>
+            </thead>
+            <tbody>
+              {currentOrders.map((order) => (
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>
+                    <div className={styles.productCell}>
+                      {order.items[0] ? (
+                        <>
+                          <img
+                            src={order.items[0].imageUrl}
+                            alt={order.items[0].name}
+                            className={styles.productImage}
+                          />
+                          <span>{order.items[0].name}</span>
+                        </>
+                      ) : (
+                        "Không có sản phẩm"
+                      )}
+                    </div>
+                  </td>
+                  <td>{order.total.toLocaleString("vi-VN")} VNĐ</td>
+                  <td>{order.createdAt}</td>
+                  <td>
+                    <span
+                      className={`${styles.statusBadge} ${getStatusClass(
+                        order.status
+                      )}`}
+                    >
+                      {order.status}
+                    </span>
+                  </td>
+                  <td>
+                    <button
+                      className={styles.actionBtn}
+                      onClick={() => setSelectedOrder(order)}
+                    >
+                      Chi tiết
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Pagination Controls */}
+          <div className={styles.pagination}>
+            <button
+              className={styles.paginationBtn}
+              onClick={handlePrevPage}
+              disabled={currentPage === 1}
+            >
+              Trước
+            </button>
+            {Array.from({ length: totalPages }, (_, index) => (
+              <button
+                key={index + 1}
+                className={`${styles.paginationBtn} ${
+                  currentPage === index + 1 ? styles.activePage : ""
+                }`}
+                onClick={() => handlePageChange(index + 1)}
+              >
+                {index + 1}
+              </button>
             ))}
-          </tbody>
-        </table>
+            <button
+              className={styles.paginationBtn}
+              onClick={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              Sau
+            </button>
+          </div>
+        </>
       )}
 
       {selectedOrder && (

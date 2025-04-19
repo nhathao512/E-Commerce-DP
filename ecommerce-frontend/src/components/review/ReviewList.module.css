@@ -1,66 +1,209 @@
+/* Tổng thể danh sách đánh giá: Gradient nền, shadow tĩnh, form nhỏ hơn */
 .reviewList {
-  margin-top: 20px;
-  padding: 20px;
-  border-top: 1px solid #e0e0e0;
+  margin-top: 40px;
+  padding: 32px;
+
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1); /* Shadow tĩnh, nhẹ hơn */
+  position: relative;
 }
 
+/* Tiêu đề: Gradient chữ, font nhỏ hơn */
 .reviewTitle {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 15px;
-  color: #333;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #1a202c;
+
+  font-family: 'Poppins', sans-serif;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
+/* Số sao trung bình: Căn trái, nền gradient, kích thước nhỏ hơn */
+.averageRating {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 12px 20px;
+  background: linear-gradient(90deg, #dbeafe 0%, #e0e7ff 100%);
+  border-radius: 10px;
+  justify-content: flex-start; /* Căn trái */
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08); /* Shadow tĩnh, nhẹ hơn */
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Văn bản số sao trung bình: Font nhỏ hơn, đậm */
+.averageRatingText {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Container cho các ngôi sao trung bình */
+.averageStars {
+  display: flex;
+  gap: 6px; /* Gap nhỏ hơn */
+}
+
+/* Ngôi sao trung bình: Màu xám nhạt, nhỏ hơn */
+.averageStar {
+  font-size: 20px;
+  color: #d1d5db;
+}
+
+/* Ngôi sao đầy: Màu vàng sáng, glow tĩnh */
+.averageStarFilled {
+  color: #facc15;
+  filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.5));
+}
+
+/* Ngôi sao nửa đầy: Hiển thị nửa sao cho 4.5 */
+.averageStarHalf {
+  color: #facc15;
+  filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.5));
+  position: relative;
+  overflow: hidden;
+  width: 10px; /* Nửa chiều rộng của sao, nhỏ hơn */
+}
+
+/* Thông báo không có đánh giá: Nền gradient, font nhỏ hơn */
 .noReviews {
   font-size: 16px;
-  color: #666;
+  color: #64748b;
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  font-family: 'Poppins', sans-serif;
+  animation: fadeIn 0.8s ease-in-out;
 }
 
+/* Danh sách các đánh giá: Flex column, gap nhỏ hơn */
 .reviewItems {
   list-style: none;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px; /* Gap nhỏ hơn */
 }
 
+/* Mỗi đánh giá: Gradient nền, shadow tĩnh, nhỏ hơn */
 .reviewItem {
-  background-color: #f9f9f9;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #ffffff 0%, #f5faff 100%);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Shadow tĩnh, nhẹ hơn */
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px; /* Gap nhỏ hơn */
+  animation: fadeIn 0.8s ease-in-out;
+  animation-fill-mode: backwards;
 }
 
+/* Tên người dùng: Font đậm, nhỏ hơn */
 .reviewUser {
-  font-weight: bold;
+  font-weight: 600;
   font-size: 16px;
-  color: #333;
+  color: #1e293b;
+  font-family: 'Poppins', sans-serif;
 }
 
+/* Rating của mỗi đánh giá: Flex, gap nhỏ hơn */
 .reviewRating {
   display: flex;
-  gap: 2px;
+  gap: 6px; /* Gap nhỏ hơn */
 }
 
+/* Ngôi sao của mỗi đánh giá: Màu xám nhạt, nhỏ hơn */
 .star {
   font-size: 18px;
-  color: #ccc;
+  color: #d1d5db;
 }
 
+/* Ngôi sao đầy: Màu vàng sáng, glow tĩnh */
 .starFilled {
-  color: #f5c518;
+  color: #facc15;
+  filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.5));
 }
 
+/* Bình luận: Font nhẹ, nhỏ hơn */
 .reviewComment {
   font-size: 14px;
-  color: #666;
-  line-height: 1.5;
+  color: #475569;
+  line-height: 1.7;
+  font-family: 'Poppins', sans-serif;
 }
 
+/* Ngày đánh giá: Font nhỏ hơn, màu nhạt */
 .reviewDate {
   font-size: 12px;
-  color: #999;
+  color: #94a3b8;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Phân trang: Flex, căn giữa, kích thước nhỏ hơn */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* Gap nhỏ hơn */
+  margin-top: 24px;
+  padding: 12px;
+ 
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08); /* Shadow tĩnh */
+}
+
+/* Nút phân trang (Previous/Next): Gradient, font nhỏ hơn */
+.paginationButton {
+  padding: 8px 16px;
+  background: linear-gradient(90deg, #2563eb 0%, #7e22ce 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+}
+
+/* Nút bị vô hiệu hóa: Màu xám, không cursor */
+.paginationButton.disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Số trang: Nền gradient, font nhỏ hơn */
+.pageNumber {
+  padding: 8px 12px;
+  background: linear-gradient(90deg, #dbeafe 0%, #e0e7ff 100%);
+  color: #1e293b;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* Shadow nhẹ hơn */
+}
+
+/* Trang hiện tại: Gradient nổi bật */
+.pageNumber.activePage {
+  background: linear-gradient(90deg, #2563eb 0%, #7e22ce 100%);
+  color: #ffffff;
+}
+
+/* Animation fade-in khi tải */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px); /* Giảm translate để phù hợp form nhỏ */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

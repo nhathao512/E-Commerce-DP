@@ -78,22 +78,20 @@ function ReviewForm({ productCode, onClose }) {
         rating,
         comment: newComment.trim(),
       };
-      console.log("Dữ liệu đánh giá gửi đi:", reviewData); // Ghi log để kiểm tra
+      console.log("Dữ liệu đánh giá gửi đi:", reviewData);
       const response = await addReview(reviewData);
-      console.log("Phản hồi đánh giá:", response.data); // Ghi log để kiểm tra
+      console.log("Phản hồi đánh giá:", response.data);
       setNewComment("");
       setRating(0);
       setAlertMessage({ text: "Đánh giá thành công!", type: "success" });
-      if (onClose) {
-        setTimeout(onClose, 1000);
-      }
+      setTimeout(onClose, 1000);
     } catch (error) {
       console.error(
         "Lỗi khi gửi đánh giá:",
         error.response?.data || error.message
       );
       setAlertMessage({
-        text: error.response?.data || "Đánh giá thất bại! Vui lòng thử lại.",
+        text: error.response?.data?.message || "Đánh giá thất bại! Vui lòng thử lại.",
         type: "error",
       });
     }
@@ -126,9 +124,18 @@ function ReviewForm({ productCode, onClose }) {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
         />
-        <button type="submit" className={styles.submitButton}>
-          Gửi bình luận
-        </button>
+        <div className={styles.buttonGroup}>
+          <button type="submit" className={styles.submitButton}>
+            Gửi bình luận
+          </button>
+          <button
+            type="button"
+            className={styles.cancelButton}
+            onClick={onClose}
+          >
+            Quay về
+          </button>
+        </div>
       </form>
 
       {showLoginPopup && (
