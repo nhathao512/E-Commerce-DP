@@ -67,10 +67,15 @@ const UserOrderManagement = () => {
                 item.productName || "Sản phẩm"
               )}`,
             productCode: item.productCode,
+            price: item.price,
+            size: item.size,
           })),
           cancelReason: order.cancelReason || "",
+          name: order.name || "Không xác định",
+          phone: order.phone || "Không xác định",
+          address: order.address || "Không xác định",
         }));
-        console.log("Dữ liệu đơn hàng:", JSON.stringify(ordersData, null, 2)); // Ghi log chi tiết
+        console.log("Dữ liệu đơn hàng:", JSON.stringify(ordersData, null, 2));
         setOrders(ordersData);
       } catch (err) {
         console.error("Lỗi khi lấy đơn hàng:", err);
@@ -109,7 +114,7 @@ const UserOrderManagement = () => {
   const canRate = (status) => status === "Thành công";
 
   const handleRateClick = (item) => {
-    console.log("Nhấn nút Đánh giá cho item:", item); // Ghi log để debug
+    console.log("Nhấn nút Đánh giá cho item:", item);
     if (!item.productCode || item.productCode === "UNKNOWN") {
       console.error("Mã sản phẩm không hợp lệ:", item);
       alert("Không thể đánh giá: Mã sản phẩm không hợp lệ!");
@@ -200,54 +205,63 @@ const UserOrderManagement = () => {
       {selectedOrder && (
         <div className={styles.popupOverlay}>
           <div className={styles.popup}>
-            <h3>Chi tiết đơn hàng</h3>
-            {selectedOrder.cancelReason &&
-              selectedOrder.status === "Đã hủy" && (
+            <div className={styles.popupContent}>
+              <h3>Chi tiết đơn hàng</h3>
+              <div className={styles.userInfo}>
+                <p><strong>Tên:</strong> {selectedOrder.name}</p>
+                <p><strong>Số điện thoại:</strong> {selectedOrder.phone}</p>
+                <p><strong>Địa chỉ:</strong> {selectedOrder.address}</p>
+                <p><strong>Tổng tiền:</strong> {selectedOrder.total.toLocaleString("vi-VN")} VNĐ</p>
+              </div>
+
+              {selectedOrder.cancelReason && selectedOrder.status === "Đã hủy" && (
                 <p className={styles.cancelReason}>
                   Lý do hủy: {selectedOrder.cancelReason}
                 </p>
               )}
-            <table className={styles.detailTable}>
-              <thead>
-                <tr>
-                  <th>Tên</th>
-                  <th>SL</th>
-                  <th>Thao tác</th>
-                  <th>Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedOrder.items.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.name}</td>
-                    <td>{item.quantity}</td>
-                    <td>
-                      <div className={styles.popupButtons}>
-                        <button
-                          className={styles.actionBtn}
-                          onClick={() => handleRateClick(item)}
-                          disabled={
-                            !canRate(selectedOrder.status) || !item.productCode
-                          }
-                        >
-                          Đánh giá
-                        </button>
-                      </div>
-                    </td>
-                    <td>
-                      <span
-                        className={`${styles.statusBadge} ${getStatusClass(
-                          selectedOrder.status
-                        )}`}
-                      >
-                        {selectedOrder.status}
-                      </span>
-                    </td>
+              <table className={styles.detailTable}>
+                <thead>
+                  <tr>
+                    <th>Tên</th>
+                    <th>SL</th>
+                    <th>Kích thước</th>
+                    <th>Giá</th>
+                    <th>Thao tác</th>
+                    <th className={styles.statusColumn}>Trạng thái</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-
+                </thead>
+                <tbody>
+                  {selectedOrder.items.map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.name}</td>
+                      <td>{item.quantity}</td>
+                      <td>{item.size || "N/A"}</td>
+                      <td>{item.price?.toLocaleString("vi-VN") || "N/A"} VNĐ</td>
+                      <td>
+                        <div className={styles.popupButtons}>
+                          <button
+                            className={styles.actionBtn}
+                            onClick={() => handleRateClick(item)}
+                            disabled={!canRate(selectedOrder.status) || !item.productCode}
+                          >
+                            Đánh giá
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <span
+                          className={`${styles.statusBadge} ${getStatusClass(
+                            selectedOrder.status
+                          )}`}
+                        >
+                          {selectedOrder.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             <button
               className={styles.closeBtn}
               onClick={() => setSelectedOrder(null)}
