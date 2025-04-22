@@ -20,7 +20,7 @@ const UserOrderManagement = () => {
   const mapStatusForUser = (adminStatus) => {
     switch (adminStatus) {
       case "Xác nhận":
-        return "Chờ xác nhận";
+        return "Xác nhận";
       case "Đang xử lý":
         return "Đang xử lý";
       case "Giao hàng":
@@ -32,7 +32,7 @@ const UserOrderManagement = () => {
       case "Trả hàng":
         return "Đã trả hàng";
       default:
-        return adminStatus || "Chờ xác nhận";
+        return adminStatus || "Không rõ";
     }
   };
 
@@ -101,8 +101,8 @@ const UserOrderManagement = () => {
       case "Đã hủy":
       case "Đã trả hàng":
         return styles.statusRed;
-      case "Chờ xác nhận":
-        return styles.statusGray;
+      case "Xác nhận":
+        return styles.statusGreen;
       default:
         return "";
     }

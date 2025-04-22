@@ -156,11 +156,11 @@ function OrderManagement() {
                 <label>Trạng thái:</label>
                 <select
                   name="status"
-                  defaultValue={editingOrder?.status || "Xác nhận"}
+                  defaultValue={editingOrder?.status || "Đang xử lý"}
                   required
                 >
-                  <option value="Xác nhận">Xác nhận</option>
                   <option value="Đang xử lý">Đang xử lý</option>
+                  <option value="Xác nhận">Xác nhận</option>
                   <option value="Giao hàng">Giao hàng</option>
                   <option value="Hoàn thành">Hoàn thành</option>
                   <option value="Hủy">Hủy</option>

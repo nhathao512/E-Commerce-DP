@@ -60,7 +60,7 @@ public class OrderService {
         order.setCardNumber(cardNumber);
         order.setCardExpiry(cardExpiry);
         order.setCardCVC(cardCVC);
-        order.setStatus("Xác nhận");
+        order.setStatus("Đang xử lý");
 
         PaymentContext paymentContext = new PaymentContext();
         switch (paymentMethod.toLowerCase()) {
