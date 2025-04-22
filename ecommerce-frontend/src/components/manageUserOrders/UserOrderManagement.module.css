@@ -314,4 +314,17 @@
   background: linear-gradient(to right, #667eea, #764ba2);
   font-weight: bold;
   transform: scale(1.1);
+}.noOrders {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 300px; /* Ensure enough height for centering */
+  text-align: center;
+}
+
+.noOrdersImage {
+  max-width: 600px; /* Adjust size as needed */
+  height: auto;
+  margin: 0 auto; /* Center horizontally */
 }

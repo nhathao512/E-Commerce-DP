@@ -4,12 +4,10 @@ import {
   updateCartItemQuantity,
   getProductById,
 } from "../../services/api";
-import Popup from "../common/Popup";
 import styles from "./CartItem.module.css";
 import cartStyles from "./Cart.module.css";
 
-function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
-  const [popup, setPopup] = useState(null);
+function CartItem({ item, setCartItems, isSelected, onCheckboxChange, onShowPopup }) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const checkStockAvailability = async (productId, size, desiredQuantity) => {
@@ -28,10 +26,9 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
     event.preventDefault();
     const userId = localStorage.getItem("userID");
     if (!userId) {
-      setPopup({
+      onShowPopup({
         message: "Vui lòng đăng nhập để cập nhật giỏ hàng!",
         type: "warning",
-        onClose: () => setPopup(null),
         showCloseButton: false,
         confirmButton: {
           text: "Đăng nhập",
@@ -39,7 +36,7 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
         },
         cancelButton: {
           text: "Đóng",
-          onClick: () => setPopup(null),
+          onClick: () => onShowPopup(null),
         },
         className: cartStyles.popupOverlay,
       });
@@ -53,10 +50,10 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
       newQuantity
     );
     if (!canAddMore) {
-      setPopup({
+      onShowPopup({
         message: `Số lượng tồn kho không đủ! Chỉ còn ${item.quantity} sản phẩm cho kích thước ${item.size}.`,
         type: "error",
-        onClose: () => setPopup(null),
+        onClose: () => onShowPopup(null),
         className: cartStyles.popupOverlay,
       });
       return;
@@ -84,10 +81,10 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
       console.error("Error updating quantity:", err);
-      setPopup({
+      onShowPopup({
         message: "Không thể tăng số lượng. Vui lòng thử lại!",
         type: "error",
-        onClose: () => setPopup(null),
+        onClose: () => onShowPopup(null),
         className: cartStyles.popupOverlay,
       });
     }
@@ -97,10 +94,9 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
     event.preventDefault();
     const userId = localStorage.getItem("userID");
     if (!userId) {
-      setPopup({
+      onShowPopup({
         message: "Vui lòng đăng nhập để cập nhật giỏ hàng!",
         type: "warning",
-        onClose: () => setPopup(null),
         showCloseButton: false,
         confirmButton: {
           text: "Đăng nhập",
@@ -108,7 +104,7 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
         },
         cancelButton: {
           text: "Đóng",
-          onClick: () => setPopup(null),
+          onClick: () => onShowPopup(null),
         },
         className: cartStyles.popupOverlay,
       });
@@ -117,10 +113,10 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
 
     const newQuantity = item.quantity - 1;
     if (newQuantity < 1) {
-      setPopup({
+      onShowPopup({
         message: "Số lượng tối thiểu là 1. Nếu muốn xóa, hãy nhấn nút Xóa!",
         type: "info",
-        onClose: () => setPopup(null),
+        onClose: () => onShowPopup(null),
         className: cartStyles.popupOverlay,
       });
       return;
@@ -148,10 +144,10 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
       window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
       console.error("Error updating quantity:", err);
-      setPopup({
+      onShowPopup({
         message: "Không thể giảm số lượng. Vui lòng thử lại!",
         type: "error",
-        onClose: () => setPopup(null),
+        onClose: () => onShowPopup(null),
         className: cartStyles.popupOverlay,
       });
     }
@@ -159,16 +155,15 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
 
   const handleDelete = async (event) => {
     event.preventDefault();
-    if (isDeleting) return; // Ngăn click nhanh
+    if (isDeleting) return;
     setIsDeleting(true);
 
     try {
       const userId = localStorage.getItem("userID");
       if (!userId) {
-        setPopup({
+        onShowPopup({
           message: "Vui lòng đăng nhập để xóa sản phẩm!",
           type: "warning",
-          onClose: () => setPopup(null),
           showCloseButton: false,
           confirmButton: {
             text: "Đăng nhập",
@@ -176,7 +171,7 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
           },
           cancelButton: {
             text: "Đóng",
-            onClick: () => setPopup(null),
+            onClick: () => onShowPopup(null),
           },
           className: cartStyles.popupOverlay,
         });
@@ -196,20 +191,20 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
         )
       );
       window.dispatchEvent(new Event("cartUpdated"));
-      setPopup({
+      onShowPopup({
         message: `Đã xóa ${item.productName} (${item.size}) khỏi giỏ hàng!`,
         type: "success",
-        onClose: () => setPopup(null),
+        onClose: () => onShowPopup(null),
         className: cartStyles.popupOverlay,
       });
     } catch (err) {
       console.error("Error removing item from cart:", err);
-      setPopup({
+      onShowPopup({
         message:
           err.response?.data?.message ||
           "Không thể xóa sản phẩm. Vui lòng thử lại!",
         type: "error",
-        onClose: () => setPopup(null),
+        onClose: () => onShowPopup(null),
         className: cartStyles.popupOverlay,
       });
     } finally {
@@ -266,7 +261,6 @@ function CartItem({ item, setCartItems, isSelected, onCheckboxChange }) {
           Xóa
         </button>
       </div>
-      {popup && <Popup {...popup} />}
     </li>
   );
 }

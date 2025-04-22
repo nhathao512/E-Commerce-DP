@@ -229,7 +229,6 @@
   padding: 25px;
 }
 
-/* Add styles for the popup to ensure it appears above other elements */
 .popupOverlay {
   position: fixed;
   top: 0;
@@ -239,6 +238,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000; /* Ensure the popup is above all other elements */
-  background-color: rgba(0, 0, 0, 0.5); /* Optional: Add a semi-transparent overlay */
+  z-index: 100000; /* Giá trị cực cao để luôn ở trên cùng */
+  background-color: rgba(0, 0, 0, 0.7); /* Tăng độ tối của overlay */
+  overflow: auto; /* Cho phép cuộn nếu nội dung dài */
+  animation: fadeInOverlay 0.3s ease-in-out; /* Hiệu ứng xuất hiện mượt mà */
+}
+
+.popupOverlay > div {
+  position: relative;
+  z-index: 100001; /* Nội dung popup cao hơn overlay */
+  max-width: 500px; /* Giới hạn chiều rộng */
+  width: 90%;
+  max-height: 80vh; /* Giới hạn chiều cao */
+  overflow-y: auto; /* Cho phép cuộn nội dung */
+  padding: 25px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); /* Bóng đậm hơn */
+  animation: fadeInPopup 0.3s ease-in-out; /* Hiệu ứng cho nội dung */
+}
+
+@keyframes fadeInOverlay {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInPopup {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
