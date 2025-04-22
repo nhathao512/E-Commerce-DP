@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -21,8 +23,14 @@ public class ProductService {
     private ProductRepository productRepository;
 
     public Product addProduct(ProductRequest request) {
-        // Tạo sản phẩm bằng ProductFactory
-        Product tempProduct = ProductFactory.createProduct(
+        Map<String, Object> specificAttributes = new HashMap<>();
+        if ("clothing".equalsIgnoreCase(request.getType())) {
+            specificAttributes.put("material", request.getMaterial());
+        } else if ("shoe".equalsIgnoreCase(request.getType())) {
+            specificAttributes.put("sole", request.getSole());
+        }
+
+        Product product = ProductFactory.createProduct(
                 request.getType(),
                 request.getName(),
                 request.getPrice(),
@@ -30,38 +38,10 @@ public class ProductService {
                 request.getImageUrl(),
                 request.getDescription(),
                 request.getQuantity(),
-                request.getSizes()
+                request.getSizes(),
+                specificAttributes
         );
-
-        // Nếu type là clothing, tạo instance ClothingProduct và sao chép thuộc tính
-        switch (request.getType().toLowerCase()){
-            case "clothing":
-                ClothingProduct clothingProduct = new ClothingProduct();
-                clothingProduct.setName(tempProduct.getName());
-                clothingProduct.setPrice(tempProduct.getPrice());
-                clothingProduct.setCategoryId(tempProduct.getCategoryId());
-                clothingProduct.setImages(tempProduct.getImages());
-                clothingProduct.setDescription(tempProduct.getDescription());
-                clothingProduct.setSizes(tempProduct.getSizes());
-                clothingProduct.setQuantity(tempProduct.getQuantity());
-                clothingProduct.setProductCode(tempProduct.getProductCode());
-                clothingProduct.setMaterial(request.getMaterial());
-                return productRepository.save(clothingProduct);
-            case "shoe":
-                ShoeProduct shoeProduct = new ShoeProduct();
-                shoeProduct.setName(tempProduct.getName());
-                shoeProduct.setPrice(tempProduct.getPrice());
-                shoeProduct.setCategoryId(tempProduct.getCategoryId());
-                shoeProduct.setImages(tempProduct.getImages());
-                shoeProduct.setDescription(tempProduct.getDescription());
-                shoeProduct.setSizes(tempProduct.getSizes());
-                shoeProduct.setQuantity(tempProduct.getQuantity());
-                shoeProduct.setProductCode(tempProduct.getProductCode());
-                shoeProduct.setSole(request.getSole());
-                return productRepository.save(shoeProduct);
-            default:
-                return productRepository.save(tempProduct);
-        }
+        return productRepository.save(product);
     }
 
     public Product getProductById(String id) {

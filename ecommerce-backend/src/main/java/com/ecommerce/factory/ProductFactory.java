@@ -1,6 +1,8 @@
 package com.ecommerce.factory;
 
+import com.ecommerce.model.ClothingProduct;
 import com.ecommerce.model.Product;
+import com.ecommerce.model.ShoeProduct;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,50 +13,46 @@ public class ProductFactory {
     private static final Random random = new Random();
 
     public static Product createProduct(String type, String name, Double price, String categoryId,
-                                        String imageUrl, String description, Map<String, Integer> quantities, List<String> sizes) {
+                                        String imageUrl, String description, Map<String, Integer> quantities, List<String> sizes, Map<String, Object> specificAttributes) {
         // Create a generic Product instance
-        Product product = new Product() {
-            // Anonymous subclass to satisfy abstract class instantiation
-        };
-
-        // Set common attributes
-        product.setName(name);
-        product.setPrice(price);
-        product.setCategoryId(categoryId);
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            product.addImage(imageUrl);
-        }
-        product.setDescription(description);
-
-        // Set sizes if provided
-        if (sizes != null) {
-            product.setSizes(sizes);
-        }
-
-        // Set quantities if provided
-        if (quantities != null) {
-            product.setQuantity(quantities);
+        if (type.equalsIgnoreCase("clothing")) {
+            ClothingProduct clothingProduct = new ClothingProduct();
+            clothingProduct.setName(name);
+            clothingProduct.setPrice(price);
+            clothingProduct.setCategoryId(categoryId);
+            clothingProduct.setQuantity(quantities);
+            if(imageUrl != null) {
+                clothingProduct.addImage(imageUrl);
+            }
+            clothingProduct.setDescription(description);
+            clothingProduct.setMaterial((String) specificAttributes.get("material"));
+            clothingProduct.setProductCode("CLO" + String.format("%03d", random.nextInt(1000)));
+            return clothingProduct;
+        } else if (type.equalsIgnoreCase("shoe")) {
+            ShoeProduct shoeProduct = new ShoeProduct();
+            shoeProduct.setName(name);
+            shoeProduct.setPrice(price);
+            shoeProduct.setCategoryId(categoryId);
+            shoeProduct.setQuantity(quantities);
+            if(imageUrl != null) {
+                shoeProduct.addImage(imageUrl);
+            }
+            shoeProduct.setDescription(description);
+            shoeProduct.setSole((String) specificAttributes.get("sole"));
+            shoeProduct.setProductCode("SHO" + String.format("%03d", random.nextInt(1000)));
+            return shoeProduct;
         } else {
-            // Default to empty quantity map if none provided
-            product.setQuantity(new HashMap<>());
-        }
-
-        // Generate product code based on type
-        String productCodePrefix = getProductCodePrefix(type.toLowerCase());
-        String productCode = productCodePrefix + String.format("%03d", random.nextInt(1000));
-        product.setProductCode(productCode);
-
-        return product;
-    }
-
-    private static String getProductCodePrefix(String type) {
-        switch (type.toLowerCase()) {
-            case "shoe":
-                return "SHO";
-            case "clothing":
-                return "CLO";
-            default:
-                throw new IllegalArgumentException("Invalid product type: " + type);
+            Product product = new Product() {
+            };
+            product.setName(name);
+            product.setPrice(price);
+            product.setCategoryId(categoryId);
+            product.setQuantity(quantities);
+            if(imageUrl != null) {
+                product.addImage(imageUrl);
+            }
+            product.setDescription(description);
+            return product;
         }
     }
 }
