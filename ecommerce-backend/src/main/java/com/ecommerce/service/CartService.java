@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,6 +27,31 @@ public class CartService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
+    private final Map<String, Cart> cartInstances = new HashMap<>();
+
+    public Cart getCartInstance(String userId) {
+        if (userId == null || userId.isEmpty()) {
+            throw new IllegalArgumentException("ID người dùng không được trống!");
+        }
+        synchronized (cartInstances) {
+            return cartInstances.computeIfAbsent(userId, k -> {
+                Cart cart = new Cart(userId);
+                // Đồng bộ dữ liệu từ MongoDB khi khởi tạo
+                Optional<Cart> optionalCart = cartRepository.findById(userId);
+                if (optionalCart.isPresent()) {
+                    cart.setItems(optionalCart.get().getItems());
+                }
+                return cart;
+            });
+        }
+    }
+
+    public void removeCartInstance(String userId) {
+        synchronized (cartInstances) {
+            cartInstances.remove(userId);
+        }
+    }
+
     public void addToCart(String userId, Product product, int quantity, String size) {
         // Kiểm tra tồn kho
         Integer stockForSize = product.getQuantityForSize(size);
@@ -34,20 +61,14 @@ public class CartService {
             );
         }
 
-        // Lấy giỏ hàng từ Singleton
-        Cart cart = Cart.getInstance(userId);
+        // Lấy giỏ hàng
+        Cart cart = getCartInstance(userId);
 
         // Đăng ký observer nếu chưa có
         boolean hasObserver = cart.getObservers().stream()
                 .anyMatch(observer -> observer instanceof ConcreteCartObserver);
         if (!hasObserver) {
             cart.addObserver(new ConcreteCartObserver("UIObserver", userId, messagingTemplate));
-        }
-
-        // Đồng bộ dữ liệu từ MongoDB khi khởi tạo
-        Optional<Cart> optionalCart = cartRepository.findById(userId);
-        if (optionalCart.isPresent() && cart.getItems().isEmpty()) {
-            cart.setItems(optionalCart.get().getItems());
         }
 
         // Thêm sản phẩm
@@ -67,12 +88,12 @@ public class CartService {
             );
         }
 
-        Cart cart = Cart.getInstance(userId);
+        Cart cart = getCartInstance(userId);
         cart.updateItemQuantity(productId, size, quantity);
     }
 
     public boolean isProductInCart(String userId, String productId, String size) {
-        Cart cart = Cart.getInstance(userId);
+        Cart cart = getCartInstance(userId);
         return cart.getItems().stream()
                 .anyMatch(item ->
                         item.getProduct().getId().equals(productId) &&
@@ -80,26 +101,22 @@ public class CartService {
     }
 
     public List<CartItem> getCartItems(String userId) {
-        Cart cart = Cart.getInstance(userId);
-        Optional<Cart> optionalCart = cartRepository.findById(userId);
-        if (optionalCart.isPresent() && cart.getItems().isEmpty()) {
-            cart.setItems(optionalCart.get().getItems());
-        }
+        Cart cart = getCartInstance(userId);
         return cart.getItems();
     }
 
     public void clearCart(String userId) {
-        Cart cart = Cart.getInstance(userId);
+        Cart cart = getCartInstance(userId);
         cart.clear();
     }
 
     public double getTotal(String userId) {
-        Cart cart = Cart.getInstance(userId);
+        Cart cart = getCartInstance(userId);
         return cart.getTotal();
     }
 
     public void removeSelectedItems(String userId, List<CartItem> selectedItems) {
-        Cart cart = Cart.getInstance(userId);
+        Cart cart = getCartInstance(userId);
         boolean hasObserver = cart.getObservers().stream()
                 .anyMatch(observer -> observer instanceof ConcreteCartObserver);
         if (!hasObserver) {
@@ -112,7 +129,7 @@ public class CartService {
     }
 
     public void removeFromCart(String userId, String productId, String size) {
-        Cart cart = Cart.getInstance(userId);
+        Cart cart = getCartInstance(userId);
         // Đăng ký observer nếu chưa có
         boolean hasObserver = cart.getObservers().stream()
                 .anyMatch(observer -> observer instanceof ConcreteCartObserver);

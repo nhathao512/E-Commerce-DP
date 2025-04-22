@@ -5,31 +5,19 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Document(collection = "carts")
 public class Cart {
-    private static final Map<String, Cart> instances = new HashMap<>();
     @Id
     private String userId;
     private List<CartItem> items;
     private transient List<CartObserver> observers;
 
-    private Cart(String userId) {
+    public Cart(String userId) {
         this.userId = userId;
         this.items = new ArrayList<>();
         this.observers = new ArrayList<>();
-    }
-
-    public static Cart getInstance(String userId) {
-        if (userId == null || userId.isEmpty()) {
-            throw new IllegalArgumentException("ID người dùng không được trống!");
-        }
-        synchronized (Cart.class) {
-            return instances.computeIfAbsent(userId, k -> new Cart(userId));
-        }
     }
 
     public String getUserId() { return userId; }
@@ -99,12 +87,6 @@ public class Cart {
         int itemCount = items.size();
         for (CartObserver observer : observers) {
             observer.update(itemCount);
-        }
-    }
-
-    public static void removeInstance(String userId) {
-        synchronized (Cart.class) {
-            instances.remove(userId);
         }
     }
 }
