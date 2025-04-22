@@ -7,7 +7,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-height: 500px; /* Đảm bảo chiều cao tối thiểu để các ô đồng đều */
+  min-height: 500px;
   cursor: pointer;
   position: relative;
   border: 1px solid #bfdbfe;
@@ -45,8 +45,8 @@
 .imageWrapper {
   position: relative;
   width: 100%;
-  height: 300px; /* Chiều cao cố định để đồng bộ các ô */
-  background: #f1f5f9; /* Nền cho khoảng trống */
+  height: 300px;
+  background: #f1f5f9;
   border-radius: 20px 20px 0 0;
   display: flex;
   align-items: center;
@@ -57,7 +57,7 @@
 .image {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Hiển thị toàn bộ ảnh, không cắt */
+  object-fit: contain;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -104,6 +104,42 @@
 
 .card:hover .name::after {
   opacity: 1;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.star {
+  font-size: 0.875rem;
+  color: #d1d5db; /* Gray for empty stars */
+}
+
+.starFilled {
+  color: #f59e0b; /* Yellow for filled stars */
+}
+
+.starHalf {
+  color: #f59e0b;
+  position: relative;
+}
+
+.starHalf::before {
+  content: "★";
+  position: absolute;
+  left: 0;
+  width: 50%;
+  overflow: hidden;
+  color: #f59e0b;
+}
+
+.ratingValue {
+  font-size: 0.875rem;
+  color: #4b5563;
+  font-weight: 500;
 }
 
 .description {
@@ -167,11 +203,11 @@
 @media (max-width: 1024px) {
   .card {
     border-radius: 20px;
-    min-height: 450px; /* Giảm chiều cao tối thiểu trên màn hình nhỏ */
+    min-height: 450px;
   }
 
   .imageWrapper {
-    height: 250px; /* Giảm chiều cao trên màn hình nhỏ */
+    height: 250px;
   }
 
   .content {
@@ -181,6 +217,18 @@
 
   .name {
     font-size: 1.125rem;
+  }
+
+  .rating {
+    gap: 0.4rem;
+  }
+
+  .star {
+    font-size: 0.8125rem;
+  }
+
+  .ratingValue {
+    font-size: 0.8125rem;
   }
 
   .description {
@@ -200,11 +248,11 @@
 @media (max-width: 768px) {
   .card {
     border-radius: 16px;
-    min-height: 400px; /* Giảm chiều cao tối thiểu trên màn hình nhỏ hơn */
+    min-height: 400px;
   }
 
   .imageWrapper {
-    height: 200px; /* Giảm chiều cao trên màn hình nhỏ hơn */
+    height: 200px;
   }
 
   .content {
@@ -213,6 +261,18 @@
 
   .name {
     font-size: 1rem;
+  }
+
+  .rating {
+    gap: 0.3rem;
+  }
+
+  .star {
+    font-size: 0.75rem;
+  }
+
+  .ratingValue {
+    font-size: 0.75rem;
   }
 
   .description {
@@ -230,7 +290,6 @@
   }
 }
 
-/* Animation slideUp */
 @keyframes slideUp {
   from {
     transform: translateY(20px);
