@@ -11,9 +11,10 @@ import java.util.Random;
 
 public class ProductFactory {
     private static final Random random = new Random();
-
-    public static Product createProduct(String type, String name, Double price, String categoryId,
-                                        String imageUrl, String description, Map<String, Integer> quantities, List<String> sizes, Map<String, Object> specificAttributes) {
+    public static Product createProduct(String type, String name, Double price, 
+                    String categoryId, String imageUrl, 
+                    String description, Map<String, Integer> quantities, 
+                    List<String> sizes, Map<String, Object> specificAttributes) {
         // Create a generic Product instance
         if (type.equalsIgnoreCase("clothing")) {
             ClothingProduct clothingProduct = new ClothingProduct();
@@ -26,7 +27,8 @@ public class ProductFactory {
             }
             clothingProduct.setDescription(description);
             clothingProduct.setMaterial((String) specificAttributes.get("material"));
-            clothingProduct.setProductCode("CLO" + String.format("%03d", random.nextInt(1000)));
+            clothingProduct.setProductCode("CLO" + String.format("%03d", 
+                                            random.nextInt(1000)));
             return clothingProduct;
         } else if (type.equalsIgnoreCase("shoe")) {
             ShoeProduct shoeProduct = new ShoeProduct();
@@ -39,7 +41,8 @@ public class ProductFactory {
             }
             shoeProduct.setDescription(description);
             shoeProduct.setSole((String) specificAttributes.get("sole"));
-            shoeProduct.setProductCode("SHO" + String.format("%03d", random.nextInt(1000)));
+            shoeProduct.setProductCode("SHO" + String.format("%03d", 
+                                            random.nextInt(1000)));
             return shoeProduct;
         } else {
             Product product = new Product() {

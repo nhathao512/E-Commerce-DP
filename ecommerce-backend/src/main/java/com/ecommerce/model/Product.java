@@ -50,12 +50,10 @@ public abstract class Product {
     public String getCategoryId() { return categoryId; }
     public void setCategoryId(String categoryId) { this.categoryId = categoryId; }
 
-    // Bổ sung getters và setters cho sizes
     public List<String> getSizes() { return sizes; }
     public void setSizes(List<String> sizes) { this.sizes = sizes; }
     public void addSize(String size) { this.sizes.add(size); }
 
-    // Bổ sung getters và setters cho quantity
     public Map<String, Integer> getQuantity() { return quantity; }
     public void setQuantity(Map<String, Integer> quantity) { this.quantity = quantity; }
 

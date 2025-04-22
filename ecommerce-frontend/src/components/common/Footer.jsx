@@ -22,10 +22,18 @@ function Footer() {
         <div className={styles.section}>
           <h3 className={styles.title}>Quick Links</h3>
           <ul className={styles.links}>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/privacy">Privacy Policy</a></li>
-            <li><a href="/terms">Terms of Service</a></li>
-            <li><a href="/faq">FAQ</a></li>
+            <li>
+              <a href="/about">About Us</a>
+            </li>
+            <li>
+              <a href="/privacy">Privacy Policy</a>
+            </li>
+            <li>
+              <a href="/terms">Terms of Service</a>
+            </li>
+            <li>
+              <a href="/faq">FAQ</a>
+            </li>
           </ul>
         </div>
 

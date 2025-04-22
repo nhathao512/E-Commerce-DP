@@ -55,7 +55,7 @@ function Register() {
     <div className={styles.container}>
       <div className={styles.backgroundOverlay}></div>
       <div className={styles.formWrapper}>
-        <h2 className={styles.title}>Register</h2>
+        <h2 className={styles.title}>Đăng Ký</h2>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputWrapper}>
             <FaUser className={styles.icon} />

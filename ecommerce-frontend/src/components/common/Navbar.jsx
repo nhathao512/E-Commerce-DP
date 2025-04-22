@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+  useRef,
+  useCallback,
+} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import logo from "../../assets/logo.png";
@@ -52,7 +58,8 @@ function Navbar() {
       setError(null);
       console.log("Cart count fetched:", count);
     } catch (err) {
-      const errorMsg = err.response?.headers["error-message"] || "Failed to fetch cart count";
+      const errorMsg =
+        err.response?.headers["error-message"] || "Failed to fetch cart count";
       setError(errorMsg);
       setCartCount(0);
       console.error("Error fetching cart count:", errorMsg);
@@ -131,7 +138,11 @@ function Navbar() {
   // Handle search submission
   const handleSearch = (e) => {
     e.preventDefault();
-    navigate(searchQuery.trim() ? `/products?search=${encodeURIComponent(searchQuery)}` : "/products");
+    navigate(
+      searchQuery.trim()
+        ? `/products?search=${encodeURIComponent(searchQuery)}`
+        : "/products"
+    );
     setSearchQuery("");
   };
 
@@ -200,12 +211,9 @@ function Navbar() {
             >
               <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 0 0 0 4 2 2 0 0 0 0-4zm-10 2a2 2 0 0 0 0 4 2 2 0 0 0 0-4z" />
             </svg>
-            {cartCount != 0 ? 
-            <span className={styles.cartCount}>{cartCount}</span>
-            :
-            null
-            }
-            
+            {cartCount != 0 ? (
+              <span className={styles.cartCount}>{cartCount}</span>
+            ) : null}
           </div>
         </Link>
 
@@ -228,7 +236,11 @@ function Navbar() {
               />
               <span>{user.fullName}</span>
             </div>
-            <ul className={`${styles.navProfileDropdown} ${isDropdownOpen ? styles.show : ""}`}>
+            <ul
+              className={`${styles.navProfileDropdown} ${
+                isDropdownOpen ? styles.show : ""
+              }`}
+            >
               <li onClick={() => navigate("/profile")}>
                 <svg
                   width="20"

@@ -122,15 +122,12 @@ public class ProductService {
             throw new IllegalArgumentException("Hình ảnh không tồn tại trong sản phẩm");
         }
 
-        // Xóa hình ảnh khỏi danh sách
         images.remove(imageName);
         product.setImages(images);
 
-        // Cập nhật sản phẩm
         productRepository.save(product);
 
         try {
-            // Xóa file vật lý nếu cần
             java.nio.file.Path imagePath = Paths.get(System.getProperty("user.dir") + "/uploads/products/" + imageName);
             java.nio.file.Files.deleteIfExists(imagePath);
         } catch (IOException e) {
