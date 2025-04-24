@@ -1,11 +1,8 @@
 package com.ecommerce.observer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 public class ConcreteCartObserver implements CartObserver {
-    private static final Logger logger = LoggerFactory.getLogger(ConcreteCartObserver.class);
     private final String observerName;
     private final String userId;
     private final SimpMessagingTemplate messagingTemplate;
@@ -18,7 +15,6 @@ public class ConcreteCartObserver implements CartObserver {
 
     @Override
     public void update(int itemCount) {
-        logger.info("Observer {}: Cart updated for user {} with {} items", observerName, userId, itemCount);
         messagingTemplate.convertAndSendToUser(
                 userId,
                 "/topic/cart",

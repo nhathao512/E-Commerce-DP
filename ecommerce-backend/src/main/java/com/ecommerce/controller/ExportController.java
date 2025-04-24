@@ -8,8 +8,6 @@ import com.ecommerce.model.Order;
 import com.ecommerce.model.User;
 import com.ecommerce.service.AuthService;
 import com.ecommerce.service.OrderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -25,8 +23,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/export")
 @PreAuthorize("hasRole('ADMIN')")
 public class ExportController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ExportController.class);
 
     private final OrderService orderService;
     private final AuthService authService;
@@ -44,7 +40,6 @@ public class ExportController {
             // Lấy danh sách đơn hàng
             List<Order> orders = orderService.getAllOrders();
             if (orders.isEmpty()) {
-                logger.warn("No orders found for exporting top products.");
                 return ResponseEntity.badRequest()
                         .body(new ByteArrayResource("No orders available.".getBytes()));
             }
@@ -57,7 +52,6 @@ public class ExportController {
                             Collectors.summingInt(item -> {
                                 Integer quantity = item.getQuantity();
                                 if (quantity == null) {
-                                    logger.warn("Quantity is null for item: {}", item);
                                     return 1;
                                 }
                                 return quantity;
@@ -76,7 +70,6 @@ public class ExportController {
 
             List<ProductCount> topProducts = new ArrayList<>(productCounts.values());
             if (topProducts.isEmpty()) {
-                logger.warn("No completed orders found for top products.");
                 return ResponseEntity.badRequest()
                         .body(new ByteArrayResource("No completed orders available.".getBytes()));
             }
@@ -87,7 +80,6 @@ public class ExportController {
 
             return createResponse(data, "top_products", format);
         } catch (Exception e) {
-            logger.error("Error exporting top products: {}", e.getMessage(), e);
             return ResponseEntity.badRequest()
                     .body(new ByteArrayResource(("Error exporting top products: " + e.getMessage()).getBytes()));
         }
@@ -100,7 +92,6 @@ public class ExportController {
             // Lấy danh sách đơn hàng
             List<Order> orders = orderService.getAllOrders();
             if (orders.isEmpty()) {
-                logger.warn("No orders found for exporting top users.");
                 return ResponseEntity.badRequest()
                         .body(new ByteArrayResource("No orders available.".getBytes()));
             }
@@ -122,7 +113,6 @@ public class ExportController {
                                     entry.getValue()
                             );
                         } catch (IllegalArgumentException e) {
-                            logger.warn("User not found for ID {}: {}", entry.getKey(), e.getMessage());
                             return new UserCount("Unknown", "N/A", entry.getValue());
                         }
                     })
@@ -131,7 +121,6 @@ public class ExportController {
                     .collect(Collectors.toList());
 
             if (topUsers.isEmpty()) {
-                logger.warn("No completed orders found for top users.");
                 return ResponseEntity.badRequest()
                         .body(new ByteArrayResource("No completed orders available.".getBytes()));
             }
@@ -142,7 +131,6 @@ public class ExportController {
 
             return createResponse(data, "top_users", format);
         } catch (Exception e) {
-            logger.error("Error exporting top users: {}", e.getMessage(), e);
             return ResponseEntity.badRequest()
                     .body(new ByteArrayResource(("Error exporting top users: " + e.getMessage()).getBytes()));
         }

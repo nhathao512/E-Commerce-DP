@@ -2,8 +2,6 @@ package com.ecommerce.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +11,6 @@ import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     @Value("${jwt.secret:yourVeryLongSecretKeyWithAtLeast32Characters@}")
     private String jwtSecret;
@@ -37,7 +33,6 @@ public class JwtTokenProvider {
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
-        logger.info("Generated token for subject {}: {}", subject, token);
         return token;
     }
 
@@ -49,10 +44,8 @@ public class JwtTokenProvider {
             String subject = parser.parseClaimsJws(token)
                     .getBody()
                     .getSubject();
-            logger.debug("Extracted subject from token: {}", subject);
             return subject;
         } catch (JwtException e) {
-            logger.error("Invalid JWT token: {}", e.getMessage());
             throw e;
         }
     }
@@ -63,10 +56,8 @@ public class JwtTokenProvider {
                     .setSigningKey(getSigningKey())
                     .build();
             parser.parseClaimsJws(token);
-            logger.debug("Token validated successfully");
             return true;
         } catch (JwtException | IllegalArgumentException ex) {
-            logger.error("Token validation failed: {}", ex.getMessage());
             return false;
         }
     }
@@ -76,7 +67,6 @@ public class JwtTokenProvider {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-        logger.warn("No Bearer token found in Authorization header");
         return null;
     }
 }

@@ -6,8 +6,6 @@ import com.ecommerce.model.User;
 import com.ecommerce.repository.ProductRepository;
 import com.ecommerce.repository.ReviewRepository;
 import com.ecommerce.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +14,6 @@ import java.util.Optional;
 
 @Service
 public class ReviewService {
-    private static final Logger logger = LoggerFactory.getLogger(ReviewService.class);
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -55,10 +52,8 @@ public class ReviewService {
         // Lấy fullName từ User
         User user = userRepository.findByShortUserId(shortUserId);
         if (user != null) {
-            logger.info("Found user for shortUserId {}: fullName = {}", shortUserId, user.getFullName());
             review.setFullName(user.getFullName() != null ? user.getFullName() : "Anonymous");
         } else {
-            logger.warn("User not found for shortUserId: {}", shortUserId);
             review.setFullName("Anonymous");
         }
 
@@ -74,10 +69,8 @@ public class ReviewService {
             if (review.getFullName() == null) {
                 User user = userRepository.findByShortUserId(review.getShortUserId());
                 if (user != null) {
-                    logger.info("Found user for shortUserId {}: fullName = {}", review.getShortUserId(), user.getFullName());
                     review.setFullName(user.getFullName() != null ? user.getFullName() : "Anonymous");
                 } else {
-                    logger.warn("User not found for shortUserId: {}", review.getShortUserId());
                     review.setFullName("Anonymous");
                 }
             }
