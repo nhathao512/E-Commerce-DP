@@ -18,7 +18,6 @@ public class AvatarUploader extends FileUploadTemplate {
         this.authService = authService;
     }
 
-    // Phương thức public để gọi từ controller
     public UserResponse uploadAvatar(MultipartFile file, String username) throws IOException {
         this.username = username;
         UserResponse currentUser = authService.getCurrentUser(username);

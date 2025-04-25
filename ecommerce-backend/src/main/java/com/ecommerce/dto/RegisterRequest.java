@@ -7,10 +7,9 @@ public class RegisterRequest {
     private String password;
     private String phone;
     private String address;
-    private String fullName; // Thêm fullName
-    private String avatar;   // Thêm avatar (có thể để trống khi đăng ký)
+    private String fullName;
+    private String avatar;
 
-    // Getters và Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getShortUserId() { return shortUserId; }

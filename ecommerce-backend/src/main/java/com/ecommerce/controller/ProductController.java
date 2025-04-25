@@ -49,12 +49,10 @@ public class ProductController {
             @RequestParam("quantity") String quantityJson,
             @RequestParam(value = "image", required = false) List<MultipartFile> images) {
         try {
-            // Parse JSON strings
             ObjectMapper mapper = new ObjectMapper();
             List<String> sizes = mapper.readValue(sizesJson, new TypeReference<List<String>>(){});
             Map<String, Integer> quantity = mapper.readValue(quantityJson, new TypeReference<Map<String, Integer>>(){});
 
-            // Create ProductRequest
             ProductRequest request = new ProductRequest();
             request.setName(name);
             request.setPrice(price);
@@ -66,10 +64,8 @@ public class ProductController {
             request.setSizes(sizes);
             request.setQuantity(quantity);
 
-            // Add product
             Product product = productService.addProduct(request);
 
-            // Upload images if provided
             if (images != null && !images.isEmpty()) {
                 List<String> imageUrls = productImageUploader.uploadMultipleImages(images);
                 for (String imageUrl : imageUrls) {
@@ -106,12 +102,10 @@ public class ProductController {
                     ? mapper.readValue(deletedImagesJson, new TypeReference<List<String>>(){})
                     : List.of();
 
-            // Xóa các ảnh được chỉ định
             for (String imageName : deletedImages) {
                 productService.deleteImage(existingProduct, imageName);
             }
 
-            // Kiểm tra số lượng ảnh
             int remainingImages = existingProduct.getImages().size();
             if (remainingImages + files.size() > MAXIMUM_IMAGES_PER_PRODUCT) {
                 return ResponseEntity.badRequest().body(ResponseObject.builder()
@@ -120,7 +114,6 @@ public class ProductController {
                         .build());
             }
 
-            // Upload ảnh mới nếu có
             if (!files.isEmpty()) {
                 List<String> imageUrls = productImageUploader.uploadMultipleImages(files);
                 for (String imageUrl : imageUrls) {
@@ -205,12 +198,10 @@ public class ProductController {
         try {
             Product existingProduct = productService.getProductById(id);
 
-            // Parse JSON strings
             ObjectMapper mapper = new ObjectMapper();
             List<String> sizes = mapper.readValue(sizesJson, new TypeReference<List<String>>(){});
             Map<String, Integer> quantity = mapper.readValue(quantityJson, new TypeReference<Map<String, Integer>>(){});
 
-            // Update fields
             existingProduct.setName(name);
             existingProduct.setDescription(description);
             existingProduct.setPrice(price);
@@ -223,7 +214,6 @@ public class ProductController {
             existingProduct.setSizes(sizes);
             existingProduct.setQuantity(quantity);
 
-            // Upload new images if provided
             if (images != null && !images.isEmpty()) {
                 List<String> imageUrls = productImageUploader.uploadMultipleImages(images);
                 existingProduct.setImages(imageUrls);
@@ -267,7 +257,6 @@ public class ProductController {
         try {
             Product product = productService.getProductById(productId);
 
-            // Xóa hình ảnh
             productService.deleteImage(product, imageName);
 
             return ResponseEntity.ok(ResponseObject.builder()

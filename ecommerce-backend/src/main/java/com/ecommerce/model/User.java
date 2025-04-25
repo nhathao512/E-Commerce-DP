@@ -6,22 +6,20 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "users")
 public class User {
     @Id
-    private String id; // ID gốc của MongoDB
-    private String shortUserId; // shortUserId
+    private String id;
+    private String shortUserId;
     private String username;
     private String password;
     private String phone;
     private String address;
-    private String fullName; // Thêm trường Họ và tên
-    private String avatar; // Thêm trường Ảnh đại diện (URL hoặc đường dẫn)
-    private int role; // Thêm trường role (0 = user, 1 = admin)
+    private String fullName;
+    private String avatar;
+    private int role;
 
-    // Constructors
     public User() {
-        this.role = 0; // Mặc định role = 0 khi tạo mới
+        this.role = 0;
     }
 
-    // Getters và Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getShortUserId() { return shortUserId; }

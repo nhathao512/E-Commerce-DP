@@ -16,17 +16,16 @@ public class ProductImageUploader extends FileUploadTemplate {
 
     @Override
     protected String postProcess(String fileUrl) {
-        return fileUrl; // Chỉ trả về URL
+        return fileUrl;
     }
 
-    // Upload nhiều ảnh
     public List<String> uploadMultipleImages(List<MultipartFile> files) throws IOException {
         List<String> urls = new ArrayList<>();
         for (MultipartFile file : files) {
             if (file.getSize() == 0) {
-                continue; // Bỏ qua file rỗng
+                continue;
             }
-            urls.add(upload(file, null)); // Gọi phương thức upload từ lớp cha
+            urls.add(upload(file, null));
         }
         return urls;
     }

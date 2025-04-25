@@ -6,7 +6,6 @@ import lombok.Setter;
 @Setter
 @Getter
 public class OrderItem {
-    // Getters và Setters
     private String productId;
     private int quantity;
     private double price;

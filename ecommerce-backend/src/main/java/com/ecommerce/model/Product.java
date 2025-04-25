@@ -18,7 +18,7 @@ import java.util.Map;
 public abstract class Product {
     @Id
     private String id;
-    private String productCode; // Trường mới, ngắn gọn và duy nhất
+    private String productCode;
     private String name;
     private String description;
     private Double price;
@@ -27,7 +27,6 @@ public abstract class Product {
     private List<String> sizes = new ArrayList<>();
     private Map<String, Integer> quantity = new HashMap<>();
 
-    // Getters và Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
@@ -57,12 +56,10 @@ public abstract class Product {
     public Map<String, Integer> getQuantity() { return quantity; }
     public void setQuantity(Map<String, Integer> quantity) { this.quantity = quantity; }
 
-    // Phương thức tiện ích để cập nhật số lượng cho một kích thước cụ thể
     public void updateQuantity(String size, Integer qty) {
         this.quantity.put(size, qty);
     }
 
-    // Phương thức tiện ích để lấy số lượng của một kích thước cụ thể
     public Integer getQuantityForSize(String size) {
         return this.quantity.getOrDefault(size, 0);
     }

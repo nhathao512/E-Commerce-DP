@@ -17,7 +17,6 @@ public class ProductRequest {
     private String material;
     private String sole;
 
-    // Getters và Setters
     public String getType() {
         return type;
     }

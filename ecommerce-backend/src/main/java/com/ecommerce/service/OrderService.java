@@ -39,7 +39,6 @@ public class OrderService {
             throw new IllegalArgumentException("ID người dùng không được trống!");
         }
 
-        // Đảm bảo mỗi CartItem có productCode
         for (CartItem item : items) {
             if (item.getProduct() == null || item.getProduct().getProductCode() == null) {
                 throw new IllegalArgumentException("Sản phẩm hoặc mã sản phẩm không hợp lệ: " + item.getProductName());
@@ -89,7 +88,6 @@ public class OrderService {
             throw new IllegalArgumentException("ID người dùng không được trống!");
         }
         List<Order> orders = orderRepository.findByUserId(userId);
-        // Đảm bảo productCode được bao gồm trong mỗi CartItem
         for (Order order : orders) {
             for (CartItem item : order.getItems()) {
                 if (item.getProductCode() == null || item.getProductCode().isEmpty()) {
@@ -106,7 +104,6 @@ public class OrderService {
 
     public List<Order> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
-        // Đảm bảo productCode được bao gồm trong mỗi CartItem
         for (Order order : orders) {
             for (CartItem item : order.getItems()) {
                 if (item.getProductCode() == null || item.getProductCode().isEmpty()) {

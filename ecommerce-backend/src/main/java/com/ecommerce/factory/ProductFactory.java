@@ -15,7 +15,6 @@ public class ProductFactory {
                     String categoryId, String imageUrl, 
                     String description, Map<String, Integer> quantities, 
                     List<String> sizes, Map<String, Object> specificAttributes) {
-        // Create a generic Product instance
         if (type.equalsIgnoreCase("clothing")) {
             ClothingProduct clothingProduct = new ClothingProduct();
             clothingProduct.setName(name);

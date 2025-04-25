@@ -22,7 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:" + System.getProperty("user.dir") + "/uploads/");
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + System.getProperty("user.dir") + "/uploads/");
-        registry.addResourceHandler("/api/images/**") // Thêm ánh xạ cho /api/images/**
+        registry.addResourceHandler("/api/images/**")
                 .addResourceLocations("file:" + System.getProperty("user.dir") + "/uploads/");
     }
 }

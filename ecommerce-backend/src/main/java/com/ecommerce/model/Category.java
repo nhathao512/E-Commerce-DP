@@ -9,13 +9,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Document(collection = "categories")
 public class Category {
     @Id
-    @JsonProperty("id") // Đảm bảo ánh xạ _id từ MongoDB thành id trong JSON
+    @JsonProperty("id")
     private String id;
 
-    @JsonProperty("name") // Rõ ràng ánh xạ trường name
+    @JsonProperty("name")
     private String name;
 
-    @JsonProperty("icon") // Rõ ràng ánh xạ trường icon
+    @JsonProperty("icon")
     private String icon;
 
     public Category() {}

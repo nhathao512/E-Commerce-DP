@@ -41,7 +41,6 @@ public class Province {
     @Field("District")
     private List<District> district;
 
-    // Getters và setters
     public String getId() {
         return id;
     }
@@ -162,7 +161,6 @@ class District {
     @Field("Ward")
     private List<Ward> ward;
 
-    // Getters và setters
     public String getType() {
         return type;
     }
@@ -272,7 +270,6 @@ class Ward {
     @Field("AdministrativeUnitId")
     private int administrativeUnitId;
 
-    // Getters và setters
     public String getType() {
         return type;
     }

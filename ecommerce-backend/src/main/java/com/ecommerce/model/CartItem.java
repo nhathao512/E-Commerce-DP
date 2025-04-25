@@ -7,7 +7,7 @@ public class CartItem {
     private String productName;
     private double price;
     private String imageUrl;
-    private String productCode; // Thêm trường productCode
+    private String productCode;
 
     public CartItem() {}
 
@@ -19,7 +19,7 @@ public class CartItem {
         this.price = product.getPrice();
         this.imageUrl = product.getImages() != null && !product.getImages().isEmpty()
                 ? product.getImages().get(0) : null;
-        this.productCode = product.getProductCode(); // Gán productCode từ Product
+        this.productCode = product.getProductCode();
     }
 
     public Product getProduct() { return product; }

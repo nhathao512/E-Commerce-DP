@@ -49,7 +49,6 @@ public class ReviewService {
         review.setRating(rating);
         review.setComment(comment);
 
-        // Lấy fullName từ User
         User user = userRepository.findByShortUserId(shortUserId);
         if (user != null) {
             review.setFullName(user.getFullName() != null ? user.getFullName() : "Anonymous");

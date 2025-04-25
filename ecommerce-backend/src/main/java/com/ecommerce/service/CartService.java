@@ -36,7 +36,6 @@ public class CartService {
         synchronized (cartInstances) {
             return cartInstances.computeIfAbsent(userId, k -> {
                 Cart cart = new Cart(userId);
-                // Đồng bộ dữ liệu từ MongoDB khi khởi tạo
                 Optional<Cart> optionalCart = cartRepository.findById(userId);
                 if (optionalCart.isPresent()) {
                     cart.setItems(optionalCart.get().getItems());
@@ -53,7 +52,6 @@ public class CartService {
     }
 
     public void addToCart(String userId, Product product, int quantity, String size) {
-        // Kiểm tra tồn kho
         Integer stockForSize = product.getQuantityForSize(size);
         if (stockForSize == null || stockForSize < quantity) {
             throw new IllegalArgumentException(
@@ -61,17 +59,14 @@ public class CartService {
             );
         }
 
-        // Lấy giỏ hàng
         Cart cart = getCartInstance(userId);
 
-        // Đăng ký observer nếu chưa có
         boolean hasObserver = cart.getObservers().stream()
                 .anyMatch(observer -> observer instanceof ConcreteCartObserver);
         if (!hasObserver) {
             cart.addObserver(new ConcreteCartObserver("UIObserver", userId, messagingTemplate));
         }
 
-        // Thêm sản phẩm
         cart.addItem(product, quantity, size);
     }
 
@@ -130,7 +125,6 @@ public class CartService {
 
     public void removeFromCart(String userId, String productId, String size) {
         Cart cart = getCartInstance(userId);
-        // Đăng ký observer nếu chưa có
         boolean hasObserver = cart.getObservers().stream()
                 .anyMatch(observer -> observer instanceof ConcreteCartObserver);
         if (!hasObserver) {

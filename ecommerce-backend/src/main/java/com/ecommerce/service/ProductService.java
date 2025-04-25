@@ -116,7 +116,6 @@ public class ProductService {
     }
 
     public void deleteImage(Product product, String imageName) {
-        // Kiểm tra xem hình ảnh có tồn tại trong danh sách không
         List<String> images = product.getImages();
         if (!images.contains(imageName)) {
             throw new IllegalArgumentException("Hình ảnh không tồn tại trong sản phẩm");

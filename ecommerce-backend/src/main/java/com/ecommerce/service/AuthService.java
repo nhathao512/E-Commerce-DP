@@ -59,7 +59,7 @@ public class AuthService {
         user.setFullName(fullName);
         user.setAvatar(avatar != null && !avatar.isEmpty() ? avatar : "/Uploads/avatars/default-avatar.png");
         user.setShortUserId(generateShortUserId());
-        user.setRole(0); // Mặc định role = 0 cho người dùng mới
+        user.setRole(0);
         User savedUser = userRepository.save(user);
         return "User registered successfully with username: " + username + " and shortUserId: " + savedUser.getShortUserId();
     }
@@ -113,7 +113,6 @@ public class AuthService {
         userRepository.delete(user);
     }
 
-    // Thêm phương thức getUserById
     public User getUserById(String userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));

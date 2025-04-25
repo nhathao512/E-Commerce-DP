@@ -37,7 +37,6 @@ public class ExportController {
     public ResponseEntity<ByteArrayResource> exportTopProducts(
             @RequestParam String format) {
         try {
-            // Lấy danh sách đơn hàng
             List<Order> orders = orderService.getAllOrders();
             if (orders.isEmpty()) {
                 return ResponseEntity.badRequest()
@@ -89,7 +88,6 @@ public class ExportController {
     public ResponseEntity<ByteArrayResource> exportTopUsers(
             @RequestParam String format) {
         try {
-            // Lấy danh sách đơn hàng
             List<Order> orders = orderService.getAllOrders();
             if (orders.isEmpty()) {
                 return ResponseEntity.badRequest()

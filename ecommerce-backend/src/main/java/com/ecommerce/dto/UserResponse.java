@@ -11,10 +11,9 @@ public class UserResponse {
     private String phone;
     private String address;
     private String token;
-    private String error; // Thêm trường error để chứa thông báo lỗi
-    private int role; // Thêm trường role
+    private String error;
+    private int role;
 
-    // Constructor nhận một User (dùng khi trả về thông tin người dùng)
     public UserResponse(User user) {
         this.id = user.getId();
         this.shortUserId = user.getShortUserId();
@@ -24,10 +23,9 @@ public class UserResponse {
         this.phone = user.getPhone();
         this.address = user.getAddress();
         this.role = user.getRole();
-        this.error = null; // Không có lỗi
+        this.error = null;
     }
 
-    // Constructor rỗng (dùng khi cần tạo đối tượng rỗng)
     public UserResponse() {
         this.id = null;
         this.shortUserId = null;
@@ -40,7 +38,6 @@ public class UserResponse {
         this.error = null;
     }
 
-    // Constructor với thông báo lỗi (dùng khi trả về lỗi)
     public UserResponse(String error) {
         this.id = null;
         this.shortUserId = null;
@@ -53,7 +50,6 @@ public class UserResponse {
         this.error = error;
     }
 
-    // Constructor đầy đủ với tất cả các tham số (dùng khi cần tạo đối tượng thủ công)
     public UserResponse(String id, String shortUserId, String username, String fullName, String avatar, String phone, String address, int role) {
         this.id = id;
         this.shortUserId = shortUserId;
@@ -66,7 +62,6 @@ public class UserResponse {
         this.error = null;
     }
 
-    // Getters và Setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
     public String getShortUserId() { return shortUserId; }
@@ -88,7 +83,6 @@ public class UserResponse {
     public int getRole() { return role; }
     public void setRole(int role) { this.role = role; }
 
-    // Phương thức toString để hỗ trợ debug
     @Override
     public String toString() {
         return "UserResponse{" +

@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface ProductRepository extends MongoRepository<Product, String> {
     List<Product> findByCategoryId(String categoryId);
-    Optional<Product> findByProductCode(String productCode); // Thêm phương thức này
+    Optional<Product> findByProductCode(String productCode);
 
 }
