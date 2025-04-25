@@ -19,7 +19,6 @@ function UserManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const usersPerPage = 10;
 
-  // Fetch list of users
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
@@ -35,12 +34,10 @@ function UserManagement() {
     }
   };
 
-  // Call API when component mounts
   useEffect(() => {
     fetchUsers();
   }, []);
 
-  // Memoize filtered and sorted users
   const filteredUsers = useMemo(() => {
     return users
       .filter((user) => {
@@ -60,24 +57,20 @@ function UserManagement() {
       });
   }, [users, searchTerm, isAsc]);
 
-  // Calculate paginated users
   const paginatedUsers = useMemo(() => {
     const startIndex = (currentPage - 1) * usersPerPage;
     const endIndex = startIndex + usersPerPage;
     return filteredUsers.slice(startIndex, endIndex);
   }, [filteredUsers, currentPage]);
 
-  // Calculate total pages
   const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-  // Handle page change
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
       setCurrentPage(pageNumber);
     }
   };
 
-  // Open form to create new user
   const handleCreate = () => {
     setEditingUser(null);
     setIsPopupOpen(true);
@@ -85,7 +78,6 @@ function UserManagement() {
     setShowConfirmPassword(false);
   };
 
-  // Open form to edit user
   const handleEdit = (user) => {
     setEditingUser(user);
     setIsPopupOpen(true);
@@ -93,14 +85,12 @@ function UserManagement() {
     setShowConfirmPassword(false);
   };
 
-  // Open delete confirmation popup
   const handleDelete = (id) => {
     const user = users.find((u) => u.id === id);
     setUserToDelete(user);
     setIsDeletePopupOpen(true);
   };
 
-  // Confirm user deletion
   const confirmDelete = async () => {
     setIsLoading(true);
     try {
@@ -119,7 +109,6 @@ function UserManagement() {
     }
   };
 
-  // Handle form submission (create or edit)
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;

@@ -132,7 +132,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 50, 0.5); /* Slightly darker for better contrast */
+  background: rgba(0, 0, 50, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -140,69 +140,68 @@
 }
 
 .popup {
-  background: linear-gradient(145deg, #f7f9ff, #eef2ff); /* Maintain gradient */
+  background: linear-gradient(145deg, #f7f9ff, #eef2ff);
   border-radius: 16px;
-  width: 90%; /* Responsive width */
-  max-width: 700px; /* Slightly wider for balance */
-  max-height: 80vh; /* Limit height to fit screen */
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 32px rgba(0, 0, 100, 0.2); /* Softer shadow */
+  box-shadow: 0 8px 32px rgba(0, 0, 100, 0.2);
   position: relative;
-  overflow: hidden; /* Ensure no overflow */
+  overflow: hidden;
   margin-top: 80px;
 }
 
 .popupContent {
   flex: 1;
-  padding: 1.5rem 2rem; /* Balanced padding */
-  overflow-y: auto; /* Enable scrolling */
-  scrollbar-width: thin; /* Firefox scrollbar */
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
-/* Custom Scrollbar for Webkit browsers */
 .popupContent::-webkit-scrollbar {
   width: 8px;
 }
 
 .popupContent::-webkit-scrollbar-track {
-  background: #e6e9ff; /* Light track to match theme */
+  background: #e6e9ff;
   border-radius: 10px;
 }
 
 .popupContent::-webkit-scrollbar-thumb {
-  background: #4e54c8; /* Thumb matches primary color */
+  background: #4e54c8;
   border-radius: 10px;
 }
 
 .popupContent::-webkit-scrollbar-thumb:hover {
-  background: #667eea; /* Lighter on hover */
+  background: #667eea;
 }
 
 .popup h3 {
   font-size: 1.8rem;
   color: #273c75;
   font-weight: bold;
-  margin: 1rem 0; /* Reduced margin for better spacing */
+  margin: 1rem 0;
   text-align: center;
-  text-shadow: 0 1px 2px rgba(0, 0, 100, 0.1); /* Subtle shadow */
+  text-shadow: 0 1px 2px rgba(0, 0, 100, 0.1);
 }
 
 .userInfo {
   margin-bottom: 1.5rem;
-  padding: 1rem 1.5rem; /* Slightly more padding for balance */
-  background: linear-gradient(145deg, #ffffff, #f7f9ff); /* Softer gradient */
+  padding: 1rem 1.5rem;
+  background: linear-gradient(145deg, #ffffff, #f7f9ff);
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 100, 0.08); /* Lighter shadow */
+  box-shadow: 0 4px 12px rgba(0, 0, 100, 0.08);
   border: 1px solid #d3d9ff;
   text-align: left;
 }
 
 .userInfo p {
-  margin: 0.6rem 0; /* Slightly more spacing */
+  margin: 0.6rem 0;
   font-size: 1rem;
   color: #273c75;
-  line-height: 1.5; /* Improved readability */
+  line-height: 1.5;
 }
 
 .userInfo strong {
@@ -213,8 +212,8 @@
 
 .detailTable {
   width: 100%;
-  margin-top: 1rem; /* Reduced for tighter layout */
-  border-collapse: separate; /* Better for rounded corners */
+  margin-top: 1rem;
+  border-collapse: separate;
   border-spacing: 0;
   border-radius: 12px;
   overflow: hidden;
@@ -236,11 +235,11 @@
   text-align: center;
   color: #333;
   border: none;
-  transition: background-color 0.2s ease; /* Smooth hover effect */
+  transition: background-color 0.2s ease;
 }
 
 .detailTable tr:hover td {
-  background-color: #f4f6ff; /* Subtle hover effect */
+  background-color: #f4f6ff;
 }
 
 .detailTable tr:last-child td {
@@ -249,19 +248,19 @@
 }
 
 .statusColumn {
-  width: 180px; /* Consistent with previous requirement */
+  width: 180px;
 }
 
 .popupButtons {
   display: flex;
   justify-content: center;
-  gap: 1rem; /* Slightly tighter spacing */
-  margin: 1rem 0; /* Balanced margin */
+  gap: 1rem;
+  margin: 1rem 0;
 }
 
 .closeBtn {
-  display: block; /* Ensure button is centered */
-  margin: 1rem auto; /* Centered with auto margins */
+  display: block;
+  margin: 1rem auto;
   background: none;
   color: #4e54c8;
   border: 2px solid #4e54c8;
@@ -269,18 +268,16 @@
   cursor: pointer;
   font-size: 1rem;
   border-radius: 8px;
-  padding: 0.6rem 1.5rem; /* Slightly larger padding */
+  padding: 0.6rem 1.5rem;
   transition: all 0.2s ease;
 }
 
 .closeBtn:hover {
   background-color: #4e54c8;
-  color: white; /* Invert colors on hover */
+  color: white;
   transform: scale(1.05);
 }
-/* Existing styles remain unchanged, add the following at the end */
 
-/* Pagination Styles */
 .pagination {
   display: flex;
   justify-content: center;
@@ -314,17 +311,18 @@
   background: linear-gradient(to right, #667eea, #764ba2);
   font-weight: bold;
   transform: scale(1.1);
-}.noOrders {
+}
+.noOrders {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  min-height: 300px; /* Ensure enough height for centering */
+  min-height: 300px;
   text-align: center;
 }
 
 .noOrdersImage {
-  max-width: 600px; /* Adjust size as needed */
+  max-width: 600px;
   height: auto;
-  margin: 0 auto; /* Center horizontally */
+  margin: 0 auto;
 }

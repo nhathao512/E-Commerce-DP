@@ -6,7 +6,10 @@ import API from "../../../services/api";
 function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
   const [images, setImages] = useState(
     Array.isArray(product.images)
-      ? product.images.map((img) => ({ url: `${apiUrl}/images/${img}`, name: img }))
+      ? product.images.map((img) => ({
+          url: `${apiUrl}/images/${img}`,
+          name: img,
+        }))
       : []
   );
   const [newImages, setNewImages] = useState([]);
@@ -14,11 +17,9 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
-  // Cấu hình giới hạn
-  const MAX_FILES = 5; // Tối đa 5 ảnh
-  const MAX_SIZE = 5 * 1024 * 1024; // 5MB mỗi ảnh
+  const MAX_FILES = 5;
+  const MAX_SIZE = 5 * 1024 * 1024;
 
-  // Xử lý khi chọn file ảnh
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files).filter((file) => {
       if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
@@ -34,25 +35,25 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
 
     if (selectedFiles.length + images.length + newImages.length > MAX_FILES) {
       alert(`Bạn chỉ có thể upload tối đa ${MAX_FILES} ảnh!`);
-      setNewImages([...newImages, ...selectedFiles.slice(0, MAX_FILES - images.length - newImages.length)]);
+      setNewImages([
+        ...newImages,
+        ...selectedFiles.slice(0, MAX_FILES - images.length - newImages.length),
+      ]);
     } else {
       setNewImages([...newImages, ...selectedFiles]);
     }
   };
 
-  // Xóa ảnh hiện có
   const handleDeleteImage = (index) => {
     const deletedImage = images[index];
     setDeletedImages([...deletedImages, deletedImage.name]);
     setImages(images.filter((_, i) => i !== index));
   };
 
-  // Xóa ảnh mới được chọn
   const handleDeleteNewImage = (index) => {
     setNewImages(newImages.filter((_, i) => i !== index));
   };
 
-  // Gửi yêu cầu cập nhật ảnh
   const handleSave = async () => {
     if (newImages.length === 0 && deletedImages.length === 0) {
       alert("Không có thay đổi để lưu!");
@@ -72,7 +73,9 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
           "Content-Type": "multipart/form-data",
         },
         onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
           setUploadProgress(percentCompleted);
         },
       });
@@ -85,7 +88,9 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
       onClose();
     } catch (error) {
       const message =
-        error.response?.data?.message || error.message || "Đã xảy ra lỗi khi upload ảnh";
+        error.response?.data?.message ||
+        error.message ||
+        "Đã xảy ra lỗi khi upload ảnh";
       alert(`Không thể cập nhật ảnh: ${message}`);
     } finally {
       setIsSubmitting(false);
@@ -126,7 +131,10 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
 
           <div className={styles.imagePreview}>
             {images.map((img, index) => (
-              <div key={`existing-${index}`} className={`${styles.imageWrapper} ${styles.existingImage}`}>
+              <div
+                key={`existing-${index}`}
+                className={`${styles.imageWrapper} ${styles.existingImage}`}
+              >
                 <img src={img.url} alt={`Product ${index}`} />
                 <button
                   type="button"
@@ -140,7 +148,10 @@ function ImageManagement({ product, onClose, apiUrl, onUpdateImages }) {
               </div>
             ))}
             {newImages.map((file, index) => (
-              <div key={`new-${index}`} className={`${styles.imageWrapper} ${styles.newImage}`}>
+              <div
+                key={`new-${index}`}
+                className={`${styles.imageWrapper} ${styles.newImage}`}
+              >
                 <img src={URL.createObjectURL(file)} alt={`New ${index}`} />
                 <button
                   type="button"

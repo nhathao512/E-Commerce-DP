@@ -4,7 +4,11 @@ import styles from "./ReviewList.module.css";
 
 function ReviewList({ productCode }) {
   const [reviews, setReviews] = useState([]);
-  const [averageRating, setAverageRating] = useState({ value: 0, fullStars: 0, hasHalfStar: false });
+  const [averageRating, setAverageRating] = useState({
+    value: 0,
+    fullStars: 0,
+    hasHalfStar: false,
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const reviewsPerPage = 5;
 
@@ -15,9 +19,11 @@ function ReviewList({ productCode }) {
         const fetchedReviews = response.data;
         setReviews(fetchedReviews);
 
-        // Tính số sao trung bình
         if (fetchedReviews.length > 0) {
-          const totalRating = fetchedReviews.reduce((sum, review) => sum + review.rating, 0);
+          const totalRating = fetchedReviews.reduce(
+            (sum, review) => sum + review.rating,
+            0
+          );
           const avg = totalRating / fetchedReviews.length;
           const roundedAvg = Number(avg.toFixed(1));
           const fullStars = Math.floor(roundedAvg);
@@ -33,13 +39,11 @@ function ReviewList({ productCode }) {
     fetchReviews();
   }, [productCode]);
 
-  // Tính toán các bình luận hiển thị trên trang hiện tại
   const totalPages = Math.ceil(reviews.length / reviewsPerPage);
   const indexOfLastReview = currentPage * reviewsPerPage;
   const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
   const currentReviews = reviews.slice(indexOfFirstReview, indexOfLastReview);
 
-  // Xử lý điều hướng phân trang
   const handlePrevious = () => {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
@@ -64,19 +68,32 @@ function ReviewList({ productCode }) {
             {[...Array(5)].map((_, index) => {
               if (index < averageRating.fullStars) {
                 return (
-                  <span key={index} className={`${styles.averageStar} ${styles.averageStarFilled}`}>
+                  <span
+                    key={index}
+                    className={`${styles.averageStar} ${styles.averageStarFilled}`}
+                  >
                     ★
                   </span>
                 );
               }
-              if (index === averageRating.fullStars && averageRating.hasHalfStar) {
+              if (
+                index === averageRating.fullStars &&
+                averageRating.hasHalfStar
+              ) {
                 return (
-                  <span key={index} className={`${styles.averageStar} ${styles.averageStarHalf}`}>
+                  <span
+                    key={index}
+                    className={`${styles.averageStar} ${styles.averageStarHalf}`}
+                  >
                     ★
                   </span>
                 );
               }
-              return <span key={index} className={styles.averageStar}>★</span>;
+              return (
+                <span key={index} className={styles.averageStar}>
+                  ★
+                </span>
+              );
             })}
           </div>
         </div>

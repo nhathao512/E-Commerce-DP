@@ -265,7 +265,6 @@ h3 {
   background-color: white;
 }
 
-/* Toast Notification */
 .notification {
   position: fixed;
   top: 20px;
@@ -279,11 +278,11 @@ h3 {
 }
 
 .notificationSuccess {
-  background-color: #10b981; /* Màu xanh cho thành công */
+  background-color: #10b981;
 }
 
 .notificationError {
-  background-color: #ef4444; /* Màu đỏ cho lỗi */
+  background-color: #ef4444;
 }
 
 @keyframes slideIn {

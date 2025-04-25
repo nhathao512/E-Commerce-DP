@@ -43,7 +43,6 @@ function Navbar() {
     ? `${backendBaseUrl}/${user.avatar}?t=${Date.now()}`
     : null;
 
-  // Fetch cart count using getCart from api.jsx
   const fetchCartCount = useCallback(async () => {
     if (!isAuthenticated || !user?.id) {
       setCartCount(0);
@@ -66,12 +65,10 @@ function Navbar() {
     }
   }, [isAuthenticated, user?.id]);
 
-  // Fetch initial cart count
   useEffect(() => {
     fetchCartCount();
   }, [fetchCartCount]);
 
-  // WebSocket setup for real-time cart updates
   useEffect(() => {
     if (!isAuthenticated || !user?.id) {
       setCartCount(0);
@@ -102,7 +99,7 @@ function Navbar() {
       onStompError: (frame) => {
         console.error("WebSocket error:", frame);
         setError("Failed to connect to WebSocket");
-        fetchCartCount(); // Fallback to HTTP
+        fetchCartCount();
       },
     });
 
@@ -115,17 +112,15 @@ function Navbar() {
     };
   }, [isAuthenticated, user?.id, fetchCartCount]);
 
-  // Handle cartUpdated event as fallback
   useEffect(() => {
     const handleCartUpdated = () => {
       console.log("Received cartUpdated event");
-      fetchCartCount(); // Fallback if WebSocket fails
+      fetchCartCount();
     };
     window.addEventListener("cartUpdated", handleCartUpdated);
     return () => window.removeEventListener("cartUpdated", handleCartUpdated);
   }, [fetchCartCount]);
 
-  // Handle scroll for fixed navbar
   useEffect(() => {
     const handleScroll = debounce(() => {
       setIsScrolled(window.scrollY > 50);
@@ -135,7 +130,6 @@ function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle search submission
   const handleSearch = (e) => {
     e.preventDefault();
     navigate(
@@ -146,7 +140,6 @@ function Navbar() {
     setSearchQuery("");
   };
 
-  // Handle logout with page reload
   const handleLogout = async () => {
     try {
       await logout();
@@ -158,7 +151,6 @@ function Navbar() {
     }
   };
 
-  // Dropdown handlers
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const handleMouseLeave = () => setIsDropdownOpen(false);
 

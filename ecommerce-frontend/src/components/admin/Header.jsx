@@ -1,14 +1,13 @@
-// src/pages/admin/Header.jsx
-import React, { useState } from 'react';
-import { FaMoon, FaSun } from 'react-icons/fa';
-import styles from './AdminPage.module.css'; // dùng chung CSS module
+import React, { useState } from "react";
+import { FaMoon, FaSun } from "react-icons/fa";
+import styles from "./AdminPage.module.css";
 
 const Header = () => {
   const [darkMode, setDarkMode] = useState(false);
 
   const toggleTheme = () => {
     setDarkMode(!darkMode);
-    document.body.classList.toggle('dark-theme', !darkMode);
+    document.body.classList.toggle("dark-theme", !darkMode);
   };
 
   return (

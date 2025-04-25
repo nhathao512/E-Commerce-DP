@@ -32,9 +32,7 @@ function ProductManagement() {
         const validProducts = productsResponse.data
           .filter(
             (product) =>
-              product &&
-              product.name &&
-              typeof product.name === "string"
+              product && product.name && typeof product.name === "string"
           )
           .map((product) => ({
             ...product,
@@ -158,14 +156,21 @@ function ProductManagement() {
             try {
               let updatedProduct;
               if (editingProduct) {
-                const response = await updateProduct(editingProduct.id, formData);
+                const response = await updateProduct(
+                  editingProduct.id,
+                  formData
+                );
                 updatedProduct = {
                   ...editingProduct,
                   ...response.data,
                   id: response.data.id || editingProduct.id,
-                  productCode: response.data.productCode || editingProduct.productCode || "N/A",
+                  productCode:
+                    response.data.productCode ||
+                    editingProduct.productCode ||
+                    "N/A",
                   name: response.data.name || formValues.name,
-                  description: response.data.description || formValues.description,
+                  description:
+                    response.data.description || formValues.description,
                   price: response.data.price || formValues.price,
                   categoryId: response.data.categoryId || formValues.categoryId,
                   type: response.data.type || formValues.type,
@@ -183,18 +188,22 @@ function ProductManagement() {
                   )
                 );
               } else {
-                console.log("Sending formData to addProduct:", [...formData.entries()]);
+                console.log("Sending formData to addProduct:", [
+                  ...formData.entries(),
+                ]);
                 const response = await addProduct(formData);
                 console.log("API response:", response.data);
                 updatedProduct = {
                   ...response.data,
                   id: response.data.id || `temp-${Date.now()}`,
-                  productCode: response.data.productCode || `CODE-${Date.now()}`,
+                  productCode:
+                    response.data.productCode || `CODE-${Date.now()}`,
                   images: Array.isArray(response.data.images)
                     ? response.data.images
                     : [],
                   name: response.data.name || formValues.name,
-                  description: response.data.description || formValues.description,
+                  description:
+                    response.data.description || formValues.description,
                   price: response.data.price || formValues.price,
                   categoryId: response.data.categoryId || formValues.categoryId,
                   type: response.data.type || formValues.type,
@@ -204,7 +213,6 @@ function ProductManagement() {
                   sole: response.data.sole || formValues.sole,
                 };
                 console.log("New product added:", updatedProduct);
-                // Reload the page to fetch updated product list
                 window.location.reload();
               }
               setPopupOpen(false);
@@ -234,7 +242,9 @@ function ProductManagement() {
 }
 
 function ProductForm({ editingProduct, categories, onSave, onCancel }) {
-  const [type, setType] = useState(editingProduct?.type?.toLowerCase() || "clothing");
+  const [type, setType] = useState(
+    editingProduct?.type?.toLowerCase() || "clothing"
+  );
   const [sizes, setSizes] = useState(editingProduct?.sizes || []);
   const [quantities, setQuantities] = useState(() => {
     if (editingProduct?.quantity) {
@@ -430,8 +440,12 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                     <label>Số lượng:</label>
                     <input
                       type="number"
-                      value={quantities[size] !== undefined ? quantities[size] : 0}
-                      onChange={(e) => handleQuantityChange(size, e.target.value)}
+                      value={
+                        quantities[size] !== undefined ? quantities[size] : 0
+                      }
+                      onChange={(e) =>
+                        handleQuantityChange(size, e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -483,8 +497,12 @@ function ProductForm({ editingProduct, categories, onSave, onCancel }) {
                     <label>Số lượng:</label>
                     <input
                       type="number"
-                      value={quantities[size] !== undefined ? quantities[size] : 0}
-                      onChange={(e) => handleQuantityChange(size, e.target.value)}
+                      value={
+                        quantities[size] !== undefined ? quantities[size] : 0
+                      }
+                      onChange={(e) =>
+                        handleQuantityChange(size, e.target.value)
+                      }
                       required
                     />
                   </div>

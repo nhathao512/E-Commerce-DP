@@ -12,10 +12,14 @@ const UserOrderManagement = () => {
   const [showReviewForm, setShowReviewForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [currentPage, setCurrentPage] = useState(1); // New state for current page
-  const ordersPerPage = 5; // Display 3 orders per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 5;
 
-  const { user, isAuthenticated, isLoading: authLoading } = useContext(AuthContext);
+  const {
+    user,
+    isAuthenticated,
+    isLoading: authLoading,
+  } = useContext(AuthContext);
 
   const mapStatusForUser = (adminStatus) => {
     switch (adminStatus) {
@@ -119,7 +123,6 @@ const UserOrderManagement = () => {
     setShowReviewForm(item);
   };
 
-  // Pagination logic
   const totalPages = Math.ceil(orders.length / ordersPerPage);
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -220,7 +223,6 @@ const UserOrderManagement = () => {
             </tbody>
           </table>
 
-          {/* Pagination Controls */}
           <div className={styles.pagination}>
             <button
               className={styles.paginationBtn}
@@ -257,17 +259,27 @@ const UserOrderManagement = () => {
             <div className={styles.popupContent}>
               <h3>Chi tiết đơn hàng</h3>
               <div className={styles.userInfo}>
-                <p><strong>Tên:</strong> {selectedOrder.name}</p>
-                <p><strong>Số điện thoại:</strong> {selectedOrder.phone}</p>
-                <p><strong>Địa chỉ:</strong> {selectedOrder.address}</p>
-                <p><strong>Tổng tiền:</strong> {selectedOrder.total.toLocaleString("vi-VN")} VNĐ</p>
+                <p>
+                  <strong>Tên:</strong> {selectedOrder.name}
+                </p>
+                <p>
+                  <strong>Số điện thoại:</strong> {selectedOrder.phone}
+                </p>
+                <p>
+                  <strong>Địa chỉ:</strong> {selectedOrder.address}
+                </p>
+                <p>
+                  <strong>Tổng tiền:</strong>{" "}
+                  {selectedOrder.total.toLocaleString("vi-VN")} VNĐ
+                </p>
               </div>
 
-              {selectedOrder.cancelReason && selectedOrder.status === "Đã hủy" && (
-                <p className={styles.cancelReason}>
-                  Lý do hủy: {selectedOrder.cancelReason}
-                </p>
-              )}
+              {selectedOrder.cancelReason &&
+                selectedOrder.status === "Đã hủy" && (
+                  <p className={styles.cancelReason}>
+                    Lý do hủy: {selectedOrder.cancelReason}
+                  </p>
+                )}
               <table className={styles.detailTable}>
                 <thead>
                   <tr>
@@ -285,13 +297,18 @@ const UserOrderManagement = () => {
                       <td>{item.name}</td>
                       <td>{item.quantity}</td>
                       <td>{item.size || "N/A"}</td>
-                      <td>{item.price?.toLocaleString("vi-VN") || "N/A"} VNĐ</td>
+                      <td>
+                        {item.price?.toLocaleString("vi-VN") || "N/A"} VNĐ
+                      </td>
                       <td>
                         <div className={styles.popupButtons}>
                           <button
                             className={styles.actionBtn}
                             onClick={() => handleRateClick(item)}
-                            disabled={!canRate(selectedOrder.status) || !item.productCode}
+                            disabled={
+                              !canRate(selectedOrder.status) ||
+                              !item.productCode
+                            }
                           >
                             Đánh giá
                           </button>

@@ -228,7 +228,6 @@ function AdminPage() {
     },
   };
 
-  // Hàm gọi API xuất dữ liệu
   const exportData = async (type, format) => {
     try {
       const response =

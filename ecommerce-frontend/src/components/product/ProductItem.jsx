@@ -6,7 +6,11 @@ import { getReviews } from "../../services/api";
 function ProductItem({ product }) {
   const navigate = useNavigate();
   const API_URL = "http://localhost:8080/api";
-  const [averageRating, setAverageRating] = useState({ value: 0, fullStars: 0, hasHalfStar: false });
+  const [averageRating, setAverageRating] = useState({
+    value: 0,
+    fullStars: 0,
+    hasHalfStar: false,
+  });
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -14,9 +18,11 @@ function ProductItem({ product }) {
         const response = await getReviews(product.productCode);
         const fetchedReviews = response.data;
 
-        // Calculate average rating
         if (fetchedReviews.length > 0) {
-          const totalRating = fetchedReviews.reduce((sum, review) => sum + review.rating, 0);
+          const totalRating = fetchedReviews.reduce(
+            (sum, review) => sum + review.rating,
+            0
+          );
           const avg = totalRating / fetchedReviews.length;
           const roundedAvg = Number(avg.toFixed(1));
           const fullStars = Math.floor(roundedAvg);
@@ -24,7 +30,11 @@ function ProductItem({ product }) {
           setAverageRating({ value: roundedAvg, fullStars, hasHalfStar });
         }
       } catch (error) {
-        console.error("Error fetching reviews for product:", product.productCode, error);
+        console.error(
+          "Error fetching reviews for product:",
+          product.productCode,
+          error
+        );
       }
     };
     fetchReviews();
@@ -62,12 +72,33 @@ function ProductItem({ product }) {
         <div className={styles.rating}>
           {[...Array(5)].map((_, index) => {
             if (index < averageRating.fullStars) {
-              return <span key={index} className={`${styles.star} ${styles.starFilled}`}>★</span>;
+              return (
+                <span
+                  key={index}
+                  className={`${styles.star} ${styles.starFilled}`}
+                >
+                  ★
+                </span>
+              );
             }
-            if (index === averageRating.fullStars && averageRating.hasHalfStar) {
-              return <span key={index} className={`${styles.star} ${styles.starHalf}`}>★</span>;
+            if (
+              index === averageRating.fullStars &&
+              averageRating.hasHalfStar
+            ) {
+              return (
+                <span
+                  key={index}
+                  className={`${styles.star} ${styles.starHalf}`}
+                >
+                  ★
+                </span>
+              );
             }
-            return <span key={index} className={styles.star}>★</span>;
+            return (
+              <span key={index} className={styles.star}>
+                ★
+              </span>
+            );
           })}
           <span className={styles.ratingValue}>({averageRating.value})</span>
         </div>

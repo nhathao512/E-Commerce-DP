@@ -25,7 +25,7 @@ function ProductList() {
         setFilteredProducts(productResponse.data || []);
 
         const categoryResponse = await getAllCategories();
-        console.log("Category Response:", categoryResponse.data); // Debug
+        console.log("Category Response:", categoryResponse.data);
         const categoryData = categoryResponse.data || [];
         setCategories([{ id: "Tất cả", name: "Tất cả" }, ...categoryData]);
       } catch (error) {

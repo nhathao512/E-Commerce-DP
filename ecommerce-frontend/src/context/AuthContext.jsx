@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect } from "react";
 import API from "../services/api";
 import { getCart } from "../services/api";
 
-// Hàm giải mã token JWT
 const decodeToken = (token) => {
   try {
     const base64Url = token.split(".")[1];
@@ -32,7 +31,10 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem("token");
       const storedUser = localStorage.getItem("user");
 
-      console.log("Initializing auth:", { token: !!token, storedUser: !!storedUser });
+      console.log("Initializing auth:", {
+        token: !!token,
+        storedUser: !!storedUser,
+      });
 
       if (token && storedUser) {
         try {
@@ -56,10 +58,8 @@ export const AuthProvider = ({ children }) => {
           setUser(fetchedUser);
           setIsAuthenticated(true);
 
-          // Lưu userID vào localStorage (nếu chưa có)
           localStorage.setItem("userID", decodedToken.userId);
 
-          // Đồng bộ giỏ hàng
           try {
             const cartResponse = await getCart(decodedToken.userId);
             const cartData = cartResponse.data;
@@ -106,7 +106,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      // Xóa các giá trị cũ trong localStorage trước khi đăng nhập
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("userID");
@@ -116,26 +115,22 @@ export const AuthProvider = ({ children }) => {
       const { id, token, role, ...userData } = response.data;
       console.log("Login response:", { id, role, userData });
 
-      // Giải mã token để lấy userId
       const decodedToken = decodeToken(token);
       console.log("Decoded token on login:", decodedToken);
       if (!decodedToken || !decodedToken.userId) {
         throw new Error("Invalid token");
       }
 
-      // Kiểm tra role
       if (typeof role !== "number") {
         throw new Error("Invalid role data");
       }
 
-      // Lưu thông tin mới
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify({ ...userData, role }));
       localStorage.setItem("userID", decodedToken.userId);
       setUser({ ...userData, role });
       setIsAuthenticated(true);
 
-      // Đồng bộ giỏ hàng
       try {
         const cartResponse = await getCart(decodedToken.userId);
         const cartData = cartResponse.data;
@@ -159,7 +154,7 @@ export const AuthProvider = ({ children }) => {
         window.dispatchEvent(new Event("cartUpdated"));
       }
 
-      return { token, id, role }; // Trả về role để xử lý redirect
+      return { token, id, role };
     } catch (error) {
       console.error("Login failed:", error);
       throw error;
@@ -187,7 +182,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     console.log("Logging out, clearing auth state");
-    localStorage.clear(); // Clear all localStorage to prevent stale data
+    localStorage.clear();
     setIsAuthenticated(false);
     setUser(null);
     window.dispatchEvent(new Event("cartUpdated"));

@@ -1,7 +1,5 @@
-/* Container */
 .container {
   max-width: 1440px;
-
   padding: 1.5rem;
   background: linear-gradient(145deg, #f9fafb 0%, #e0e7ff 100%);
   border-radius: 24px;
@@ -10,11 +8,10 @@
   grid-template-rows: auto auto 1fr;
   gap: 1rem;
   min-height: calc(100vh - 3rem);
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   overflow: hidden;
 }
 
-/* Header */
 .header {
   padding: 1.25rem 2rem;
   background: rgba(255, 255, 255, 0.92);
@@ -36,7 +33,6 @@
   align-items: center;
 }
 
-/* Search Bar */
 .searchBar {
   display: flex;
   justify-content: flex-end;
@@ -44,7 +40,6 @@
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
   border-radius: 12px;
-
   max-width: 600px;
   margin-left: auto;
 }
@@ -105,7 +100,6 @@
   transform: scale(1.03);
 }
 
-/* Overlay */
 .overlay {
   position: fixed;
   top: 0;
@@ -119,7 +113,6 @@
   z-index: 5000;
 }
 
-/* Modal */
 .modal {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(14px);
@@ -152,7 +145,6 @@
   margin: 0;
 }
 
-/* Form */
 .form {
   display: grid;
   gap: 1.25rem;
@@ -185,7 +177,6 @@
   outline: none;
 }
 
-/* Button Group */
 .buttonGroup {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -223,7 +214,6 @@
   transform: scale(1.03);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .container {
     padding: 1rem;

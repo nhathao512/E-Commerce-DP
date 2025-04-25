@@ -288,7 +288,7 @@ function Payment() {
           quantity: item.quantity,
           size: item.size,
           productName: item.productName,
-        })), // Bao gồm _class
+        })), 
         total: totalPrice,
         name: formData.name,
         phone: formData.phone,
@@ -333,7 +333,6 @@ function Payment() {
         className: styles.popupOverlay,
       });
     }
-    // Không hiển thị thông báo nếu không nhập voucher
   };
 
   const paymentDetails = {

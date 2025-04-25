@@ -91,7 +91,9 @@ function ReviewForm({ productCode, onClose }) {
         error.response?.data || error.message
       );
       setAlertMessage({
-        text: error.response?.data?.message || "Đánh giá thất bại! Vui lòng thử lại.",
+        text:
+          error.response?.data?.message ||
+          "Đánh giá thất bại! Vui lòng thử lại.",
         type: "error",
       });
     }

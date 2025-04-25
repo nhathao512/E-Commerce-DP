@@ -1,261 +1,252 @@
-/* Overlay */
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(17, 24, 39, 0.85);
-    backdrop-filter: blur(8px);
-    display: grid;
-    place-items: center;
-    z-index: 5000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 24, 39, 0.85);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  z-index: 5000;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 600px;
+  width: 90%;
+  max-height: 85vh;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  animation: slideUp 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  font-family: "Inter", sans-serif;
+  border: 1px solid rgba(229, 231, 235, 0.5);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-  
-  /* Modal */
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  text-align: left;
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.formGroup input[type="file"] {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.formGroup input[type="file"]:focus {
+  border-color: #4f46e5;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  outline: none;
+}
+
+.imageUpload {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.uploadNote {
+  font-size: 0.813rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.progressBar {
+  width: 100%;
+  height: 1rem;
+  background: #f3f4f6;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #4f46e5;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: width 0.3s ease;
+}
+
+.imagePreview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.imageWrapper.newImage img {
+  border: 2px solid #10b981;
+}
+
+.imageWrapper.existingImage img {
+  border: 1px solid #d1d5db;
+}
+
+.imageDeleteButton {
+  position: absolute;
+  top: 0.375rem;
+  right: 0.375rem;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.imageDeleteButton:hover:not(:disabled) {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
+.imageDeleteButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.buttonGroup button {
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.buttonGroup button:first-child {
+  background: #4f46e5;
+  color: white;
+}
+
+.buttonGroup button:first-child:hover:not(:disabled) {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+.buttonGroup button:last-child {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+.buttonGroup button:last-child:hover:not(:disabled) {
+  background: #d1d5db;
+  transform: translateY(-1px);
+}
+
+.buttonGroup button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
   .modal {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 1.5rem;
-    max-width: 600px;
-    width: 90%;
-    max-height: 85vh;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-    animation: slideUp 0.3s ease-out;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    overflow-y: auto;
-    font-family: 'Inter', sans-serif;
-    border: 1px solid rgba(229, 231, 235, 0.5);
+    width: 95%;
+    padding: 1.25rem;
+    border-radius: 12px;
   }
-  
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
+
   .modal h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #111827;
-    text-align: left;
-    margin: 0 0 0.5rem;
-    line-height: 1.3;
+    font-size: 1.25rem;
   }
-  
-  /* Form */
-  .form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .formGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
-  }
-  
-  .formGroup input[type="file"] {
-    padding: 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    background: #f9fafb;
-    transition: all 0.2s ease;
-  }
-  
-  .formGroup input[type="file"]:focus {
-    border-color: #4f46e5;
-    background: #ffffff;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    outline: none;
-  }
-  
-  /* Image Upload */
-  .imageUpload {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .uploadNote {
-    font-size: 0.813rem;
-    color: #6b7280;
-    margin-top: 0.25rem;
-  }
-  
-  /* Progress Bar */
-  .progressBar {
-    width: 100%;
-    height: 1rem;
-    background: #f3f4f6;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  
-  .progressFill {
-    height: 100%;
-    background: #4f46e5;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 500;
-    transition: width 0.3s ease;
-  }
-  
-  /* Image Preview */
-  .imagePreview {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 0.5rem;
-    max-height: 400px;
-    overflow-y: auto;
-    padding: 0.5rem;
-  }
-  
-  .imageWrapper {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1;
-  }
-  
-  .imageWrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .imageWrapper.newImage img {
-    border: 2px solid #10b981;
-  }
-  
-  .imageWrapper.existingImage img {
-    border: 1px solid #d1d5db;
-  }
-  
-  /* Image Delete Button */
-  .imageDeleteButton {
-    position: absolute;
-    top: 0.375rem;
-    right: 0.375rem;
-    background: rgba(239, 68, 68, 0.9);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 1.25rem;
-    height: 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .imageDeleteButton:hover:not(:disabled) {
-    background: #dc2626;
-    transform: scale(1.1);
-  }
-  
-  .imageDeleteButton:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  /* Button Group */
-  .buttonGroup {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-  }
-  
+
+  .formGroup input[type="file"],
   .buttonGroup button {
-    padding: 0.75rem;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 0.625rem;
+    font-size: 0.813rem;
   }
-  
-  .buttonGroup button:first-child {
-    background: #4f46e5;
-    color: white;
+
+  .imagePreview {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
   }
-  
-  .buttonGroup button:first-child:hover:not(:disabled) {
-    background: #4338ca;
-    transform: translateY(-1px);
+
+  .imageDeleteButton {
+    width: 1.125rem;
+    height: 1.125rem;
+    font-size: 0.75rem;
   }
-  
-  .buttonGroup button:last-child {
-    background: #e5e7eb;
-    color: #111827;
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 1rem;
   }
-  
-  .buttonGroup button:last-child:hover:not(:disabled) {
-    background: #d1d5db;
-    transform: translateY(-1px);
+
+  .buttonGroup {
+    grid-template-columns: 1fr;
   }
-  
-  .buttonGroup button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+
+  .imagePreview {
+    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
   }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .modal {
-      width: 95%;
-      padding: 1.25rem;
-      border-radius: 12px;
-    }
-  
-    .modal h2 {
-      font-size: 1.25rem;
-    }
-  
-    .formGroup input[type="file"],
-    .buttonGroup button {
-      padding: 0.625rem;
-      font-size: 0.813rem;
-    }
-  
-    .imagePreview {
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-      gap: 0.5rem;
-    }
-  
-    .imageDeleteButton {
-      width: 1.125rem;
-      height: 1.125rem;
-      font-size: 0.75rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .modal {
-      padding: 1rem;
-    }
-  
-    .buttonGroup {
-      grid-template-columns: 1fr;
-    }
-  
-    .imagePreview {
-      grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-    }
-  }
+}

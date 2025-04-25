@@ -25,7 +25,6 @@ body {
   margin: 0;
 }
 
-/* Sidebar */
 .sidebar {
   width: 280px;
   background: linear-gradient(180deg, #1e3a8a 0%, #2563eb 100%);
@@ -85,7 +84,6 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* Main Content */
 .main {
   flex: 1;
   padding: 48px;
@@ -93,7 +91,6 @@ body {
   overflow-y: auto;
 }
 
-/* Welcome Box */
 .welcomeBox {
   background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
   padding: 48px;
@@ -114,7 +111,6 @@ body {
   text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Cards Container */
 .cardsContainer {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -157,7 +153,6 @@ body {
   font-weight: 500;
 }
 
-/* Card Variants */
 .cardRevenue {
   border: 3px solid transparent;
   background: linear-gradient(#ffffff, #ffffff) padding-box,
@@ -192,7 +187,6 @@ body {
   color: #f59e0b;
 }
 
-/* Actions Section */
 .actionsSection {
   margin-bottom: 48px;
 }
@@ -241,8 +235,7 @@ body {
   cursor: pointer;
   transition: box-shadow 0.2s ease;
   box-sizing: border-box;
-
-  text-align: center; /* Căn giữa văn bản */
+  text-align: center;
 }
 
 .actionButton:hover {
@@ -252,10 +245,9 @@ body {
 
 .actionButton svg {
   margin-right: 10px;
-  font-size: 18px; /* Kích thước biểu tượng đồng nhất */
+  font-size: 18px;
 }
 
-/* Tables Container */
 .tablesContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -324,7 +316,6 @@ body {
   border-bottom: none;
 }
 
-/* Chart Section */
 .chartSection {
   background: #ffffff;
   padding: 32px;
@@ -384,7 +375,6 @@ body {
   height: 400px;
 }
 
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -420,7 +410,6 @@ body {
     -3px -3px 10px rgba(255, 255, 255, 0.8);
 }
 
-/* Sidebar collapsed state */
 .sidebar.collapsed {
   width: 60px;
   padding: 24px 12px;
@@ -462,12 +451,10 @@ body {
   transform: scale(1.1);
 }
 
-/* Adjust main content when sidebar is collapsed */
 .adminWrapper.collapsed .main {
   margin-left: 60px;
 }
 
-/* Chart toggle buttons specific styles */
 .chartToggle .toggleButton {
   background: #e5e7eb;
   color: #1e293b;
@@ -483,7 +470,6 @@ body {
   color: #ffffff;
 }
 
-/* Responsive Design */
 @media (max-width: 1200px) {
   .adminLayout {
     flex-direction: column;
@@ -547,7 +533,7 @@ body {
   .actionButton {
     padding: 12px 20px;
     font-size: 14px;
-    width: 180px; /* Giảm chiều rộng cho màn hình nhỏ */
+    width: 180px;
   }
 }
 
@@ -606,11 +592,10 @@ body {
   }
 
   .actionButton {
-    width: 100%; /* Chiếm toàn bộ chiều rộng trên màn hình rất nhỏ */
+    width: 100%;
   }
 }
 
-/* Export Button Group */
 .exportButtonGroup {
   display: flex;
   gap: 16px;
@@ -618,7 +603,6 @@ body {
   justify-content: center;
 }
 
-/* Responsive Design for Export Button Group */
 @media (max-width: 768px) {
   .exportButtonGroup {
     flex-direction: column;

@@ -40,17 +40,17 @@
 
 .mainImage {
   position: relative;
-  overflow: hidden; /* Đảm bảo nội dung thừa bị cắt */
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%; /* Đảm bảo mainImage không vượt quá container */
+  width: 100%;
 }
 
 .mainImage img {
-  max-width: 100%; /* Giới hạn chiều rộng tối đa của ảnh */
-  height: 500px; /* Giữ nguyên chiều cao cố định */
-  object-fit: cover; /* Ảnh sẽ được cắt để vừa khung mà không bị méo */
+  max-width: 100%;
+  height: 500px;
+  object-fit: cover;
   transition: transform 0.3s ease;
 }
 
@@ -69,7 +69,7 @@
   gap: 15px;
   overflow: hidden;
   flex: 1;
-  justify-content: flex-start; /* Canh lề trái thay vì căn giữa */
+  justify-content: flex-start;
 }
 
 .thumbnail {
@@ -416,7 +416,6 @@
   }
 }
 
-/* Notification styles */
 .notification {
   margin-top: 80px;
   position: fixed !important;
@@ -436,8 +435,7 @@
 }
 
 .notificationWarning {
-  background-color: #ffc107 !important; /* Same as success per request */
-  /* Alternative: background-color: #ffc107 !important; /* Yellow for warning */
+  background-color: #ffc107 !important;
 }
 
 .notificationError {
@@ -464,7 +462,6 @@
   }
 }
 
-/* Responsive design */
 @media (max-width: 768px) {
   .productWrapper {
     flex-direction: column;

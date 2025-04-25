@@ -20,7 +20,6 @@ function CategoriesManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch danh sách danh mục khi component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -140,7 +139,6 @@ function CategoriesManagement() {
           />
           <button onClick={handleCreate}>Tạo mới</button>
           <button onClick={() => setIsAsc(!isAsc)}>
-           
             {isAsc ? "⬇ DESC" : "⬆ ASC"}
           </button>
         </div>
@@ -157,7 +155,6 @@ function CategoriesManagement() {
         onDelete={handleDelete}
       />
 
-      {/* Popup thêm/sửa danh mục */}
       {isPopupOpen && (
         <div className={styles.overlay} onClick={() => setIsPopupOpen(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
@@ -192,7 +189,6 @@ function CategoriesManagement() {
         </div>
       )}
 
-      {/* Popup xác nhận xóa */}
       {isDeletePopupOpen && (
         <div className={styles.overlay} onClick={cancelDelete}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>

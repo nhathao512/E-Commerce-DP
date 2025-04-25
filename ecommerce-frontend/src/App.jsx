@@ -20,12 +20,9 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Các trang không có Navbar và Footer */}
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/admin/*" element={<AdminPage />} />
-
-          {/* Các trang có Navbar và Footer */}
           <Route
             path="*"
             element={
@@ -52,7 +49,6 @@ function App() {
       </Router>
     </AuthProvider>
   );
-
 }
 
 export default App;

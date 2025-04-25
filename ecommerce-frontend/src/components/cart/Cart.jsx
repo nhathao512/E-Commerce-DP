@@ -12,7 +12,7 @@ function Cart() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [popup, setPopup] = useState(null); // Quản lý popup tập trung
+  const [popup, setPopup] = useState(null);
   const { isAuthenticated, isLoading } = useContext(AuthContext);
   const navigate = useNavigate();
   const API_URL = "http://localhost:8080/api";
@@ -238,7 +238,7 @@ function Cart() {
                 onCheckboxChange={() =>
                   handleCheckboxChange(item.id, item.size)
                 }
-                onShowPopup={setPopup} // Truyền callback để hiển thị popup
+                onShowPopup={setPopup}
               />
             ))}
           </ul>

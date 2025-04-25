@@ -84,7 +84,7 @@
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   font-size: 15px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   resize: vertical;
   background: #fff;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -129,14 +129,13 @@
   cursor: pointer;
   border-radius: 8px;
   text-transform: uppercase;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease,
+    color 0.2s ease;
   margin-left: 20px;
 }
 
 .cancelButton:hover {
-  
   transform: translateY(-2px);
-
 }
 
 .cancelButton:active {

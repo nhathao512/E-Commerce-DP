@@ -238,24 +238,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100000; /* Giá trị cực cao để luôn ở trên cùng */
-  background-color: rgba(0, 0, 0, 0.7); /* Tăng độ tối của overlay */
-  overflow: auto; /* Cho phép cuộn nếu nội dung dài */
-  animation: fadeInOverlay 0.3s ease-in-out; /* Hiệu ứng xuất hiện mượt mà */
+  z-index: 100000;
+  background-color: rgba(0, 0, 0, 0.7);
+  overflow: auto;
+  animation: fadeInOverlay 0.3s ease-in-out;
 }
 
 .popupOverlay > div {
   position: relative;
-  z-index: 100001; /* Nội dung popup cao hơn overlay */
-  max-width: 500px; /* Giới hạn chiều rộng */
+  z-index: 100001;
+  max-width: 500px;
   width: 90%;
-  max-height: 80vh; /* Giới hạn chiều cao */
-  overflow-y: auto; /* Cho phép cuộn nội dung */
+  max-height: 80vh;
+  overflow-y: auto;
   padding: 25px;
   border-radius: 12px;
   background-color: #ffffff;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); /* Bóng đậm hơn */
-  animation: fadeInPopup 0.3s ease-in-out; /* Hiệu ứng cho nội dung */
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  animation: fadeInPopup 0.3s ease-in-out;
 }
 
 @keyframes fadeInOverlay {

@@ -1,7 +1,5 @@
-/* Container */
 .container {
   max-width: 1440px;
-
   padding: 1.5rem;
   background: linear-gradient(145deg, #f9fafb 0%, #e0e7ff 100%);
   border-radius: 24px;
@@ -10,11 +8,10 @@
   grid-template-rows: auto auto 1fr auto;
   gap: 1rem;
   min-height: calc(100vh - 3rem);
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   overflow: hidden;
 }
 
-/* Header */
 .header {
   padding: 1.25rem 2rem;
   background: rgba(255, 255, 255, 0.92);
@@ -36,14 +33,12 @@
   align-items: center;
 }
 
-/* Search Bar */
 .searchBar {
   display: flex;
   justify-content: flex-end;
   padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
-
   max-width: 600px;
   margin-left: auto;
 }
@@ -114,7 +109,6 @@
   cursor: not-allowed;
 }
 
-/* Overlay */
 .overlay {
   position: fixed;
   top: 0;
@@ -128,7 +122,6 @@
   z-index: 5000;
 }
 
-/* Modal */
 .modal {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(14px);
@@ -168,7 +161,6 @@
   margin: 0.5rem 0;
 }
 
-/* Form */
 .form {
   display: grid;
   gap: 1.25rem;
@@ -206,7 +198,6 @@
   cursor: not-allowed;
 }
 
-/* Password Container */
 .passwordContainer {
   position: relative;
   display: flex;
@@ -231,7 +222,6 @@
   color: #1e293b;
 }
 
-/* Button Group */
 .buttonGroup {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -274,7 +264,6 @@
   cursor: not-allowed;
 }
 
-/* Delete Button */
 .deleteButton {
   background: #ef4444;
   color: white;
@@ -286,7 +275,6 @@
   box-shadow: 0 4px 16px rgba(239, 68, 68, 0.3);
 }
 
-/* Loading and Error */
 .loading {
   display: grid;
   place-items: center;
@@ -311,7 +299,6 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* Pagination */
 .pagination {
   display: flex;
   justify-content: center;
@@ -350,7 +337,6 @@
   font-weight: 600;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .container {
     padding: 1rem;

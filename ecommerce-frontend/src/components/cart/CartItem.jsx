@@ -7,7 +7,13 @@ import {
 import styles from "./CartItem.module.css";
 import cartStyles from "./Cart.module.css";
 
-function CartItem({ item, setCartItems, isSelected, onCheckboxChange, onShowPopup }) {
+function CartItem({
+  item,
+  setCartItems,
+  isSelected,
+  onCheckboxChange,
+  onShowPopup,
+}) {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const checkStockAvailability = async (productId, size, desiredQuantity) => {

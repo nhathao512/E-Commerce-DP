@@ -27,7 +27,7 @@ function HomePage() {
         setProducts(productResponse.data || []);
 
         const categoryResponse = await getAllCategories();
-        console.log("Category Response:", categoryResponse.data); // Debug
+        console.log("Category Response:", categoryResponse.data);
         setCategories(categoryResponse.data || []);
         setLoading(false);
       } catch (error) {

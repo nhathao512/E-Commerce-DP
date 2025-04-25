@@ -4,7 +4,6 @@ import API from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import styles from "./Profile.module.css";
 
-// Ảnh mặc định khi không có ảnh đại diện
 const DEFAULT_AVATAR =
   "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIiBmaWxsPSJub25lIj48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjEwMCIgZmlsbD0iI0UyRThGMCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSI0MCIgZmlsbD0iIzAyODhEMSIvPjxwYXRoIGQ9Ik0xNjAgMTkwQzE2MCAxNTYuODYzIDEzMy4xMzcgMTMwIDEwMCAxMzBDNjYuODYzIDEzMCA0MCAxNTYuODYzIDQwIDE5MEg2MEg4MEgxMjBIMTQwSDE2MFoiIGZpbGw9IiMwMjg4RDEiLz48L3N2Zz4=";
 
@@ -187,7 +186,6 @@ const Profile = () => {
         </div>
       )}
       <div className={styles.profileCard}>
-        {/* Thông tin và nút chỉnh sửa bên trái */}
         <div className={styles.infoSection}>
           <div className={styles.formSection}>
             <div className={styles.profileField}>
@@ -220,7 +218,6 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Hình ảnh bên phải */}
         <div className={styles.imageSection}>
           <div className={styles.avatarWrapper}>
             {isLoadingProfile ? (

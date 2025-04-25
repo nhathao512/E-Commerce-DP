@@ -35,7 +35,6 @@
   font-size: 36px;
   font-weight: 900;
   text-align: center;
-  /* Màu xanh tím đậm sang trọng */
   color: #1e40af;
   margin-bottom: 44px;
   letter-spacing: -0.9px;
@@ -43,7 +42,6 @@
   position: relative;
 }
 
-/* Thêm hiệu ứng ánh sáng dưới tiêu đề */
 .title::after {
   content: "";
   position: absolute;
@@ -63,7 +61,6 @@
   gap: 44px;
   padding: 36px;
   border-radius: 24px;
-  /* Gradient nhẹ nhàng với ánh sáng */
   background: linear-gradient(145deg, #ffffff 0%, #f0f7ff 100%);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06),
     inset 0 0 12px rgba(255, 255, 255, 0.9);
@@ -87,7 +84,6 @@
   display: flex;
   align-items: center;
   padding: 18px 22px;
-  /* Gradient tinh tế với ánh sáng */
   background: linear-gradient(90deg, #f0f7ff 0%, #fafaff 100%);
   border-radius: 14px;
   border: 1px solid rgba(219, 234, 254, 0.8);
@@ -101,7 +97,6 @@
   transform: translateY(-3px);
 }
 
-/* Thêm hiệu ứng viền sáng khi hover */
 .profileField::before {
   content: "";
   position: absolute;
@@ -126,7 +121,6 @@
 .label {
   font-weight: 700;
   font-size: 17px;
-  /* Màu xanh dương đậm hơn, nổi bật */
   color: #1d4ed8;
   min-width: 140px;
 }
@@ -146,7 +140,6 @@
 
 .editButton {
   padding: 18px 40px;
-  /* Gradient xanh dương đậm với ánh sáng */
   background: linear-gradient(90deg, #1d4ed8 0%, #3b82f6 100%);
   color: white;
   font-weight: 700;
@@ -161,7 +154,6 @@
   overflow: hidden;
 }
 
-/* Hiệu ứng ánh sáng di chuyển khi hover */
 .editButton::before {
   content: "";
   position: absolute;
@@ -202,7 +194,6 @@
   height: 190px;
   border-radius: 50%;
   overflow: hidden;
-  /* Viền gradient rực rỡ hơn */
   border: 6px solid transparent;
   background: linear-gradient(45deg, #000000, #60a5fa, #a78bfa, #1d4ed8)
     border-box;
@@ -211,7 +202,6 @@
   box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
 }
 
-/* Hiệu ứng ánh sáng xoay quanh viền */
 @keyframes glow {
   0% {
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.2),
@@ -322,9 +312,9 @@
   background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
   padding: 32px;
   border-radius: 24px;
-  width: 700px; /* Tăng chiều rộng để phù hợp với thiết kế */
+  width: 700px;
   max-width: 90%;
-  min-height: 500px; /* Đảm bảo modal có chiều cao tối thiểu */
+  min-height: 500px;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15), 0 0 30px rgba(59, 130, 246, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.9);
   position: relative;
@@ -333,7 +323,6 @@
   justify-content: space-between;
 }
 
-/* Thêm hiệu ứng viền sáng cho modal */
 .modal::before {
   content: "";
   position: absolute;
@@ -386,8 +375,8 @@
   color: #1f2937;
   background: #fff;
   transition: all 0.3s ease;
-  width: 100%; /* Đảm bảo input chiếm toàn bộ chiều rộng */
-  box-sizing: border-box; /* Đảm bảo padding không làm tăng kích thước */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .input:focus {

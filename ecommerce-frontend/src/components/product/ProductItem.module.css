@@ -115,11 +115,11 @@
 
 .star {
   font-size: 0.875rem;
-  color: #d1d5db; /* Gray for empty stars */
+  color: #d1d5db;
 }
 
 .starFilled {
-  color: #f59e0b; /* Yellow for filled stars */
+  color: #f59e0b;
 }
 
 .starHalf {

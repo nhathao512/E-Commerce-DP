@@ -12,7 +12,6 @@ API.interceptors.request.use((config) => {
   return config;
 });
 
-// API cho sản phẩm
 export const getProducts = () => API.get("/products");
 export const getProductById = (id) => API.get(`/products/${id}`);
 export const addProduct = (product) =>
@@ -29,7 +28,6 @@ export const updateProduct = (id, product) =>
   });
 export const deleteProduct = (id) => API.delete(`/products/${id}`);
 
-// API cho giỏ hàng
 export const getCart = (userId) =>
   API.get("/cart", {
     params: { userId },
@@ -64,10 +62,8 @@ export const clearCart = (userId) =>
     params: { userId },
   });
 
-// API cho tỉnh/thành
 export const getProvinces = () => API.get("/provinces");
 
-// API cho đơn hàng
 export const processPayment = (paymentData) =>
   API.post("/orders/create", paymentData.items, {
     params: {
@@ -98,7 +94,6 @@ export const updateOrderStatus = (orderId, status, cancelReason) =>
     params: { status, cancelReason },
   });
 
-// API cho đánh giá
 export const addReview = (data) =>
   API.post("/reviews", data, {
     headers: {
@@ -108,7 +103,6 @@ export const addReview = (data) =>
 export const getReviews = (productCode) =>
   API.get(`/reviews/product/${productCode}`);
 
-// API cho danh mục
 export const getAllCategories = () => API.get("/categories");
 export const addCategory = (name, icon) =>
   API.post("/categories", null, { params: { name, icon } });
@@ -116,7 +110,6 @@ export const updateCategory = (id, name, icon) =>
   API.put(`/categories/${id}`, null, { params: { name, icon } });
 export const deleteCategory = (id) => API.delete(`/categories/${id}`);
 
-// API cho xuất dữ liệu
 export const exportTopProducts = (format) =>
   API.get("/export/top-products", {
     params: { format },
