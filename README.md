@@ -23,7 +23,7 @@ E-Commerce Web Application allow users to view, buy and rate products. This appl
 The project includes 2 directories
 
 ```
-522H0038_522H0080/
+E-Commerce-DP/
 ├── ecommerce-backend      # include backend implementation
 ├── ecommerce-frontend      # include frontend implementation
 └── README.md               # this file
