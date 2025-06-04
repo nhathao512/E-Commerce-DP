@@ -85,5 +85,5 @@ The frontend program will be running on `localhost:3000` you can access through 
 ## Authors
 
 - [nhathao512](https://github.com/nhathao512)
-- 
+- [tinhgom007](https://github.com/tinhgom007)
 - [giahao1411](https://github.com/giahao1411)
