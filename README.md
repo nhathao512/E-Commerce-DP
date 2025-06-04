@@ -87,3 +87,6 @@ The frontend program will be running on `localhost:3000` you can access through 
 - [nhathao512](https://github.com/nhathao512)
 - [tinhgom007](https://github.com/tinhgom007)
 - [giahao1411](https://github.com/giahao1411)
+- [Hyun177](https://github.com/Hyun177)
+- [trungka982004](https://github.com/trungka982004)
+- [huyblue17](https://github.com/huyblue17)
